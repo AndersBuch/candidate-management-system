@@ -16,8 +16,9 @@ import HelloWorld from './components/HelloWorld.vue'
     
   </div>
   <HelloWorld msg="Vite + Vue" />
-  <h1>HEJSA</h1>
-  <h1>HEJSA</h1>
+  <h1>HEJ</h1>
+  <h1>HEJ</h1>
+  <h1>HEJ</h1>
   <h1>HEJSA</h1>
 </template>
 
