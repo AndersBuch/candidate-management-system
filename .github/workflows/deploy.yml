@@ -5,73 +5,29 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install
         run: npm ci
 
-      - name: Build project
+      - name: Build
         run: npm run build
 
-      - name: Include .htaccess (root or app/.htaccess)
-        run: |
-          set -e
-          if [ -f .htaccess ]; then
-            echo "Found .htaccess in repo root -> copying to dist/.htaccess"
-            cp .htaccess dist/.htaccess
-          elif [ -f app/.htaccess ]; then
-            echo "Found app/.htaccess in repo -> copying to dist/.htaccess"
-            cp app/.htaccess dist/.htaccess
-          else
-            echo "ERROR: .htaccess not found in repo root or app/.htaccess"
-            exit 1
-          fi
-
-      - name: Show dist contents (debug)
-        run: |
-          echo "==== dist listing ===="
-          ls -la dist
-          echo "======================"
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: site
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: site
-          path: site
-
-      - name: Show site contents before FTP (debug)
-        run: |
-          echo "==== site listing ===="
-          ls -la site
-          echo "======================"
-
-      - name: Deploy via FTP
+      - name: FTP deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: site/   # skal ende med /
+          local-dir: dist/   # skal ende med /
           server-dir: ${{ endsWith(secrets.FTP_PATH, '/') && secrets.FTP_PATH || format('{0}/', secrets.FTP_PATH) }}
           dangerous-clean-slate: false
