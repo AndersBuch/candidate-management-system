@@ -1,0 +1,50 @@
+name: Build & Deploy Vue to simply.com
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+      - run: npm run build
+
+      # hvis du vil inkludere .htaccess fra repoet:
+      - name: Include .htaccess (optional)
+        run: |
+          if [ -f deploy/.htaccess ]; then
+            cp deploy/.htaccess dist/.htaccess
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: site
+          server-dir: ${{ secrets.FTP_PATH }}
+          # sletter alt i target-mappen før upload – fjern hvis du vil bevare filer
+          dangerous-clean-slate: true
