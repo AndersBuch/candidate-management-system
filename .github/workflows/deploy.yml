@@ -1,33 +1,53 @@
-name: Build & Deploy Vue to simply.com
+name: CI & Deploy (main only)
 
 on:
   push:
+    branches: [ dev, main ]
+  pull_request:
     branches: [ main ]
 
 jobs:
-  deploy:
+  # Build check on PRs (no deploy)
+  pr-check:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - run: npm ci
+      - run: npm run build  # bygger for at fange fejl før merge
 
-      - name: Install
-        run: npm ci
+  # Build check on dev (no deploy)
+  dev-build:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build
 
-      - name: Build
-        run: npm run build
-
+  # Deploy only when pushing/merging to main
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build
       - name: FTP deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: dist/   # skal ende med /
-          server-dir: ${{ endsWith(secrets.FTP_PATH, '/') && secrets.FTP_PATH || format('{0}/', secrets.FTP_PATH) }}
-          dangerous-clean-slate: false
+          local-dir: dist/
+          server-dir: ${{ secrets.FTP_PATH }}   # fx /public_html/app/
+          dangerous-clean-slate: false         # så din manuelle .htaccess bliver
