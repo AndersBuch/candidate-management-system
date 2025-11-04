@@ -7,24 +7,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - run: npm ci
-      - run: npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      # hvis du vil inkludere .htaccess fra repoet:
-      - name: Include .htaccess (optional)
-        run: |
-          if [ -f deploy/.htaccess ]; then
-            cp deploy/.htaccess dist/.htaccess
-          fi
+      - name: Build project
+        run: npm run build
 
-      - uses: actions/upload-artifact@v4
+      - name: Prepare artifact
+        uses: actions/upload-artifact@v4
         with:
           name: site
           path: dist
@@ -32,19 +32,20 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
           name: site
           path: site
 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: site
           server-dir: ${{ secrets.FTP_PATH }}
-          # sletter alt i target-mappen før upload – fjern hvis du vil bevare filer
           dangerous-clean-slate: true
