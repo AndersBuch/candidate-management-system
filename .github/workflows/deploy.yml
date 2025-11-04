@@ -23,7 +23,14 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Prepare artifact
+      # (valgfrit) hvis du har en .htaccess i repoet
+      # - name: Include .htaccess
+      #   run: |
+      #     if [ -f deploy/.htaccess ]; then
+      #       cp deploy/.htaccess dist/.htaccess
+      #     fi
+
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: site
@@ -46,6 +53,6 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: site
-          server-dir: ${{ secrets.FTP_PATH }}
+          local-dir: site/   # <-- SKAL ende med /
+          server-dir: ${{ endsWith(secrets.FTP_PATH, '/') && secrets.FTP_PATH || format('{0}/', secrets.FTP_PATH) }}
           dangerous-clean-slate: true
