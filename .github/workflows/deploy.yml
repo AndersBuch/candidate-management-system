@@ -23,12 +23,11 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # (valgfrit) hvis du har en .htaccess i repoet
-      # - name: Include .htaccess
-      #   run: |
-      #     if [ -f deploy/.htaccess ]; then
-      #       cp deploy/.htaccess dist/.htaccess
-      #     fi
+      - name: Include .htaccess
+        run: |
+          if [ -f .htaccess ]; then
+            cp .htaccess dist/.htaccess
+          fi
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
