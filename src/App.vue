@@ -12,6 +12,9 @@ import HelloWorld from './components/HelloWorld.vue'
 </template>
 
 
-<style scoped lang="sass">
+<style scoped lang="scss">
+h1 {
+  color: $primaryBlue;
+}
 
 </style>
