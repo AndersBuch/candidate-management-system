@@ -15,12 +15,16 @@ export default defineConfig({
     }
   },
 
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: '@use "@/assets/style/globalVariables.scss" as *;'
-      }
+css: {
+  preprocessorOptions: {
+    scss: {
+      additionalData: `
+        @use "@/assets/style/globalVariables.scss" as *;
+        @use "@/assets/style/main.scss";
+      `
     }
-  },
-  base: '/app/'
+  }
+},
+base: '/app/'
+
 })
