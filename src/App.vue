@@ -1,18 +1,22 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
+import BasicIcon from '@/components/atoms/BasicIcon.vue'
 </script>
 
 <template>
-  <body>
-    
-
   <div>
-<h1>monkjey</h1>
+    <h1>monkjey</h1>
     <HelloWorld />
     <h1>monkjey</h1>
     <RouterView />
+
+    <img src="/icons/Filter.svg" alt="Filter icon" />
+
+    <div class="avatarContainer">
+      <BasicIcon name="Filter" />
+      <BasicIcon name="Filter" />
+    </div>
   </div>
-  </body>
 </template>
 
 
