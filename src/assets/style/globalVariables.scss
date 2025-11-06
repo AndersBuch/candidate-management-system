@@ -1,0 +1,47 @@
+/*GLOBAL COLORS*/
+$primaryBlue: #007BFF;
+$hoverBlue: #0072EB;
+$sekundareBlue: #D5E9FF;
+$black: #333333;
+$darkGrey: #969696;
+$lightGrey: #F2F2F2;
+$dangerRed: #FF383C;
+$goodGreen: #34C759;
+$whiteColor: #fff;
+$statusPurple: #CB30E0;
+$statusOrange: #FF8D28;
+
+@mixin heading1 {
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 4.3rem;
+  font-weight: 700;
+  line-height: 120%;
+}
+
+@mixin heading2 {
+  font-size: 3.1rem;
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: 700;
+  line-height: 120%;
+}
+
+@mixin bodyText {
+  font-size: 1rem;
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+@mixin boldBodyText {
+  font-size: 1rem;
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: 700;
+  line-height: 120%;
+}
+
+@mixin buttonText {
+  font-size: 1rem;
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: 700;
+  line-height: 100%;
+}
