@@ -21,7 +21,7 @@ import HelloWorld from './components/HelloWorld.vue'
   <h1>HEJ</h1>
   <h1>HEJSA</h1>
 </template>
-
+tgrt
 <style scoped>
 .logo {
   height: 6em;
