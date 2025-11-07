@@ -13,7 +13,7 @@ import BasicIcon from '@/components/atoms/BasicIcon.vue'
     <img src="/icons/Filter.svg" alt="Filter icon" />
 
     <div class="avatarContainer">
-      <BasicIcon name="Filter" />
+      <BasicIcon name="LinkinIcon" />
       <BasicIcon name="Filter" />
     </div>
   </div>
