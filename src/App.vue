@@ -1,12 +1,15 @@
 <script setup>
 import Header from '@/views/Header.vue'
 import BasicIcon from '@/components/atoms/BasicIcon.vue'
+import Button from '@/components/Button.vue'
+
 </script>
 
 <template>
   <Header />
   <main>
   <div>
+
     <h1>monkjey</h1>
     
     <h1>ehjsa</h1>
