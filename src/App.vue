@@ -1,7 +1,8 @@
 <script setup>
-import Header from '@/views/Header.vue'
+import Header from '@/components/Header.vue'
 import BasicIcon from '@/components/atoms/BasicIcon.vue'
 import Button from '@/components/Button.vue'
+import MainLogo from '@/components/MainLogo.vue'
 
 </script>
 
@@ -9,7 +10,6 @@ import Button from '@/components/Button.vue'
   <Header />
   <main>
   <div>
-
     <h1>monkjey</h1>
     
     <h1>ehjsa</h1>
