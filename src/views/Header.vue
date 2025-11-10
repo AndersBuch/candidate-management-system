@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import SectionTitle from '../components/SectionTitle.vue';
 
 </script>
 
@@ -14,8 +15,8 @@ import { ref } from 'vue'
       </nav>
     </div>
   </header>
+  <SectionTitle title="Aktuelle Stillinger" subtitle="102 åbne stillinger"/>
 </template>
-
 <style lang="scss">
 header {
   width: 100%;
