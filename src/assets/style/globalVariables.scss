@@ -24,10 +24,17 @@ $statusOrange: #FF8D28;
   font-weight: 700;
 }
 
+@mixin heading3 {
+  font-size: 1.9rem;
+  font-family: "Inter";
+  font-weight: 700;
+}
+
 @mixin bodyText {
   font-size: 1rem;
   font-family: "Inter";
   font-weight: 400;
+  line-height: 1.6;
 }
 
 @mixin boldBodyText {

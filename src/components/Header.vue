@@ -1,5 +1,5 @@
 <script setup>
-import MainLogo from '@/components/MainLogo.vue'
+import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 import { ref } from 'vue'
 
@@ -10,7 +10,7 @@ import { ref } from 'vue'
   <header>
     <div class="headerContainer">
       <RouterLink to="/">
-      <MainLogo />
+      <BasicIconAndLogo name="MainLogo" :large="true" />
       </RouterLink>
       <nav>
         <a href="#">Om Profil Search</a>
