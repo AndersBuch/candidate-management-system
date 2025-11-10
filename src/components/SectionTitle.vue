@@ -1,4 +1,5 @@
 <script setup>
+
 const props = defineProps({
   title: { type: String, default: '' },
   subtitle: { type: String, default: '' },
@@ -10,6 +11,9 @@ const props = defineProps({
     <h2 class="section-title">{{ title }}</h2>
     <p class="section-subtitle">{{ subtitle }}</p>
   </div>
+
+
+
 </template>
 
 <style scoped lang="scss">
