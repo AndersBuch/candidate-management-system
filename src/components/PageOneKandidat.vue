@@ -1,18 +1,22 @@
 <script setup>
 import Header from '@/components/Header.vue'
-import HeroSection from '@/components/HeroSection.vue'
+import HeroSectionPageOne from '@/components/HeroSectionPageOne.vue'
+import SectionTitle from '@/components/SectionTitle.vue'
+import { RouterLink } from 'vue-router'
+import Button from '@/components/Button.vue'
 </script>
 
 <template>
   <Header />
-  <HeroSection />
+  <HeroSectionPageOne />
   <main>
+    <RouterLink to="/pagetwo">
+      <Button label="Gå til Page Two" type="default" />
+    </RouterLink>
     <SectionTitle />
   </main>
 </template>
 
 
 <style scoped lang="scss">
-
-
 </style>

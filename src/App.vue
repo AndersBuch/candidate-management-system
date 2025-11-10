@@ -1,10 +1,12 @@
 <script setup>
 import PageOneKandidat from '@/components/PageOneKandidat.vue'
+import Button from '@/components/Button.vue'
 
 </script>
 
 <template>
-<PageOneKandidat />
+
+  <RouterView />
 </template>
 
 

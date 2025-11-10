@@ -9,7 +9,9 @@ import { ref } from 'vue'
 <template>
   <header>
     <div class="headerContainer">
+      <RouterLink to="/">
       <MainLogo />
+      </RouterLink>
       <nav>
         <a href="#">Om Profil Search</a>
         <a href="#">Arbejdsmetoder</a>
