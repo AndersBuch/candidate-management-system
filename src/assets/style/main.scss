@@ -1,0 +1,21 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+h1, h2, p{
+  color: #333;
+}
+
+main {
+  max-width: 1450px;
+  width: 100%;
+  margin: 0 auto; /* centrerer main */
+  flex: 1;
+}
+
+body {
+  margin: 0; /* <- denne er vigtig */
+}
