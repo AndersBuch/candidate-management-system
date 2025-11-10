@@ -87,6 +87,7 @@ import Button from '@/components/Button.vue'
     h3 {
         @include heading3;
         margin-bottom: 20px;
+        margin-top: 20px;
     }
 
     p {
@@ -97,13 +98,15 @@ import Button from '@/components/Button.vue'
     .boldTekst {
         @include boldBodyText
     }
+
 ul {
   list-style: none; 
   margin-left: 20px;
+  margin-bottom: 20px;
 
   li {
     @include bodyText;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     position: relative; 
     padding-left: 28px; /* plads til check-tegnet */
 
