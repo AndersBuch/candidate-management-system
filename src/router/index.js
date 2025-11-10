@@ -10,6 +10,11 @@ const routes = [
     path: '/pagetwo',
     name: 'PageTwo',
     component: () => import('../components/PageTwoKandidat.vue')
+  },
+  {
+  path: '/pagethree',
+    name: 'PageThree',
+    component: () => import('../components/PageThirdKandidat.vue')
   }
 ]
 
