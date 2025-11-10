@@ -1,5 +1,5 @@
 <script setup>
-import BasicIcon from '@/components/atoms/BasicIcon.vue'
+import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { computed } from 'vue'
 
 const props = defineProps({

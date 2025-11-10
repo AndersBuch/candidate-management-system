@@ -42,12 +42,12 @@ svg {
     height: 80px;
   }
   &.large {
-    width: 38px;
-    height: 38px;
+    width: 150px;
+    height: 51px;
   }
   &.small {
-    width: 16px;
-    height: 16px;
+    width: 100px;
+    height: 100px;
   }
 }
 </style>
