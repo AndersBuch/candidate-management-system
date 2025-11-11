@@ -1,16 +1,16 @@
-<script setup lang="ts">
+<script setup>
 import InlineSvg from 'vue-inline-svg'
 import { computed } from 'vue'
 
-interface Props {
-  name: string
-  selected?: boolean
-  large?: boolean
-  huge?: boolean
-  small?: boolean
-}
+const props = defineProps({
+  name: String,
+  selected: Boolean,
+  large: Boolean,
+  huge: Boolean,
+  small: Boolean,
+  exstraSmall: Boolean
+})
 
-const props = defineProps<Props>()
 
 const filePath = computed(() => `${import.meta.env.BASE_URL}icons/${props.name}.svg`);
 
@@ -25,7 +25,8 @@ const filePath = computed(() => `${import.meta.env.BASE_URL}icons/${props.name}.
       selected: props.selected,
       large: props.large,
       huge: props.huge,
-      small: props.small
+      small: props.small,
+      exstraSmall: props.exstraSmall
     }"
   />
 </template>
@@ -43,12 +44,16 @@ svg {
     height: 80px;
   }
   &.large {
-    width: 38px;
-    height: 38px;
+    width: 150px;
+    height: 51px;
   }
   &.small {
-    width: 16px;
-    height: 16px;
+    width: 100px;
+    height: 100px;
+  }
+    &.exstraSmall {
+    width: 50px;
+    height: 50px;
   }
 }
 </style>

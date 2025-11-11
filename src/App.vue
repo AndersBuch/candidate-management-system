@@ -1,32 +1,14 @@
 <script setup>
-import Header from '@/views/Header.vue'
-import BasicIcon from '@/components/atoms/BasicIcon.vue'
+import PageOneKandidat from '@/components/PageOneKandidat.vue'
+import Button from '@/components/Button.vue'
+
 </script>
 
 <template>
-  <Header />
-  <main>
-  <div>
-    <h1>monkjey</h1>
-    
-    <h1>monkjey</h1>
-    <RouterView />
 
-    <img src="/icons/Filter.svg" alt="Filter icon" />
-
-    <div class="avatarContainer">
-      <BasicIcon name="LinkinIcon" />
-      <BasicIcon name="Filter" />
-    </div>
-  </div>
-  </main>
+  <RouterView />
 </template>
 
 
 <style scoped lang="scss">
-h1 {
-  color: $primaryBlue;
-  @include heading1;
-}
-
 </style>
