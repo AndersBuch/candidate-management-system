@@ -9,7 +9,9 @@ import Hero from '@/components/Hero.vue'
     <div class="heroContainer">
       <div class="heroTextContainer">
         <h1>Procesoperatør - Pilotanlæg</h1>
-        <Button label="Søg Job" type="default" aria-label="Søg Job" />
+            <RouterLink to="/pagethree">
+            <Button label="Søg Job" type="default" aria-label="Ansøg nu" />
+            </RouterLink>
       </div>
     </div>
           <p class="heroBottomText">

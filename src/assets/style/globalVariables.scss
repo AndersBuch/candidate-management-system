@@ -37,6 +37,14 @@ $statusOrange: #FF8D28;
   line-height: 1.6;
 }
 
+
+@mixin bigBodyText {
+  font-size: 1.25rem;
+  font-family: "Inter";
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 @mixin boldBodyText {
   font-size: 1rem;
   font-family: "Inter";

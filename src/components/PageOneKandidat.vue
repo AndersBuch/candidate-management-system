@@ -2,7 +2,6 @@
 import Header from '@/components/Header.vue'
 import HeroSectionPageOne from '@/components/HeroSectionPageOne.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
-import { RouterLink } from 'vue-router'
 import Button from '@/components/Button.vue'
 </script>
 
