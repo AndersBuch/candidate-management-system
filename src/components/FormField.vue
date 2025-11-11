@@ -2,74 +2,57 @@
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
-  label: {
-    type: String,
-    required: true
-  },
-  type: {
-    type: String,
-    default: 'default'
-  },
-  placeholder: {
-    type: String,
-    default: ''
-  },
-  fieldType: {
-    type: String,
-    default: 'text'
-  },
-  modelValue: {  // <-- skift fra value til modelValue
-    type: String,
-    default: ''
-  },
-  id: {
-    type: String,
-    required: true
-  }
+  label: { type: String, required: true },
+  placeholder: { type: String, default: '' },
+  fieldType: { type: String, default: 'text' },
+  modelValue: { type: String, default: '' },
+  id: { type: String, required: true },
+  error: { type: Boolean, default: false },
+  touched: { type: Boolean, default: false },
+  errorMessage: { type: String, default: '' }
 })
 
-const emit = defineEmits(['update:modelValue'])
+// Én defineEmits — inkluder 'input'
+const emit = defineEmits(['update:modelValue', 'blur', 'input'])
 
-// Lav en lokal kopivariabel
 const localValue = ref(props.modelValue)
 
-// Hold localValue og prop synkroniseret
-watch(localValue, (val) => {
-  emit('update:modelValue', val)
-})
-watch(() => props.modelValue, (val) => {
-  localValue.value = val
-})
+watch(localValue, (val) => emit('update:modelValue', val))
+watch(() => props.modelValue, (val) => (localValue.value = val))
 
-const fieldClasses = computed(() => ({
-  defaultField: props.type === 'default',
-  primaryField: props.type === 'primary',
-  secondaryField: props.type === 'secondary',
-  dangerField: props.type === 'danger'
-}))
+const hasValue = computed(() => String(localValue.value).trim().length > 0)
+const isError = computed(() => props.error && props.touched)
 </script>
 
 <template>
   <div class="formGroup">
     <label :for="id">{{ label }}</label>
-    <textarea 
-      v-if="fieldType === 'textarea'" 
-      :id="id" 
-      :placeholder="placeholder" 
+
+    <textarea
+      v-if="fieldType === 'textarea'"
+      :id="id"
+      :placeholder="placeholder"
       v-model="localValue"
-      :class="fieldClasses"
+      @blur="emit('blur')"
+      @input="emit('input', $event)"
+      :class="{ errorField: isError, hasValue: hasValue }"
     ></textarea>
-    <input 
-      v-else 
-      :type="fieldType" 
-      :id="id" 
-      :placeholder="placeholder" 
+
+    <input
+      v-else
+      :type="fieldType"
+      :id="id"
+      :placeholder="placeholder"
       v-model="localValue"
-      :class="fieldClasses"
+      @blur="emit('blur')"
+      @input="emit('input', $event)"
+      :class="{ errorField: isError }"
     />
+
+    <!-- Vis fejltekst når feltet er touched og der er en fejlbesked -->
+<p v-if="isError && props.errorMessage" class="errorMessage">{{ props.errorMessage }}</p>
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .formGroup {
@@ -79,45 +62,42 @@ const fieldClasses = computed(() => ({
 
   label {
     margin-bottom: 0.5rem;
-    font-weight: bold;
+    @include bigBodyText;
+    color: $black;
   }
 
-  input, textarea {
+  input,
+  textarea {
     padding: 0.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    transition: border-color 0.2s;
+    border-radius: 5px;
+    @include bodyText;
+    border: 1px solid $sekundareBlue;
+    background-color: $whiteColor;
+    transition: border-color 0.2s, color 0.2s;
+
+    &::placeholder {
+      color: $darkGrey;
+    }
 
     &:focus {
-      border-color: $primaryBlue;
+      border-color: $darkGrey;
       outline: none;
     }
-  }
 
-  .defaultField {
-    background-color: #fff;
-    border-color: #ccc;
-  }
-
-  .primaryField {
-    background-color: $primaryBlue;
-    color: white;
-    border: none;
-
-    &:focus {
-      border-color: darken($primaryBlue, 10%);
+    &.hasValue {
+      border-color: $darkGrey;
+      color: $darkGrey;
     }
   }
 
-  .secondaryField {
-    background-color: #f0f0f0;
-    border-color: #aaa;
+  .errorField {
+    border-color: $dangerRed !important;
   }
 
-  .dangerField {
-    background-color: #ffe6e6;
-    border-color: $dangerRed;
+  .errorMessage {
+    color: $dangerRed;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
   }
 }
 </style>
