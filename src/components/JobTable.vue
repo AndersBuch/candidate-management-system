@@ -1,6 +1,13 @@
 <script setup>
 import Button from '@/components/Button.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function goToPageTwo() {
+  router.push({ name: 'PageTwo' })
+}
 </script>
 
 <template>
@@ -26,8 +33,8 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
     </thead>
 
     <tbody>
-      <tr>
-        <td class="cell-firma">
+      <tr @click="goToPageTwo" style="cursor: pointer">
+        <td class="cell-company">
           <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
           WSA A/S
         </td>
@@ -39,7 +46,7 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
         </td>
       </tr>
       <tr>
-        <td class="cell-firma">
+        <td class="cell-company">
           <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
           WSA A/S
         </td>
@@ -86,7 +93,7 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 .jobs tbody td {  @include bodyText;}
 
 /* first cell: icon + text aligned */
-.jobs .cell-firma {
+.jobs .cell-company {
   display: flex;
   align-items: center;
   gap: 12px;
