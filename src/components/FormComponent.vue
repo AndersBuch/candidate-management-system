@@ -1,5 +1,6 @@
 <script setup>
 import FormField from './FormField.vue'
+import FormLabel from './FormLabel.vue'
 import { reactive, computed, watch } from 'vue'
 
 const formData = reactive({
@@ -149,6 +150,7 @@ const submitForm = () => {
   @blur="formData.touched.email = true"
 />
 
+<FormLabel/>
 
     </div>
 
