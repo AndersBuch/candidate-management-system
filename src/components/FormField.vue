@@ -12,47 +12,47 @@ const props = defineProps({
   errorMessage: { type: String, default: '' }
 })
 
-// Én defineEmits — inkluder 'input'
 const emit = defineEmits(['update:modelValue', 'blur', 'input'])
-
 const localValue = ref(props.modelValue)
 
 watch(localValue, (val) => emit('update:modelValue', val))
 watch(() => props.modelValue, (val) => (localValue.value = val))
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
+
+// 🔹 Rettet: vis fejl kun hvis feltet er touched og der er en fejl
 const isError = computed(() => props.error && props.touched)
 </script>
 
 <template>
   <div class="formGroup">
-    <label :for="id">{{ label }}</label>
-
-    <textarea
-      v-if="fieldType === 'textarea'"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="localValue"
-      @blur="emit('blur')"
-      @input="emit('input', $event)"
+    <label :for="id" :class="{ errorLabel: isError }">{{ label }}</label>
+ 
+     <textarea
+       v-if="fieldType === 'textarea'"
+       :id="id"
+       :placeholder="placeholder"
+       v-model="localValue"
+       @blur="emit('blur')"
+       @input="emit('input', $event)"
+       :class="{ errorField: isError, hasValue: hasValue }"
+     ></textarea>
+ 
+     <input
+       v-else
+       :type="fieldType"
+       :id="id"
+       :placeholder="placeholder"
+       v-model="localValue"
+       @blur="emit('blur')"
+       @input="emit('input', $event)"
       :class="{ errorField: isError, hasValue: hasValue }"
-    ></textarea>
-
-    <input
-      v-else
-      :type="fieldType"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="localValue"
-      @blur="emit('blur')"
-      @input="emit('input', $event)"
-      :class="{ errorField: isError }"
-    />
-
-    <!-- Vis fejltekst når feltet er touched og der er en fejlbesked -->
-<p v-if="isError && props.errorMessage" class="errorMessage">{{ props.errorMessage }}</p>
-  </div>
-</template>
+     />
+ 
+     <!-- Fejlbesked vises kun når feltet er touched og der er fejl -->
+     <p v-if="isError && props.errorMessage" class="errorMessage">{{ props.errorMessage }}</p>
+   </div>
+ </template>
 
 <style scoped lang="scss">
 .formGroup {
@@ -99,5 +99,9 @@ const isError = computed(() => props.error && props.touched)
     font-size: 0.9rem;
     margin-top: 0.3rem;
   }
+
+  .errorLabel {
+  color: $dangerRed;
+}
 }
 </style>

@@ -1,6 +1,6 @@
 <script setup>
 import FormField from './FormField.vue'
-import { reactive, computed } from 'vue'
+import { reactive, computed, watch } from 'vue'
 
 const formData = reactive({
   name: '',
@@ -37,6 +37,11 @@ const emailErrorMessage = computed(() => {
   if (formData.email.trim() === '') return 'Email må ikke være tom.'
   if (!isValidEmail(formData.email)) return 'Indtast en gyldig emailadresse.'
   return ''
+})
+
+// Debug: tjek email, touched og fejltekst i konsollen
+watch(() => formData.email, () => {
+  formData.touched.email = true
 })
 
 // Computed for hele formen - tjek for fejl
@@ -128,8 +133,10 @@ const submitForm = () => {
         :error="!!emailErrorMessage.value"
         :touched="formData.touched.email"
         :errorMessage="emailErrorMessage.value"
+        @input="formData.touched.email = true"
         @blur="formData.touched.email = true"
       />
+
 
       <FormField
         id="message"
