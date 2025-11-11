@@ -1,7 +1,14 @@
 <script setup>
 import FormField from './FormField.vue'
 import FormLabel from './FormLabel.vue'
+import Button from '@/components/Button.vue'
+import UploadeBoks from '@/components/UploadeBoks.vue'
+
 import { reactive, computed, watch } from 'vue'
+
+// Placeholder funktioner til UploadeBoks
+function handleFile(f) { console.log('valgt fil', f) }
+function handleError(e) { console.warn('upload error', e) }
 
 const formData = reactive({
   name: '',
@@ -152,9 +159,33 @@ const submitForm = () => {
 
 <FormLabel/>
 
+<div class="UploadeBokse">
+    <UploadeBoks
+      title="Upload CV"
+      hint="Fil typer: doc og pdf maks 2MB"
+      buttonText="Upload CV"
+      accept=".pdf,.doc,.docx"
+      :maxSizeMB="2"
+      @file-selected="handleFile"
+      @error="handleError"
+      @file-removed="handleRemoved"
+    />
+
+    <UploadeBoks
+      title="Upload CV"
+      hint="Fil typer: doc og pdf maks 2MB"
+      buttonText="Upload CV"
+      accept=".pdf,.doc,.docx"
+      :maxSizeMB="2"
+      @file-selected="handleFile"
+      @error="handleError"
+      @file-removed="handleRemoved"
+    />
+</div>
+
     </div>
 
-    <button type="submit">Send</button>
+    <Button type="default" label="Send dit CV"  aria-label="Send dit CV"  />
   </form>
 </template>
 
@@ -172,18 +203,7 @@ const submitForm = () => {
 
   button {
     align-self: flex-start;
-    width: 120px;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    background-color: $primaryBlue;
-    color: white;
-    border: none;
-    cursor: pointer;
     margin-top: 1rem;
-
-    &:hover {
-      background-color: lighten($primaryBlue, 10%);
-    }
   }
 }
 </style>
