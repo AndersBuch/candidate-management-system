@@ -1,13 +1,13 @@
 <script setup>
 import Header from '@/components/Header.vue'
-import HeroSectionPagetwo from '@/components/HeroSectionPagetwo.vue'
+import HeroSectionPageTwo from '@/components/HeroSectionPageTwo.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Button from '@/components/Button.vue'
 </script>
 
 <template>
   <Header />
-  <HeroSectionPagetwo />
+  <HeroSectionPageTwo />
   <main>
     <div class="headerText">
     <BasicIconAndLogo name="LPSLogo" :small="true" />
