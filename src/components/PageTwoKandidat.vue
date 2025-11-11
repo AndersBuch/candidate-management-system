@@ -61,7 +61,9 @@ import Button from '@/components/Button.vue'
                     mulighed for efteruddannelse og faglig 
                     opkvalificering efter behov.</p>
     </div>
-    <Button label="Ansøg nu" type="default" aria-label="Ansøg nu" />
+    <RouterLink to="/pagethree">
+    <Button label="Søg Job" type="default" aria-label="Ansøg nu" />
+    </RouterLink>
   </main>
 </template>
 
