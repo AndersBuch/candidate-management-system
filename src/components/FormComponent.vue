@@ -11,6 +11,7 @@ const formData = reactive({
   city: '',
   postal: '',
   message: '',
+  linkedin: '',
   touched: {
     name: false,
     lastname: false,
@@ -19,6 +20,7 @@ const formData = reactive({
     address: false,
     city: false,
     postal: false,
+    linkedin: false,
     message: false
   }
 })
@@ -124,29 +126,30 @@ const submitForm = () => {
         @blur="formData.touched.phone = true"
       />
 
+      <FormField
+        id="linkedin"
+        label="LinkedIn"
+        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
+        v-model="formData.linkedin"
+        :touched="formData.touched.linkedin"
+        @blur="formData.touched.linkedin = true"
+      />
+
+
       <!-- Email med fejlbesked -->
-      <FormField
-        id="email"
-        label="Email"
-        placeholder="Indtast din email"
-        v-model="formData.email"
-        :error="!!emailErrorMessage.value"
-        :touched="formData.touched.email"
-        :errorMessage="emailErrorMessage.value"
-        @input="formData.touched.email = true"
-        @blur="formData.touched.email = true"
-      />
+<FormField
+  id="email"
+  label="Email"
+  placeholder="Indtast din email"
+  v-model="formData.email"
+  :error="!!emailErrorMessage"          
+  :touched="formData.touched.email"
+  :error-message="emailErrorMessage"  
+  @input="formData.touched.email = true"
+  @blur="formData.touched.email = true"
+/>
 
 
-      <FormField
-        id="message"
-        label="Besked"
-        placeholder="Skriv din besked"
-        fieldType="textarea"
-        v-model="formData.message"
-        :touched="formData.touched.message"
-        @blur="formData.touched.message = true"
-      />
     </div>
 
     <button type="submit">Send</button>
