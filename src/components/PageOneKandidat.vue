@@ -4,6 +4,7 @@ import HeroSectionPageOne from '@/components/HeroSectionPageOne.vue'
 import SectionTitle from '@/components/SectionTitle.vue'
 import { RouterLink } from 'vue-router'
 import Button from '@/components/Button.vue'
+import JobTable from './JobTable.vue'
 </script>
 
 <template>
@@ -13,10 +14,12 @@ import Button from '@/components/Button.vue'
     <RouterLink to="/pagetwo">
       <Button label="Gå til Page Two" type="default" />
     </RouterLink>
-    <SectionTitle />
+    <SectionTitle title="Aktuelle stillinger" subtitle="102 åbne stillinger" />
+    <JobTable />
   </main>
 </template>
 
 
 <style scoped lang="scss">
+
 </style>
