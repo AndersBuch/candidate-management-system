@@ -159,33 +159,41 @@ const submitForm = () => {
 
 <FormLabel/>
 
-<div class="UploadeBokse">
-    <UploadeBoks
-      title="Upload CV"
-      hint="Fil typer: doc og pdf maks 2MB"
-      buttonText="Upload CV"
-      accept=".pdf,.doc,.docx"
-      :maxSizeMB="2"
-      @file-selected="handleFile"
-      @error="handleError"
-      @file-removed="handleRemoved"
-    />
-
-    <UploadeBoks
-      title="Upload CV"
-      hint="Fil typer: doc og pdf maks 2MB"
-      buttonText="Upload CV"
-      accept=".pdf,.doc,.docx"
-      :maxSizeMB="2"
-      @file-selected="handleFile"
-      @error="handleError"
-      @file-removed="handleRemoved"
-    />
-</div>
-
     </div>
 
-    <Button type="default" label="Send dit CV"  aria-label="Send dit CV"  />
+    <div class="UploadeBokse">
+  <UploadeBoks
+    title="Upload CV"
+    hint="Klik på knappen for at updsadloade dit CV"
+    secondary-text="Træk filen hg knappen"
+    success-text="Filen er koad"
+    error-text="Forkert filtype eller for stor fil"
+    button-text="Vælg fil"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+  <UploadeBoks
+    title="Upload Andet Dokument"
+    hint="Fx: ansøgning eller referencer"
+    secondary-text="Drop filen her eller klik"
+    success-text="Dokument klar"
+    error-text="Kun pdf/doc(x) op til 2MB"
+    button-text="Vælg dokument"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+</div>
+
+    <div class="buttonContainer">
+       <Button type="default" label="Send dit CV" aria-label="Send dit CV" />
+    </div>
   </form>
 </template>
 
@@ -206,4 +214,17 @@ const submitForm = () => {
     margin-top: 1rem;
   }
 }
+.UploadeBokse {
+  display: inline-block;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;                
+  margin-bottom: 40px;        
+}
+
 </style>

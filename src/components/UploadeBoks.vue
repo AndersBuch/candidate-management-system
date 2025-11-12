@@ -3,45 +3,48 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Button from '@/components/Button.vue'
 import { ref, computed } from 'vue'
 
-const fileInput = ref(null)
-
-function triggerFileInput() {
-  fileInput.value?.click()
-}
-
 const props = defineProps({
   title: { type: String, default: 'Klik på knappen for at uploade dit CV' },
   hint: { type: String, default: 'Fil typer: doc og pdf maks 2MB' },
+  secondaryText: { type: String, default: 'Træk filen her eller brug knappen' },
+  successText: { type: String, default: 'Fil klar til upload' },
+  errorText: { type: String, default: 'Ugyldig filtype eller størrelse' },
   buttonText: { type: String, default: 'Upload CV' },
-  accept: { type: String, default: '.pdf, .doc, .docx' },
+  accept: { type: String, default: '.pdf, .doc, .docx, .png, .jpg' },
   maxSizeMB: { type: Number, default: 2 }
 })
 
 const emit = defineEmits(['file-selected', 'error', 'file-removed'])
+
+const fileInput = ref(null)
+function triggerFileInput() { fileInput.value?.click() }
 
 const dragging = ref(false)
 const file = ref(null)
 const errorMessage = ref('')
 const inputId = 'upload-input-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6)
 
-const acceptList = computed(() => props.accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean))
+const acceptList = computed(() =>
+  props.accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+)
 
 function validateAndSetFile(f) {
   errorMessage.value = ''
   if (!f) return
-  // check ext by name if accept contains dot-suffixes, else check mime
-  const extOk = acceptList.value.length === 0 || acceptList.value.some(a => {
-    if (a.startsWith('.')) {
-      return f.name.toLowerCase().endsWith(a)
-    }
-    return f.type === a
-  })
+  const extOk =
+    acceptList.value.length === 0 ||
+    acceptList.value.some(a => {
+      if (a.startsWith('.')) return f.name.toLowerCase().endsWith(a.toLowerCase())
+      return f.type === a
+    })
+
   if (!extOk) {
-    errorMessage.value = 'Ugyldig filtype'
+    errorMessage.value = props.errorText || 'Ugyldig filtype'
     file.value = null
     emit('error', { reason: 'type', file: f })
     return
   }
+
   const maxBytes = props.maxSizeMB * 1024 * 1024
   if (f.size > maxBytes) {
     errorMessage.value = `Filen er for stor (max ${props.maxSizeMB}MB)`
@@ -84,7 +87,7 @@ function removeFile() {
   emit('file-removed', removed)
 }
 
-const fileName = computed(() => file.value ? file.value.name : '')
+const fileName = computed(() => (file.value ? file.value.name : ''))
 const stateClass = computed(() => {
   if (errorMessage.value) return 'error'
   if (file.value) return 'success'
@@ -93,58 +96,63 @@ const stateClass = computed(() => {
 </script>
 
 <template>
+  <div class="uploadeBoksRoot">
     <div class="UploadTitle">
-        <h3>{{ props.title }}</h3>
+      <h3>{{ props.title }}</h3>
 
-        <div class="fileMeta" v-if="fileName">
-        <a class="fileLink" @click.prevent>{{ fileName }}</a>
-        <BasicIconAndLogo name="CloseGrey" @click.prevent="removeFile" :iconSize="true" />
+      <div class="fileMeta" v-if="fileName">
+        <a class="fileLink" href="#" @click.prevent>{{ fileName }}</a>
+        <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeFile" :iconSize="true" />
       </div>
     </div>
-  <div
-    class="uploadBox"
-    :class="[stateClass, { dragging }]"
-    @drop="onDrop"
-    @dragover="onDragOver"
-    @dragleave="onDragLeave"
-  >
-    <div class="uploadHeader">
-      <BasicIconAndLogo name="CloudIcon" :iconSize="true" />
-      <p class="uploadHint" v-if="hint">{{ hint }}</p>
-    </div>
 
-    <div class="uploadInner">
-      <div class="iconWrap">
-        <template v-if="file && !errorMessage">
-          <!-- check icon -->
-        <BasicIconAndLogo name="Check" :iconSize="true" />
-        </template>
-        <template v-else>
-        </template>
+    <div
+      class="uploadBox"
+      :class="[stateClass, { dragging }]"
+      @drop="onDrop"
+      @dragover="onDragOver"
+      @dragleave="onDragLeave"
+    >
+      <div class="uploadHeader">
+        <!-- same position: CloudIcon eller Check -->
+        <BasicIconAndLogo :name="file && !errorMessage ? 'Check' : 'CloudIcon'" :iconSize="true" />
+     
       </div>
 
-      <div class="centerContent">
-        <p class="uploadHint" v-if="!fileName">{{ props.hint }}</p>
-        <p class="uploadHint successText" v-if="fileName && !errorMessage">Fil klar til upload</p>
-        <div class="actions">
-        <input
-            ref="fileInput"
-            class="fileInput"
-            type="file"
-            :accept="props.accept"
-            @change="onInputChange"
-        />
-        <Button @click="triggerFileInput":label="props.buttonText" :aria-label="props.buttonText" />
+      <div class="uploadInner">
+        <div class="centerContent">
+          <!-- pop hint: always visible -->
+          <p class="pop">{{ props.hint }}</p>
 
+          <!-- secondary text (controlled from parent) -->
+          <p class="secondaryText" v-if="!fileName">{{ props.secondaryText }}</p>
+
+          <!-- when file approved: show successText -->
+          <p class="uploadHint successText" v-else-if="fileName && !errorMessage">{{ props.successText }}</p>
+
+          <!-- when error: show errorMessage -->
+          <p class="uploadHint errorText" v-else-if="errorMessage">{{ errorMessage }}</p>
+
+          <div class="actions">
+            <input
+              ref="fileInput"
+              :id="inputId"
+              class="fileInput"
+              type="file"
+              :accept="props.accept"
+              @change="onInputChange"
+            />
+            <Button @click="triggerFileInput" :label="props.buttonText" :aria-label="props.buttonText" />
+          </div>
         </div>
       </div>
     </div>
-
-    <p class="errorMessage" v-if="errorMessage">{{ errorMessage }}</p>
   </div>
 </template>
 
 <style scoped lang="scss">
+.uploadeBoksRoot { width: 100%; }
+
 .uploadBox {
   border: 2px dashed #3b82f6;
   border-radius: 8px;
@@ -167,92 +175,97 @@ const stateClass = computed(() => {
 }
 
 .uploadHeader {
-  display: flex;
-  flex-direction: column; /* 🟢 Placer ikon og tekst under hinanden */
-  align-items: center;    /* 🟢 Centrer vandret */
-  justify-content: center;/* 🟢 Centrer lodret */
-  gap: 8px;               /* 🟢 Lidt luft imellem ikon og tekst */
-  text-align: center;     /* 🟢 Sørg for, at teksten står midt */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-align:center;
 }
 
-.uploadTitle {
-  margin:0;
-  font-size:1.05rem;
-  color:#0f172a;
-}
-
-.fileMeta {
+.UploadTitle { //lavet
   display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:flex-start;
+  margin-bottom:12px;
+
+  h3 {
+    @include bigBodyText;
+    margin-right: 20px;
+
+  }
+
 }
 
-.fileLink {
-  color:#059669;
-  text-decoration: underline;
-  cursor: pointer;
-  font-weight:600;
-  font-size:.95rem;
+
+.fileMeta { //Lavet
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .fileLink {
+    color: $goodGreen;
+    text-decoration: underline;
+    @include bodyText;
+    cursor: default;
+
+    &:hover {
+      color: rgba($goodGreen, 0.8);
+    }
+
+  }
+
+  .basicIconAndLogo {
+    cursor: pointer;
+    display: inline-flex; 
+    transition: opacity .15s ease;
+  }
+
+  .basicIconAndLogo:hover {
+    opacity: .8;
+  }
 }
 
-.removeBtn {
-  background:transparent;
-  border:none;
-  color:#374151;
-  font-size:1rem;
-  cursor:pointer;
-  padding:4px;
-  border-radius:4px;
-}
-.removeBtn:hover { background: rgba(15,23,42,0.04); }
 
+/* center content */
 .uploadInner {
-  display: flex;
-  flex-direction: column; /* 🟢 Alt inde i uploadInner skal ligge under hinanden */
-  align-items: center;    /* 🟢 Centrer alt vandret */
-  justify-content: center;/* 🟢 Centrer alt lodret */
-  gap: 12px;
-  padding: 8px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:8px 0;
 }
 
-.iconWrap { display:flex; align-items:center; justify-content:center; width:44px; }
-.icon { display:block; }
-.icon.check { stroke:#059669; }
-.icon.cloud { stroke:#0ea5e9; }
+.centerContent {  //Lavet
+  text-align:center; 
+  display:flex; 
+  flex-direction:column; 
+  align-items:center; }
 
-.centerContent {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* 🟢 Gør, at teksten og knappen også centrerer */
-  justify-content: center;
+.pop { 
+  margin:0; 
+  color:$primaryBlue; 
+  @include bigBodyText;
+} 
+
+.secondaryText { 
+  margin:0; 
+  color:$darkGrey;
+  @include bodyText; 
+} 
+
+.successText { 
+  color:$goodGreen;
+  @include bodyText; 
 }
 
-.uploadHint { margin:0; color:#2563eb; font-weight:600; }
-.successText { color:#059669; }
+.errorText { 
+  color:$dangerRed;
+  @include bodyText; 
+}
 
 .actions { margin-top:8px; display:flex; justify-content:center; }
 .fileInput { display:none; }
 
-.uploadButton {
-  background:#0ea5e9;
-  color:white;
-  padding:10px 18px;
-  border-radius:999px;
-  cursor:pointer;
-  user-select:none;
-  font-weight:600;
-  border:none;
-}
-
-/* error text */
-.errorMessage {
-  color:#ef4444;
-  margin:0;
-  font-size:0.95rem;
-  text-align:center;
-}
-
-/* dragging visual */
 .uploadBox.dragging { background: rgba(14,165,233,0.06); border-color:#0284c7; }
 </style>
