@@ -6,69 +6,78 @@ import { ref, computed } from 'vue'
 const props = defineProps({
   title: { type: String, default: 'Klik på knappen for at uploade dit CV' },
   hint: { type: String, default: 'Fil typer: doc og pdf maks 2MB' },
-  secondaryText: { type: String, default: 'Træk filen her eller brug knappen' },
-  successText: { type: String, default: 'Fil klar til upload' },
+  secondaryText: { type: String, default: 'Træk filerne her eller brug knappen' },
+  successText: { type: String, default: 'Filer klar til upload' },
   errorText: { type: String, default: 'Ugyldig filtype eller størrelse' },
-  buttonText: { type: String, default: 'Upload CV' },
+  buttonText: { type: String, default: 'Upload filer' },
   accept: { type: String, default: '.pdf, .doc, .docx, .png, .jpg' },
-  maxSizeMB: { type: Number, default: 2 }
+  maxSizeMB: { type: Number, default: 2 },
+  multiple: { type: Boolean, default: false } // 👈 tilføjet her
 })
 
 const emit = defineEmits(['file-selected', 'error', 'file-removed'])
 
 const fileInput = ref(null)
-function triggerFileInput() { fileInput.value?.click() }
-
 const dragging = ref(false)
-const file = ref(null)
+const files = ref([]) // 👈 vi bruger array i stedet for én fil
 const errorMessage = ref('')
-const inputId = 'upload-input-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6)
+const inputId = 'upload-input-' + Date.now().toString(36)
+
+function triggerFileInput() {
+  fileInput.value?.click()
+}
 
 const acceptList = computed(() =>
   props.accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
 )
 
-function validateAndSetFile(f) {
+function validateAndAddFiles(fileList) {
   errorMessage.value = ''
-  if (!f) return
-  const extOk =
-    acceptList.value.length === 0 ||
-    acceptList.value.some(a => {
-      if (a.startsWith('.')) return f.name.toLowerCase().endsWith(a.toLowerCase())
+  const maxBytes = props.maxSizeMB * 1024 * 1024
+
+  // 🔒 Maks 6 filer tilladt
+  if (files.value.length + fileList.length > 6) {
+    errorMessage.value = 'Du kan maks uploade 6 filer.'
+    emit('error', { reason: 'max-files', count: files.value.length + fileList.length })
+    return
+  }
+
+  for (const f of fileList) {
+    const extOk = acceptList.value.some(a => {
+      if (a.startsWith('.')) return f.name.toLowerCase().endsWith(a)
       return f.type === a
     })
 
-  if (!extOk) {
-    errorMessage.value = props.errorText || 'Ugyldig filtype'
-    file.value = null
-    emit('error', { reason: 'type', file: f })
-    return
+    if (!extOk) {
+      errorMessage.value = props.errorText
+      emit('error', { reason: 'type', file: f })
+      continue
+    }
+
+    if (f.size > maxBytes) {
+      errorMessage.value = `Filen er for stor (max ${props.maxSizeMB}MB)`
+      emit('error', { reason: 'size', file: f })
+      continue
+    }
+
+    files.value.push(f)
   }
 
-  const maxBytes = props.maxSizeMB * 1024 * 1024
-  if (f.size > maxBytes) {
-    errorMessage.value = `Filen er for stor (max ${props.maxSizeMB}MB)`
-    file.value = null
-    emit('error', { reason: 'size', file: f })
-    return
-  }
-
-  file.value = f
-  errorMessage.value = ''
-  emit('file-selected', f)
+  emit('file-selected', props.multiple ? files.value : files.value[0])
 }
 
+
 function onInputChange(e) {
-  const f = e.target.files && e.target.files[0]
-  validateAndSetFile(f)
+  const fileList = e.target.files
+  if (fileList.length) validateAndAddFiles(fileList)
   e.target.value = ''
 }
 
 function onDrop(e) {
   e.preventDefault()
   dragging.value = false
-  const f = e.dataTransfer?.files?.[0]
-  validateAndSetFile(f)
+  const fileList = e.dataTransfer?.files
+  if (fileList?.length) validateAndAddFiles(fileList)
 }
 
 function onDragOver(e) {
@@ -80,17 +89,15 @@ function onDragLeave() {
   dragging.value = false
 }
 
-function removeFile() {
-  const removed = file.value
-  file.value = null
-  errorMessage.value = ''
+function removeFile(index) {
+  const removed = files.value.splice(index, 1)[0]
   emit('file-removed', removed)
 }
 
-const fileName = computed(() => (file.value ? file.value.name : ''))
+const fileNames = computed(() => files.value.map(f => f.name))
 const stateClass = computed(() => {
   if (errorMessage.value) return 'error'
-  if (file.value) return 'success'
+  if (files.value.length) return 'success'
   return ''
 })
 </script>
@@ -100,9 +107,16 @@ const stateClass = computed(() => {
     <div class="UploadTitle">
       <h3>{{ props.title }}</h3>
 
-      <div class="fileMeta" v-if="fileName">
-        <a class="fileLink" href="#" @click.prevent>{{ fileName }}</a>
-        <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeFile" :iconSize="true" />
+      <div class="fileMeta" v-if="files.length">
+        <template v-for="(name, index) in fileNames" :key="index">
+          <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
+          <BasicIconAndLogo
+            class="basicIconAndLogo"
+            name="CloseGrey"
+            @click.prevent="removeFile(index)"
+            :iconSize="true"
+          />
+        </template>
       </div>
     </div>
 
@@ -114,24 +128,16 @@ const stateClass = computed(() => {
       @dragleave="onDragLeave"
     >
       <div class="uploadHeader">
-        <!-- same position: CloudIcon eller Check -->
-        <BasicIconAndLogo :name="file && !errorMessage ? 'Check' : 'CloudIcon'" :iconSize="true" />
-     
+        <BasicIconAndLogo :name="files.length && !errorMessage ? 'Check' : 'CloudIcon'" :iconSize="true" />
       </div>
 
       <div class="uploadInner">
         <div class="centerContent">
-          <!-- pop hint: always visible -->
           <p class="pop">{{ props.hint }}</p>
 
-          <!-- secondary text (controlled from parent) -->
-          <p class="secondaryText" v-if="!fileName">{{ props.secondaryText }}</p>
-
-          <!-- when file approved: show successText -->
-          <p class="uploadHint successText" v-else-if="fileName && !errorMessage">{{ props.successText }}</p>
-
-          <!-- when error: show errorMessage -->
-          <p class="uploadHint errorText" v-else-if="errorMessage">{{ errorMessage }}</p>
+          <p class="uploadHint errorText" v-if="errorMessage">{{ errorMessage }}</p>
+          <p class="uploadHint successText" v-else-if="files.length">{{ props.successText }}</p>
+          <p class="secondaryText" v-else>{{ props.secondaryText }}</p>
 
           <div class="actions">
             <input
@@ -140,6 +146,7 @@ const stateClass = computed(() => {
               class="fileInput"
               type="file"
               :accept="props.accept"
+              :multiple="props.multiple" 
               @change="onInputChange"
             />
             <Button @click="triggerFileInput" :label="props.buttonText" :aria-label="props.buttonText" />
@@ -151,27 +158,25 @@ const stateClass = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.uploadeBoksRoot { width: 100%; }
-
 .uploadBox {
-  border: 2px dashed #3b82f6;
-  border-radius: 8px;
+  border: 2px dashed $primaryBlue;
+  border-radius: 5px;
   padding: 18px;
-  background: rgba(59,130,246,0.04);
+  background: $sekundareBlue;
   transition: border-color .15s, background .15s;
-  display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-bottom: 20px;
 }
 
-/* state classes */
 .uploadBox.error {
-  border-color: #ef4444;
-  background: rgba(239,68,68,0.03);
+  border-color: $dangerRed;
+  background-color: rgba($dangerRed, 0.1);
+
 }
 .uploadBox.success {
-  border-color: #10b981;
-  background: rgba(16,185,129,0.03);
+  border-color: $goodGreen;
+  background: rgba($goodGreen, 0.1);
 }
 
 .uploadHeader {
@@ -179,7 +184,6 @@ const stateClass = computed(() => {
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:8px;
   text-align:center;
 }
 
@@ -187,7 +191,7 @@ const stateClass = computed(() => {
   display:flex;
   align-items:center;
   justify-content:flex-start;
-  margin-bottom:12px;
+  margin-bottom: 20px;
 
   h3 {
     @include bigBodyText;
@@ -197,11 +201,12 @@ const stateClass = computed(() => {
 
 }
 
-
-.fileMeta { //Lavet
+.fileMeta { 
   display: flex;
   align-items: center;
+  flex-wrap: wrap; 
   gap: 10px;
+  max-width: 100%; 
 
   .fileLink {
     color: $goodGreen;
@@ -212,7 +217,6 @@ const stateClass = computed(() => {
     &:hover {
       color: rgba($goodGreen, 0.8);
     }
-
   }
 
   .basicIconAndLogo {
@@ -264,8 +268,36 @@ const stateClass = computed(() => {
   @include bodyText; 
 }
 
-.actions { margin-top:8px; display:flex; justify-content:center; }
-.fileInput { display:none; }
+.actions { 
+  margin-top:8px; 
+  display:flex; 
+  justify-content:center; 
+}
 
-.uploadBox.dragging { background: rgba(14,165,233,0.06); border-color:#0284c7; }
+.fileInput { 
+  display:none; 
+}
+
+.uploadBox.dragging { 
+  background: rgba($primaryBlue, 0.1); 
+  }
+
+  .uploadBox.dragging {
+  border-color: darken($primaryBlue, 8%);
+  background: rgba($primaryBlue, 0.08);
+}
+
+/* når boksen er i error-tilstand men brugeren trækker */
+.uploadBox.error.dragging {
+  border-color: $dangerRed; 
+  background: rgba($dangerRed, 0.2); 
+}
+
+/* når boksen er i success-tilstand men brugeren trækker */
+.uploadBox.success.dragging {
+  border-color: $goodGreen;
+  background: rgba($goodGreen, 0.2); 
+}
+
+
 </style>

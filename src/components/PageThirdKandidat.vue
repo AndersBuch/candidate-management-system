@@ -23,9 +23,10 @@ import Form from '@/components/FormComponent.vue'
   h2 {
     text-align: center;
     @include heading2;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     margin-top: 65px;
   }
+  
   }
 
 

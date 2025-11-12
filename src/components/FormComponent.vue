@@ -33,6 +33,8 @@ const formData = reactive({
   }
 })
 
+
+
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
   const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
@@ -49,10 +51,6 @@ const emailErrorMessage = computed(() => {
   return ''
 })
 
-// Debug: tjek email, touched og fejltekst i konsollen
-watch(() => formData.email, () => {
-  formData.touched.email = true
-})
 
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
@@ -164,11 +162,11 @@ const submitForm = () => {
     <div class="UploadeBokse">
   <UploadeBoks
     title="Upload CV"
-    hint="Klik på knappen for at updsadloade dit CV"
-    secondary-text="Træk filen hg knappen"
-    success-text="Filen er koad"
-    error-text="Forkert filtype eller for stor fil"
-    button-text="Vælg fil"
+    hint="Klik på knappen eller træk filer her"
+    secondary-text="Fil typer: doc(x) og pdf maks 2MB"
+    success-text="Filen er upload"
+    error-text="Kun pdf/doc(x) op til 2MB"
+    button-text="Upload CV"
     accept=".pdf,.doc,.docx"
     :max-size-mb="2"
     @file-selected="handleFile"
@@ -177,18 +175,47 @@ const submitForm = () => {
   />
 
   <UploadeBoks
-    title="Upload Andet Dokument"
-    hint="Fx: ansøgning eller referencer"
-    secondary-text="Drop filen her eller klik"
-    success-text="Dokument klar"
+    title="Upload profil billede"
+    hint="Klik på knappen eller træk filer her"
+    secondary-text="Fil typer: jpg og png maks 2MB"
+    success-text="profil billede klar"
+    error-text="Kun .png eller .jpg op til 2MB"
+    button-text="Upload profil billede"
+    accept=".png, .jpg"
+    :max-size-mb="2"
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+    <UploadeBoks
+    title="Upload ansøgning"
+    hint="Klik på knappen eller træk filer her"
+    secondary-text="Fil typer: doc(x) og pdf maks 2MB"
+    success-text="Filen er upload"
     error-text="Kun pdf/doc(x) op til 2MB"
-    button-text="Vælg dokument"
+    button-text="Upload ansøgning"
     accept=".pdf,.doc,.docx"
     :max-size-mb="2"
     @file-selected="handleFile"
     @error="handleError"
     @file-removed="handleRemoved"
   />
+
+<UploadeBoks
+  title="Upload andre dokumenter"
+  hint="Klik på knappen eller træk filer her"
+  secondary-text="Fil typer: doc(x) og pdf maks 2MB"
+  success-text="Filerne er uploadet"
+  error-text="Kun pdf/doc(x) op til 2MB"
+  button-text="Upload dokumenter"
+  accept=".pdf,.doc,.docx"
+  :max-size-mb="2"
+  :multiple="true"       
+  @file-selected="handleFile"
+  @error="handleError"
+  @file-removed="handleRemoved"
+/>
 </div>
 
     <div class="buttonContainer">
