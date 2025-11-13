@@ -12,6 +12,8 @@ import { ref } from 'vue'
 const showModal = ref(false)
 
 
+
+
 </script>
 
 <template>
@@ -26,25 +28,30 @@ const showModal = ref(false)
      <button @click="showModal = true">Åbn modal</button>
     <Modal
     v-if="showModal" 
-    modalTitle="Privat politik" 
+    modalTitle="Privat politik"
+    titleAlign="center" 
     @close="showModal = false">
-      <div class="privacyPolicy">
-        Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
-        fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.  Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
-        fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
-        fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.fødevaretekno-logi?
-        Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
-        fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.  Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
-        fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
-        fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.fødevaretekno-logi?
-      </div>
       <div class="centerContent">
+        <div class="privacyPolicy">
+          <div class="scrollInner">
+            <p>
+              Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
+              fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.  Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
+              fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
+              fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.fødevaretekno-logi?
+              Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
+              fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.  Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
+              fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
+              fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.fødevaretekno-logi?
+            </p>
+          </div>
+        </div>
         <InputField
         v-model:checked="acceptedTerms"
         label="Jeg accepterer betingelserne"
         />
-        <Button label="Godkend" type="default" aria-label="Godkend" />
-        <Button label="Anuller" type="default" aria-label="Anuller" />
+        <Button label="Godkend" type="notActive" aria-label="Godkend" />
+        <Button label="Anuller" type="secondary" aria-label="Anuller" @click="showModal = false"/>
       </div>
     </Modal>
   </main>
@@ -56,12 +63,17 @@ const showModal = ref(false)
   .privacyPolicy {
     padding: 20px 40px;
     height: 380px;
-    width: 100%;
-    overflow-y: auto;
+    width: 695px;
     background-color: $lightGrey;
     border-radius: 5px;
-    margin-bottom: 20px;
-    
+    box-shadow: $privacyPolicyDropShadow;
+    margin-bottom: 10px;
+
+    .scrollInner {
+      height: 100%;
+      overflow-y: auto;
+    }
+
   }
 
   .centerContent {
@@ -69,7 +81,7 @@ const showModal = ref(false)
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
   }
 
 </style>
