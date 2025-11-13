@@ -5,17 +5,21 @@ const props = defineProps({
   type: String
 })
 
-// vælg billede og højde ud fra typen
+// Vælg billede ud fra typen
 const filePath = computed(() => {
   const base = import.meta.env.BASE_URL
   if (props.type === 'hero2' || props.type === 'hero3')
     return `${base}img/HeroSectionOrtherPages.jpg`
+  if (props.type === 'login')
+    return `${base}img/HeroSectionLogIn.jpg`
   return `${base}img/HeroSectionPageOne.jpg`
 })
 
+// Vælg højde ud fra typen
 const sectionHeight = computed(() => {
   if (props.type === 'hero2') return '650px'
   if (props.type === 'hero3') return '450px'
+  if (props.type === 'login') return '100vh' // fuld skærm
   return '750px'
 })
 </script>
@@ -27,7 +31,13 @@ const sectionHeight = computed(() => {
       backgroundImage: `url(${filePath})`,
       height: sectionHeight
     }"
-  ></section>
+  >
+    <!-- Overlay til login hvis ønsket -->
+    <div v-if="props.type === 'login'"></div>
+
+    <!-- Slot til login-card -->
+    <slot />
+  </section>
 </template>
 
 <style scoped lang="scss">
@@ -38,5 +48,8 @@ const sectionHeight = computed(() => {
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
+  justify-content: center;
+  position: relative;
 }
+
 </style>
