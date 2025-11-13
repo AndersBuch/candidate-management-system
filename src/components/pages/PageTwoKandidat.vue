@@ -1,8 +1,8 @@
 <script setup>
-import Header from '@/components/Header.vue'
-import HeroSectionPageTwo from '@/components/HeroSectionPageTwo.vue'
+import Header from '@/components/organisms/Header.vue'
+import HeroSectionPageTwo from '@/components/organisms/HeroSectionPageTwo.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-import Button from '@/components/Button.vue'
+import Button from '@/components/atoms/Button.vue'
 </script>
 
 <template>

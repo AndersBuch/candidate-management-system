@@ -1,5 +1,5 @@
 <script setup>
-import FormField from './FormField.vue'
+import FormField from '@/organisms/FormField.vue'
 import FormLabel from './FormLabel.vue'
 import Button from '@/components/Button.vue'
 import UploadeBoks from '@/components/UploadeBoks.vue'

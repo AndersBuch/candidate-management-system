@@ -1,6 +1,6 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-import Button from '@/components/Button.vue'
+import Button from '@/components/atoms/Button.vue'
 import { ref, computed } from 'vue'
 
 const props = defineProps({

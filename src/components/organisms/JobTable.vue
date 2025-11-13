@@ -1,5 +1,5 @@
 <script setup>
-import Button from '@/components/Button.vue'
+import Button from '@/components/atoms/Button.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { useRouter } from 'vue-router'
 

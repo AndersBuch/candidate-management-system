@@ -1,11 +1,11 @@
 <script setup>
-import Header from '@/components/Header.vue'
-import HeroSectionPageOne from '@/components/HeroSectionPageOne.vue'
-import SectionTitle from '@/components/SectionTitle.vue'
-import Button from '@/components/Button.vue'
-import JobTable from './JobTable.vue'
-import Modal from './Modal.vue'
-import InputField from './InputField.vue'
+import Header from '@/components/organisms/Header.vue'
+import HeroSectionPageOne from '@/components/organisms/HeroSectionPageOne.vue'
+import SectionTitle from '@/components/atoms/SectionTitle.vue'
+import Button from '@/components/atoms/Button.vue'
+import JobTable from '@/components/organisms/JobTable.vue'
+import Modal from '@/components/Modal.vue'
+import InputField from '@/components/atoms/InputField.vue'
 
 import { ref } from 'vue'
 

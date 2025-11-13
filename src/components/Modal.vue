@@ -1,5 +1,5 @@
 <script setup>
-import Backdrop from './Backdrop.vue';
+import Backdrop from '@/components/atoms/Backdrop.vue';
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 const props = defineProps({

@@ -1,7 +1,7 @@
 <script setup>
-import Header from '@/components/Header.vue'
-import HeroSectionPageThird from '@/components/HeroSectionPageThird.vue'
-import Form from '@/components/FormComponent.vue'
+import Header from '@/components/organisms/Header.vue'
+import HeroSectionPageThird from '@/components/organisms/HeroSectionPageThird.vue'
+import Form from '@/components/organisms/FormComponent.vue'
 </script>
 
 <template>
