@@ -1,5 +1,5 @@
 <script setup>
-import Hero from '@/components/Hero.vue'
+import Hero from '@/components/atoms/Hero.vue'
 </script>
 
 <template>
@@ -28,7 +28,5 @@ import Hero from '@/components/Hero.vue'
     color: $whiteColor;
   }
 }
-
-
 
 </style>
