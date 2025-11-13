@@ -35,7 +35,14 @@ function validateAndAddFiles(fileList) {
   errorMessage.value = ''
   const maxBytes = props.maxSizeMB * 1024 * 1024
 
-  // 🔒 Maks 6 filer tilladt
+  // 🔒 Hvis multiple = false → tillad kun én fil
+  if (!props.multiple && fileList.length > 1) {
+    errorMessage.value = 'Du kan kun uploade én fil her.'
+    emit('error', { reason: 'single-only', count: fileList.length })
+    return
+  }
+
+  // 🔒 Maks 6 filer samlet
   if (files.value.length + fileList.length > 6) {
     errorMessage.value = 'Du kan maks uploade 6 filer.'
     emit('error', { reason: 'max-files', count: files.value.length + fileList.length })
@@ -60,11 +67,17 @@ function validateAndAddFiles(fileList) {
       continue
     }
 
-    files.value.push(f)
+    // ✅ Hvis kun én fil må vælges, overskriv i stedet for at tilføje
+    if (!props.multiple) {
+      files.value = [f]
+    } else {
+      files.value.push(f)
+    }
   }
 
   emit('file-selected', props.multiple ? files.value : files.value[0])
 }
+
 
 
 function onInputChange(e) {
