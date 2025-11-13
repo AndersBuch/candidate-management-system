@@ -44,8 +44,7 @@ function handleLogin() {
     localStorage.setItem('loggedUser', JSON.stringify({ email: found.email, name: found.name }))
 
     // Naviger til dashboard
-    const target = { name: 'Dashboard' }
-    router.push(target).catch(() => router.push('/dashboard'))
+    router.push({ name: 'DashboardSite' })
 }
 </script>
 
@@ -76,7 +75,7 @@ function handleLogin() {
                     </div>
 
                     <div class="buttonWrapper">
-                        <Button type="default" label="Log ind" aria-label="Log ind" />
+                        <Button type="default" label="Log ind" aria-label="Log ind" @click="handleLogin" />
                     </div>
                 </form>
             </div>
