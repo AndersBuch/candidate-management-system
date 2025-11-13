@@ -1,6 +1,6 @@
 <script setup>
-import Button from '@/components/Button.vue'
-import Hero from '@/components/Hero.vue'
+import Button from '@/components/atoms/Button.vue'
+import Hero from '@/components/atoms/Hero.vue'
 </script>
 
 <template>
