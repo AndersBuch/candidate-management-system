@@ -1,4 +1,5 @@
 <script setup>
+import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -10,22 +11,18 @@ const props = defineProps({
   error: { type: Boolean, default: false },
   touched: { type: Boolean, default: false },
   errorMessage: { type: String, default: '' },
-  link: { type: String, default: '' }
+  link: { type: String, default: '' },
+  // ny prop for at vise øjeikonet
+  showToggle: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:modelValue', 'blur', 'input'])
 
 const localValue = ref(props.modelValue)
+const showPassword = ref(false)
 
-// Når parent ændrer v-model, opdatér localValue
-watch(() => props.modelValue, (newVal) => {
-  localValue.value = newVal
-})
-
-// Når localValue ændres, emit til parent
-watch(localValue, (newVal) => {
-  emit('update:modelValue', newVal)
-})
+watch(() => props.modelValue, (newVal) => (localValue.value = newVal))
+watch(localValue, (newVal) => emit('update:modelValue', newVal))
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
@@ -40,31 +37,34 @@ const isError = computed(() => props.error && props.touched)
       <template v-else>{{ label }}</template>
     </label>
 
-    <textarea
-      v-if="fieldType === 'textarea'"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="localValue"
-      @blur="emit('blur')"
-      @input="emit('input', $event)"
-      :class="{ errorField: isError, hasValue: hasValue }"
-    ></textarea>
+    <div class="inputWrapper">
+      <input
+        :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType"
+        :id="id"
+        :placeholder="placeholder"
+        v-model="localValue"
+        @blur="emit('blur')"
+        @input="emit('input', $event)"
+        :class="{ errorField: isError, hasValue: hasValue }"
+      />
 
-    <input
-      v-else
-      :type="fieldType"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="localValue"
-      @blur="emit('blur')"
-      @input="emit('input', $event)"
-      :class="{ errorField: isError, hasValue: hasValue }"
-    />
+      <!-- Eye / EyeOff ikon -->
+      <button
+        v-if="showToggle"
+        type="button"
+        class="eyeToggle"
+        @click="showPassword = !showPassword"
+      >
+        <BasicIconAndLogo
+          :name="showPassword ? 'Eye' : 'EyeOff'"
+          :iconSize="true"
+        />
+      </button>
+    </div>
 
     <p v-if="isError && errorMessage" class="errorMessage">{{ errorMessage }}</p>
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .formGroup {
@@ -124,5 +124,29 @@ const isError = computed(() => props.error && props.touched)
   .errorLabel {
     color: $dangerRed;
   }
+  
 }
+
+ .inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      width: 100%;
+      padding-right: 2.5rem; // plads til ikonet
+    }
+
+    .eyeToggle {
+      position: absolute;
+      right: 0.6rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
 </style>

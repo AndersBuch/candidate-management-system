@@ -12,14 +12,14 @@ const props = defineProps({
   buttonText: { type: String, default: 'Upload filer' },
   accept: { type: String, default: '.pdf, .doc, .docx, .png, .jpg' },
   maxSizeMB: { type: Number, default: 2 },
-  multiple: { type: Boolean, default: false } // 👈 tilføjet her
+  multiple: { type: Boolean, default: false } 
 })
 
 const emit = defineEmits(['file-selected', 'error', 'file-removed'])
 
 const fileInput = ref(null)
 const dragging = ref(false)
-const files = ref([]) // 👈 vi bruger array i stedet for én fil
+const files = ref([]) 
 const errorMessage = ref('')
 const inputId = 'upload-input-' + Date.now().toString(36)
 
@@ -35,14 +35,14 @@ function validateAndAddFiles(fileList) {
   errorMessage.value = ''
   const maxBytes = props.maxSizeMB * 1024 * 1024
 
-  // 🔒 Hvis multiple = false → tillad kun én fil
+  // Hvis multiple = false → tillad kun en fil
   if (!props.multiple && fileList.length > 1) {
     errorMessage.value = 'Du kan kun uploade én fil her.'
     emit('error', { reason: 'single-only', count: fileList.length })
     return
   }
 
-  // 🔒 Maks 6 filer samlet
+  // Maks 6 filer samlet
   if (files.value.length + fileList.length > 6) {
     errorMessage.value = 'Du kan maks uploade 6 filer.'
     emit('error', { reason: 'max-files', count: files.value.length + fileList.length })
@@ -67,7 +67,7 @@ function validateAndAddFiles(fileList) {
       continue
     }
 
-    // ✅ Hvis kun én fil må vælges, overskriv i stedet for at tilføje
+    // Hvis kun en fil må vælges, overskriv i stedet for at tilføje
     if (!props.multiple) {
       files.value = [f]
     } else {
@@ -296,8 +296,8 @@ const stateClass = computed(() => {
   }
 
   .uploadBox.dragging {
-  border-color: darken($primaryBlue, 8%);
-  background: rgba($primaryBlue, 0.08);
+  border-color: rgba($primaryBlue, 8%);
+  background: rgba($primaryBlue, 0.2);
 }
 
 /* når boksen er i error-tilstand men brugeren trækker */
