@@ -47,7 +47,7 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 // Computed fejlbesked til email
 const emailErrorMessage = computed(() => {
   if (formData.email.trim() === '') return 'Email må ikke være tom.'
-  if (!isValidEmail(formData.email)) return 'Indtast en gyldig emailadresse.'
+  if (!isValidEmail(formData.email)) return 'Indtast en gyldig emailadresse med @.'
   return ''
 })
 

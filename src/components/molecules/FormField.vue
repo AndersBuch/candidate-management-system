@@ -1,6 +1,7 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-import { computed, ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
+
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -11,8 +12,6 @@ const props = defineProps({
   error: { type: Boolean, default: false },
   touched: { type: Boolean, default: false },
   errorMessage: { type: String, default: '' },
-  link: { type: String, default: '' },
-  // ny prop for at vise øjeikonet
   showToggle: { type: Boolean, default: false }
 })
 
@@ -26,7 +25,19 @@ watch(localValue, (newVal) => emit('update:modelValue', newVal))
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
+
+// ✅ Email-specifik fejlbesked
+const isEmail = computed(() => props.fieldType === 'email')
+const emailErrorMessage = computed(() => {
+  if (!isEmail.value) return ''
+  if (!props.touched) return ''
+  if (localValue.value.trim() === '') return 'Email må ikke være tom.'
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(localValue.value)) return 'Indtast en gyldig emailadresse.'
+  return ''
+})
 </script>
+
 
 <template>
   <div class="formGroup">
