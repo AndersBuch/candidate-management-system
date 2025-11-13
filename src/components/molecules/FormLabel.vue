@@ -1,5 +1,5 @@
 <script setup>
-import InputField from '@/atoms/InputField.vue'
+import InputField from '@/components/atoms/InputField.vue'
 import { ref } from 'vue'
 
 const genderMan = ref(false)
