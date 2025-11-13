@@ -5,7 +5,7 @@ import SectionTitle from '@/components/SectionTitle.vue'
 import Button from '@/components/Button.vue'
 import JobTable from './JobTable.vue'
 import Modal from './Modal.vue'
-
+import InputField from './InputField.vue'
 
 import { ref } from 'vue'
 
@@ -26,9 +26,9 @@ const showModal = ref(false)
      <button @click="showModal = true">Åbn modal</button>
     <Modal
     v-if="showModal" 
-    modalTitle="Hej verden" 
+    modalTitle="Privat politik" 
     @close="showModal = false">
-      <div class="privacy-policy">
+      <div class="privacyPolicy">
         Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
         fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.  Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
         fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
@@ -38,6 +38,14 @@ const showModal = ref(false)
         fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens 
         fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser – og lyst til at være en vigtig del af vores udviklingsteam? Så er du måske den procesoperatør, vi leder efter.fødevaretekno-logi?
       </div>
+      <div class="centerContent">
+        <InputField
+        v-model:checked="acceptedTerms"
+        label="Jeg accepterer betingelserne"
+        />
+        <Button label="Godkend" type="default" aria-label="Godkend" />
+        <Button label="Anuller" type="default" aria-label="Anuller" />
+      </div>
     </Modal>
   </main>
 </template>
@@ -45,13 +53,23 @@ const showModal = ref(false)
 
 <style scoped lang="scss">
 
-  .privacy-policy {
+  .privacyPolicy {
     padding: 20px 40px;
     height: 380px;
     width: 100%;
     overflow-y: auto;
     background-color: $lightGrey;
     border-radius: 5px;
+    margin-bottom: 20px;
+    
+  }
+
+  .centerContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
   }
 
 </style>

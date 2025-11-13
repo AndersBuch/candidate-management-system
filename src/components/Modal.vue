@@ -13,10 +13,10 @@ const emit = defineEmits(['close'])
 <template>
   <Backdrop>
     <div class="modal">
-      <div class="modal-header">
-        <h2>{{ modalTitle }}</h2> <BasicIconAndLogo name="X" :xxSmall="true" @click="emit('close')" class="close-icon" />
+      <div class="modalHeader">
+        <h2>{{ modalTitle }}</h2> <BasicIconAndLogo name="X" :xxSmall="true" @click="emit('close')" class="closeIcon" />
       </div>
-      <div  class="modal-body">
+      <div  class="modalBody">
         <slot></slot>
       </div>
     </div>
@@ -30,10 +30,10 @@ const emit = defineEmits(['close'])
   border-radius: 15px;
   background-color: $whiteColor;
   color: $black;
-  width: 800px;
-  height: 650px;
+  box-shadow: $modalDropShadow;
+  width: 650px;
 
-.modal-header {
+.modalHeader {
   position: relative; // giver os mulighed for at placere ikonet absolut
   text-align: center; // centrerer teksten
   margin-bottom: 1rem;
@@ -43,7 +43,7 @@ const emit = defineEmits(['close'])
     margin: 0;
   }
 
-  .close-icon {
+  .closeIcon {
     position: absolute;
     right: 0;
     top: 50%;
@@ -56,7 +56,7 @@ const emit = defineEmits(['close'])
     }
   }
 }
-.modal-body{
+.modalBody{
   @include bodyText;
 }
 

@@ -12,14 +12,14 @@ function goToPageTwo() {
 
 <template>
 
-<div class="job-table-container">
+<div class="jobTableContainer">
   <table class="jobs">
     <colgroup>
       <col style="width:32%">  <!-- Firma -->
       <col style="width:26%">  <!-- Stilling -->
       <col style="width:22%">  <!-- Branche -->
       <col style="width:14%">  <!-- Geografi -->
-      <col class="col-cta">     <!-- CTA -->
+      <col class="colCta">     <!-- CTA -->
     </colgroup>
 
     <thead>
@@ -34,7 +34,7 @@ function goToPageTwo() {
 
     <tbody>
       <tr @click="goToPageTwo" style="cursor: pointer">
-        <td class="cell-company">
+        <td class="cellCompany">
           <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
           WSA A/S
         </td>
@@ -46,14 +46,14 @@ function goToPageTwo() {
         </td>
       </tr>
       <tr>
-        <td class="cell-company">
+        <td class="cellCompany">
           <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
           WSA A/S
         </td>
         <td>Værktøjsmager</td>
         <td>Præcisionsplast</td>
         <td>København</td>
-        <td class="cell-cta">
+        <td class="cellCta">
           <Button label="Søg job" type="small" aria-label="Søg job" />
         </td>
       </tr>
@@ -65,7 +65,7 @@ function goToPageTwo() {
 
 <style scoped lang="scss">
 
-.job-table-container {
+.jobTableContainer {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -93,15 +93,15 @@ function goToPageTwo() {
 .jobs tbody td {  @include bodyText;}
 
 /* first cell: icon + text aligned */
-.jobs .cell-company {
+.jobs .cellCompany {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 /* last column: shrink to content and align right */
-.jobs .col-cta,
-.jobs .cell-cta,
+.jobs .colCta,
+.jobs .cellCta,
 .jobs th:last-child,
 .jobs td:last-child {
   width: 1%;
