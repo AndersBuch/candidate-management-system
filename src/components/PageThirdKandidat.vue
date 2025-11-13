@@ -1,7 +1,6 @@
 <script setup>
 import Header from '@/components/Header.vue'
 import HeroSectionPageThird from '@/components/HeroSectionPageThird.vue'
-import Button from '@/components/Button.vue'
 import Form from '@/components/FormComponent.vue'
 </script>
 

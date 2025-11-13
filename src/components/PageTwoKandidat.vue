@@ -110,7 +110,7 @@ ul {
     @include bodyText;
     margin-bottom: 10px;
     position: relative; 
-    padding-left: 28px; /* plads til check-tegnet */
+    padding-left: 28px;
 
     &::before {
       content: '✔';

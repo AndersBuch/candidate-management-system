@@ -27,17 +27,8 @@ function onCheck(e) {
   <div class="inputBoks">
     <label :for="id" class="checkboxLabel">
       <!-- Custom styled checkbox -->
-      <input
-        type="checkbox"
-        :id="id"
-        :checked="isChecked"
-        @change="onCheck($event)"
-        :disabled="disabled"
-      />
-      <span 
-        class="labelText"
-        :class="{ checked: isChecked }"
-      >
+      <input type="checkbox" :id="id" :checked="isChecked" @change="onCheck($event)" :disabled="disabled" />
+      <span class="labelText" :class="{ checked: isChecked }">
         <slot>{{ label }}</slot>
       </span>
       <!-- Optional: custom checkmark -->
@@ -76,12 +67,10 @@ function onCheck(e) {
 }
 
 .checkboxLabel input[type="checkbox"]:checked {
-  background-color: $primaryBlue; /* Grøn baggrund når checked */
+  background-color: $primaryBlue;
   border-color: $primaryBlue;
 }
 
-
-/* Tekst ændrer farve afhængig af checked state */
 .labelText {
   @include bodyText;
   color: $darkGrey;
@@ -92,7 +81,6 @@ function onCheck(e) {
   color: $black;
 }
 
-/* Optional: custom checkmark */
 .customCheckbox {
   position: absolute;
   width: 24px;
@@ -105,7 +93,7 @@ function onCheck(e) {
   justify-content: center;
 }
 
-.checkboxLabel input[type="checkbox"]:checked + .labelText + .customCheckbox::after {
+.checkboxLabel input[type="checkbox"]:checked+.labelText+.customCheckbox::after {
   content: '✔';
   color: $whiteColor;
   font-size: 16px;

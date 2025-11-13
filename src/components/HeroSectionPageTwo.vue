@@ -22,7 +22,7 @@ import Hero from '@/components/Hero.vue'
 
 <style scoped lang="scss">
 .heroWrapper {
-  position: relative; /* gør det muligt at placere tekst ovenpå hero */
+  position: relative;  
 }
 
 .heroContainer {
