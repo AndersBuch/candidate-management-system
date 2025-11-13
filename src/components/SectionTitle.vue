@@ -7,9 +7,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="header-section-container">
-    <h2 class="section-title">{{ title }}</h2>
-    <p class="section-subtitle">{{ subtitle }}</p>
+  <div class="headerSectionContainer">
+    <h2 class="sectionTitle">{{ title }}</h2>
+    <p class="sectionSubtitle">{{ subtitle }}</p>
   </div>
 
 
@@ -17,7 +17,7 @@ const props = defineProps({
 </template>
 
 <style scoped lang="scss">
-.header-section-container {
+.headerSectionContainer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,11 +25,11 @@ const props = defineProps({
   padding-top: 40px;
   padding-bottom: 40px;
 
-    .section-title {
+    .sectionTitle {
       color: $black;
        @include heading2;
     }
-    .section-subtitle {
+    .sectionSubtitle {
       color: $darkGrey;
       @include bodyText;
     }

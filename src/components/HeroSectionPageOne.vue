@@ -10,6 +10,7 @@ import Hero from '@/components/Hero.vue'
       <div class="heroTextContainer">
         <h1>Rekruttering er vores håndværk – tekniske profiler er vores speciale</h1>
         <Button label="Aktuelle stillinger" type="default" aria-label="Aktuelle stillinger" />
+        
       </div>
     </div>
   </div>
