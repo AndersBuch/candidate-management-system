@@ -1,8 +1,8 @@
 <script setup>
-import FormField from '@/organisms/FormField.vue'
-import FormLabel from './FormLabel.vue'
-import Button from '@/components/Button.vue'
-import UploadeBoks from '@/components/UploadeBoks.vue'
+import FormField from '@/componets/molecules/FormField.vue'
+import FormLabel from '@/components/molecules/FormLabel.vue'
+import Button from '@/components/atoms/Button.vue'
+import UploadeBoks from '@/components/molecules/UploadeBoks.vue'
 
 import { reactive, computed, watch } from 'vue'
 
