@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -10,13 +10,22 @@ const props = defineProps({
   error: { type: Boolean, default: false },
   touched: { type: Boolean, default: false },
   errorMessage: { type: String, default: '' },
-  link: { type: String, default: '' } // <-- Ny prop til link
+  link: { type: String, default: '' }
 })
 
 const emit = defineEmits(['update:modelValue', 'blur', 'input'])
+
 const localValue = ref(props.modelValue)
 
+// Når parent ændrer v-model, opdatér localValue
+watch(() => props.modelValue, (newVal) => {
+  localValue.value = newVal
+})
 
+// Når localValue ændres, emit til parent
+watch(localValue, (newVal) => {
+  emit('update:modelValue', newVal)
+})
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
@@ -24,7 +33,6 @@ const isError = computed(() => props.error && props.touched)
 
 <template>
   <div class="formGroup">
-    <!-- Hvis der er et link, render <a> i label -->
     <label :for="id" :class="{ errorLabel: isError }">
       <template v-if="link">
         <a :href="link" target="_blank" rel="noopener noreferrer">{{ label }}</a>
@@ -53,9 +61,10 @@ const isError = computed(() => props.error && props.touched)
       :class="{ errorField: isError, hasValue: hasValue }"
     />
 
-<p v-if="isError && errorMessage" class="errorMessage">{{ errorMessage }}</p>
+    <p v-if="isError && errorMessage" class="errorMessage">{{ errorMessage }}</p>
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .formGroup {
