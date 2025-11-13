@@ -113,6 +113,7 @@ function goToPageTwo() {
 /* hover/stripe (optional) */
 .jobs tbody tr:hover td {
   background: $hoverLightBlue !important;
+  transition: 0.2s;
 }
 .jobs tbody tr:nth-child(even) td { background: $lightGrey; }
 
