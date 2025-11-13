@@ -2,7 +2,6 @@
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { ref, computed, watch } from 'vue'
 
-
 const props = defineProps({
   label: { type: String, required: true },
   placeholder: { type: String, default: '' },
