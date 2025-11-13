@@ -1,19 +1,51 @@
 <script setup>
+import { onMounted, onUnmounted } from 'vue'
 import Backdrop from '@/components/atoms/Backdrop.vue';
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 const props = defineProps({
   modalTitle: { type: String, default: '' },
+  titleAlign: { type: String, default: 'left' } // "center" | "left"
 })
 
 const emit = defineEmits(['close'])
+
+const lockScroll = () => {
+  if (typeof document === 'undefined') return
+
+  const body = document.body
+  const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth
+
+  // lås scroll
+  body.classList.add('no-scroll')
+  // kompensér for den forsvundne scrollbar så siden ikke “hopper”
+  if (scrollBarWidth > 0) {
+    body.style.paddingRight = `${scrollBarWidth}px`
+  }
+}
+
+const unlockScroll = () => {
+  if (typeof document === 'undefined') return
+
+  const body = document.body
+  body.classList.remove('no-scroll')
+  body.style.paddingRight = ''
+}
+
+onMounted(() => {
+  lockScroll()
+})
+
+onUnmounted(() => {
+  unlockScroll()
+})
 
 </script>
 
 <template>
   <Backdrop>
     <div class="modal">
-      <div class="modalHeader">
+      <div class="modalHeader" :style="{ textAlign: props.titleAlign }">
         <h2>{{ modalTitle }}</h2> <BasicIconAndLogo name="X" :xxSmall="true" @click="emit('close')" class="closeIcon" />
       </div>
       <div  class="modalBody">
@@ -31,7 +63,6 @@ const emit = defineEmits(['close'])
   background-color: $whiteColor;
   color: $black;
   box-shadow: $modalDropShadow;
-  width: 650px;
 
 .modalHeader {
   position: relative; // giver os mulighed for at placere ikonet absolut

@@ -33,6 +33,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['click'])
+
 const difftentButton = computed(() => ({
   //KANDIDAT SIDEN
   defaultButton: props.type === 'default' && !props.active,
@@ -59,13 +61,21 @@ rejectedButton: props.type === 'rejected' && !props.active,
   <button
     :class="[difftentButton, { disabledButton: props.disabled }]"
     :aria-label="props.ariaLabel"
+    :disabled="props.disabled"
+    @click.stop="!props.disabled && emit('click')"
   >
-    <BasicIcon v-if="showIcon && iconName" :name="iconName" />
+    <BasicIconAndLogo v-if="showIcon && iconName" :name="iconName" />
     <p>{{ label }}</p>
   </button>
 </template>
 
 <style scoped lang="scss">
+
+.disabledButton {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 .acceptedButton {
     background-color: $goodGreen;

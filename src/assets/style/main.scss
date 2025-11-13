@@ -19,3 +19,8 @@ main {
 body {
   margin: 0; /* <- denne er vigtig */
 }
+
+body.no-scroll {
+  overflow: hidden;
+}
+
