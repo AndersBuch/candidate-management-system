@@ -1,5 +1,4 @@
 <script setup>
-import Button from '@/components/Button.vue'
 import Hero from '@/components/Hero.vue'
 </script>
 
@@ -14,7 +13,7 @@ import Hero from '@/components/Hero.vue'
 
 <style scoped lang="scss">
 .heroWrapper {
-  position: relative; /* gør det muligt at placere tekst ovenpå hero */
+  position: relative; 
 }
 
 .heroContainer {

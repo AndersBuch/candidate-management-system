@@ -27,13 +27,13 @@ import { ref } from 'vue'
 <style lang="scss">
 header {
   width: 100%;
-  background-color: #f2f2f2; /* baggrund helt ud */
+  background-color: $whiteColor; 
   height: 80px;
 
   .headerContainer {
   max-width: 1450px;
   height: 80px;
-  margin: 0 auto; /* centrerer */
+  margin: 0 auto; 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,18 +44,18 @@ nav {
   align-items: center; // centrerer links vertikalt
 
   a {
-    display: flex;         // gør linket til flexbox
-    align-items: center;   // centrerer tekst vertikalt
-    justify-content: center; // centrerer tekst horisontalt
+    display: flex;         
+    align-items: center;   
+    justify-content: center;
     color: $black;
     text-decoration: none;
     transition: color 0.2s ease-in-out;
     transition: background-color 0.2s ease-in-out;
-    padding: 0 8px;        // små padding for de almindelige links    
+    padding: 0 8px;         
     @include bodyText;
 
       &:hover {
-      color: lighten($black, 25%);
+      color: rgba($black, 0.7);
     }
 
     &:last-child {

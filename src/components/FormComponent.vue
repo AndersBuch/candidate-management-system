@@ -1,7 +1,14 @@
 <script setup>
 import FormField from './FormField.vue'
 import FormLabel from './FormLabel.vue'
+import Button from '@/components/Button.vue'
+import UploadeBoks from '@/components/UploadeBoks.vue'
+
 import { reactive, computed, watch } from 'vue'
+
+// Placeholder funktioner til UploadeBoks
+function handleFile(f) { console.log('valgt fil', f) }
+function handleError(e) { console.warn('upload error', e) }
 
 const formData = reactive({
   name: '',
@@ -26,6 +33,8 @@ const formData = reactive({
   }
 })
 
+
+
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
   const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
@@ -42,10 +51,6 @@ const emailErrorMessage = computed(() => {
   return ''
 })
 
-// Debug: tjek email, touched og fejltekst i konsollen
-watch(() => formData.email, () => {
-  formData.touched.email = true
-})
 
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
@@ -154,7 +159,71 @@ const submitForm = () => {
 
     </div>
 
-    <button type="submit">Send</button>
+    <div class="UploadeBokse">
+  <UploadeBoks
+    title="Upload CV"
+    hint="Klik på knappen eller træk filer her"
+    secondary-text="Fil typer: doc(x) og pdf maks 2MB"
+    success-text="Filen er upload"
+    error-text="Kun pdf/doc(x) op til 2MB"
+    button-text="Upload CV"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    :multiple="false"
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+  <UploadeBoks
+    title="Upload profil billede"
+    hint="Klik på knappen eller træk filer her"
+    secondary-text="Fil typer: jpg og png maks 2MB"
+    success-text="profil billede klar"
+    error-text="Kun .png eller .jpg op til 2MB"
+    button-text="Upload profil billede"
+    accept=".png, .jpg"
+    :max-size-mb="2"
+    :multiple="false"
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+    <UploadeBoks
+    title="Upload ansøgning"
+    hint="Klik på knappen eller træk filer her"
+    secondary-text="Fil typer: doc(x) og pdf maks 2MB"
+    success-text="Filen er upload"
+    error-text="Kun pdf/doc(x) op til 2MB"
+    button-text="Upload ansøgning"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    :multiple="false"
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+<UploadeBoks
+  title="Upload andre dokumenter"
+  hint="Klik på knappen eller træk filer her"
+  secondary-text="Fil typer: doc(x) og pdf maks 2MB"
+  success-text="Filerne er uploadet"
+  error-text="Kun pdf/doc(x) op til 2MB"
+  button-text="Upload dokumenter"
+  accept=".pdf,.doc,.docx"
+  :max-size-mb="2"
+  :multiple="true"       
+  @file-selected="handleFile"
+  @error="handleError"
+  @file-removed="handleRemoved"
+/>
+</div>
+
+    <div class="buttonContainer">
+       <Button type="default" label="Send dit CV" aria-label="Send dit CV" />
+    </div>
   </form>
 </template>
 
@@ -172,18 +241,20 @@ const submitForm = () => {
 
   button {
     align-self: flex-start;
-    width: 120px;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    background-color: $primaryBlue;
-    color: white;
-    border: none;
-    cursor: pointer;
     margin-top: 1rem;
-
-    &:hover {
-      background-color: lighten($primaryBlue, 10%);
-    }
   }
 }
+.UploadeBokse {
+  display: inline-block;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;                
+  margin-bottom: 40px;        
+}
+
 </style>
