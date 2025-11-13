@@ -25,16 +25,6 @@ watch(localValue, (newVal) => emit('update:modelValue', newVal))
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
 
-// ✅ Email-specifik fejlbesked
-const isEmail = computed(() => props.fieldType === 'email')
-const emailErrorMessage = computed(() => {
-  if (!isEmail.value) return ''
-  if (!props.touched) return ''
-  if (localValue.value.trim() === '') return 'Email må ikke være tom.'
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(localValue.value)) return 'Indtast en gyldig emailadresse.'
-  return ''
-})
 </script>
 
 
@@ -80,7 +70,7 @@ const emailErrorMessage = computed(() => {
 .formGroup {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 
   label {
     margin-bottom: 0.5rem;
