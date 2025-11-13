@@ -8,6 +8,14 @@ const router = useRouter()
 function goToPageTwo() {
   router.push({ name: 'PageTwo' })
 }
+
+
+const emit = defineEmits(['open-privacy-modal'])
+
+
+function onApplyClick() {
+  emit('open-privacy-modal')
+}
 </script>
 
 <template>
@@ -42,7 +50,7 @@ function goToPageTwo() {
         <td>Præcisionsplast</td>
         <td>København</td>
         <td class="cell-cta">
-          <Button label="Søg job" type="small" aria-label="Søg job" />
+          <Button label="Søg job" type="small" aria-label="Søg job" @click="onApplyClick" />
         </td>
       </tr>
       <tr>
@@ -54,7 +62,7 @@ function goToPageTwo() {
         <td>Præcisionsplast</td>
         <td>København</td>
         <td class="cellCta">
-          <Button label="Søg job" type="small" aria-label="Søg job" />
+          <Button label="Søg job" type="small" aria-label="Søg job"  @click="onApplyClick" />
         </td>
       </tr>
     </tbody>

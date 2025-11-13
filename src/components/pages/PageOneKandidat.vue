@@ -7,25 +7,51 @@ import JobTable from '@/components/organisms/JobTable.vue'
 import Modal from '@/components/Modal.vue'
 import InputField from '@/components/atoms/InputField.vue'
 
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
 
 const showModal = ref(false)
 
 
+const acceptedTerms = ref(false)
 
 
+const router = useRouter()
+
+function openPrivacyModal() {
+  showModal.value = true
+}
+
+
+function closeModal() {
+  showModal.value = false
+  acceptedTerms.value = false
+}
+
+
+const acceptButtonType = computed(() =>
+  acceptedTerms.value ? 'default' : 'notActive'
+)
+
+
+const acceptButtonDisabled = computed(() => !acceptedTerms.value)
+
+
+function onAccept() {
+  if (!acceptedTerms.value) return
+  showModal.value = false
+  router.push('/pagethree')   
+}
 </script>
 
 <template>
   <Header />
   <HeroSectionPageOne />
   <main>
-    <RouterLink to="/pagetwo">
-      <Button label="Gå til Page Two" type="default" />
-    </RouterLink>
+
     <SectionTitle title="Aktuelle stillinger" subtitle="102 åbne stillinger" />
-    <JobTable />
-     <button @click="showModal = true">Åbn modal</button>
+    <JobTable @open-privacy-modal="openPrivacyModal" />
     <Modal
     v-if="showModal" 
     modalTitle="Privat politik"
@@ -50,8 +76,12 @@ const showModal = ref(false)
         v-model:checked="acceptedTerms"
         label="Jeg accepterer betingelserne"
         />
-        <Button label="Godkend" type="notActive" aria-label="Godkend" />
-        <Button label="Anuller" type="secondary" aria-label="Anuller" @click="showModal = false"/>
+        <Button label="Godkend"
+                :type="acceptButtonType"
+                :disabled="acceptButtonDisabled"
+                aria-label="Godkend"
+                @click="onAccept"/>
+        <Button label="Anuller" type="secondary" aria-label="Anuller" @click="closeModal"/>
       </div>
     </Modal>
   </main>
