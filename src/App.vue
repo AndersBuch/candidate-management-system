@@ -1,6 +1,6 @@
 <script setup>
-import PageOneKandidat from '@/components/PageOneKandidat.vue'
-import Button from '@/components/Button.vue'
+import PageOneKandidat from '@/components/pages/PageOneKandidat.vue'
+import Button from '@/components/atoms/Button.vue'
 
 </script>
 

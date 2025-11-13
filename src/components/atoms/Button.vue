@@ -36,10 +36,10 @@ const props = defineProps({
 const difftentButton = computed(() => ({
   //KANDIDAT SIDEN
   defaultButton: props.type === 'default' && !props.active,
-  sekundareButton: props.type === 'sekundare' && !props.active,
-  unAktivButton: props.type === 'ikkeAktiv' && !props.active,
-  activeUnAktivButton: props.type === 'ikkeAktiv' && props.active,
-  activeSecondaryButton: props.type === 'secondary' && props.active,
+  secondaryButton: props.type === 'secondary' && !props.active,
+  unActiveButton: props.type === 'notActive' && !props.active,
+  activeUnAktivButton: props.type === 'notActive' && props.active,
+  activeSecondaryButton: props.type === 'secondaryActive' && props.active,
   smallButton: props.type === 'small' && !props.active,
 
   //DASHBOARD KNAPPER
@@ -47,10 +47,10 @@ const difftentButton = computed(() => ({
   smallDashboardButton: props.type === 'smalldashboard' && !props.active,
 
   //DASHBOARD STATUS
-  acceptetButton: props.type === 'accept' && !props.active,
-  afventerButton: props.type === 'afventer' && !props.active,
-  kontaktesButton: props.type === 'kontaktes' && !props.active,
-  afvistButton: props.type === 'afvist' && !props.active,
+acceptedButton: props.type === 'accepted' && !props.active,
+pendingButton: props.type === 'pending' && !props.active,
+contactButton: props.type === 'contact' && !props.active,
+rejectedButton: props.type === 'rejected' && !props.active,
 
 }))
 </script>
@@ -67,47 +67,48 @@ const difftentButton = computed(() => ({
 
 <style scoped lang="scss">
 
-.acceptetButton {
+.acceptedButton {
     background-color: $goodGreen;
     border: none;
     width: 100px;
     height: 35px;
 
     &:hover {
-        background-color: lighten($goodGreen, 10%);
+        background-color: rgba($goodGreen, 0.9);
     }
 }
 
-.afventerButton {
+.pendingButton {
     background-color: $statusOrange;
     border: none;
     width: 100px;
     height: 35px;
 
     &:hover {
-        background-color: lighten($statusOrange, 10%);
+        background-color: rgba($statusOrange, 0.9);
+        
     }
 }
 
-.kontaktesButton {
+.contactButton {
     background-color: $statusPurple;
     border: none;
     width: 100px;
     height: 35px;
 
     &:hover {
-        background-color: lighten($statusPurple, 10%);
+        background-color: rgba($statusPurple, 0.9);
     }
 }
 
-.afvistButton {
+.rejectedButton {
     background-color: $dangerRed;
     border: none;
     width: 100px;
     height: 35px;
 
     &:hover {
-        background-color: lighten($dangerRed, 10%);
+        background-color: rgba($dangerRed, 0.9);
     }
 }
 
@@ -139,7 +140,7 @@ button {
   }
 }
 
-.sekundareButton {
+.secondaryButton {
   background-color: $whiteColor;
   color: $black;
   width: 115px;
@@ -154,7 +155,7 @@ button {
   }
 }
 
-.unAktivButton {
+.unActiveButton {
     background-color: $darkGrey;
     color: $whiteColor;
     border: none;

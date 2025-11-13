@@ -1,8 +1,7 @@
 <script setup>
-import Header from '@/components/Header.vue'
-import HeroSectionPageThird from '@/components/HeroSectionPageThird.vue'
-import Button from '@/components/Button.vue'
-import Form from '@/components/FormComponent.vue'
+import Header from '@/components/organisms/Header.vue'
+import HeroSectionPageThird from '@/components/organisms/HeroSectionPageThird.vue'
+import Form from '@/components/organisms/FormComponent.vue'
 </script>
 
 <template>
@@ -23,9 +22,10 @@ import Form from '@/components/FormComponent.vue'
   h2 {
     text-align: center;
     @include heading2;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     margin-top: 65px;
   }
+  
   }
 
 

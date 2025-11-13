@@ -1,9 +1,12 @@
 <script setup>
-import InputField from './InputField.vue'
+import InputField from '@/atoms/InputField.vue'
 import { ref } from 'vue'
 
-const acceptedTerms = ref(false)
-const newsletter = ref(true)
+const genderMan = ref(false)
+const genderWomen = ref(false)
+const genderNothing = ref(false)
+
+// const newsletter = ref(true)
 </script>
 
 <template>
@@ -12,20 +15,20 @@ const newsletter = ref(true)
     <div class="checkbox-row">
       <!-- Første genbrug -->
       <InputField
-        v-model:checked="acceptedTerms"
-        label="Jeg accepterer betingelserne"
+        v-model:checked="genderMan"
+        label="Mand"
       />
 
       <!-- Anden genbrug -->
       <InputField
-        v-model:checked="newsletter"
-        label="Tilmeld nyhedsbrev"
+        v-model:checked="genderWomen"
+        label="Kvinde"
       />
 
       <!-- Tredje genbrug -->
       <InputField
-        v-model:checked="newsletter"
-        label="Noget tredje"
+        v-model:checked="genderNothing"
+        label="Intet/andet køn"
       />
     </div>
 

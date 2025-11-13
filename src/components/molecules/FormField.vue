@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -16,8 +16,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'blur', 'input'])
 const localValue = ref(props.modelValue)
 
-watch(localValue, (val) => emit('update:modelValue', val))
-watch(() => props.modelValue, (val) => (localValue.value = val))
+
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
@@ -109,7 +108,7 @@ const isError = computed(() => props.error && props.touched)
 
   .errorMessage {
     color: $dangerRed;
-    font-size: 0.9rem;
+    @include bodyText;
     margin-top: 0.3rem;
   }
 

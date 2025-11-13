@@ -1,6 +1,6 @@
 <script setup>
-import Button from '@/components/Button.vue'
-import Hero from '@/components/Hero.vue'
+import Button from '@/components/atoms/Button.vue'
+import Hero from '@/components/atoms/Hero.vue'
 </script>
 
 <template>
@@ -10,6 +10,7 @@ import Hero from '@/components/Hero.vue'
       <div class="heroTextContainer">
         <h1>Rekruttering er vores håndværk – tekniske profiler er vores speciale</h1>
         <Button label="Aktuelle stillinger" type="default" aria-label="Aktuelle stillinger" />
+        
       </div>
     </div>
   </div>
