@@ -60,7 +60,7 @@ rejectedButton: props.type === 'rejected' && !props.active,
     :class="[difftentButton, { disabledButton: props.disabled }]"
     :aria-label="props.ariaLabel"
   >
-    <BasicIcon v-if="showIcon && iconName" :name="iconName" />
+    <BasicIconAndLogo v-if="showIcon && iconName" :name="iconName" />
     <p>{{ label }}</p>
   </button>
 </template>
