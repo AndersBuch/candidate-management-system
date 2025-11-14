@@ -39,17 +39,10 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 </script>
 
 <template>
-  <div
-    class="tableRow"
-    :class="[rowClass, { activeRow: isActive }]"
-    @click="handleClick"
-  >
+  <div class="tableRow" :class="[rowClass, { activeRow: isActive }]" @click="handleClick">
     <div class="col colName">
       <div class="avatar">
-        <BasicIconAndLogo
-          :name="isActive ? 'UserWhite' : 'User'"
-          :iconSize="true"
-        />
+        <BasicIconAndLogo :name="isActive ? 'UserWhite' : 'User'" :iconSize="true" />
       </div>
       <div class="nameText">{{ name }}</div>
     </div>
@@ -57,34 +50,15 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colPhone">{{ phone }}</div>
     <div class="col colEmail">{{ email }}</div>
 
-    <Button
-      v-if="status"
-      :type="status.toLowerCase()"  
-      :label="getStatusLabel(status)"
-      :aria-label="getStatusLabel(status)"
-      @click.stop="$emit('statusClick', { name, status })"
-    />
+    <Button v-if="status" :type="status.toLowerCase()" :label="getStatusLabel(status)"
+      :aria-label="getStatusLabel(status)" @click.stop="$emit('statusClick', { name, status })" />
 
     <div class="col colActions">
-      <BasicIconAndLogo
-        :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'"
-        :iconSize="true"
-        class="iconBtn linkedin"
-        role="button"
-        tabindex="0"
-        aria-label="LinkedIn"
-        @click.stop="openLinkedin"
-      />
+      <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
+        role="button" tabindex="0" aria-label="LinkedIn" @click.stop="openLinkedin" />
 
-      <BasicIconAndLogo
-        :name="isActive ? 'EditWhite' : 'Edit'"
-        :iconSize="true"
-        class="iconBtn edit"
-        role="button"
-        tabindex="0"
-        :aria-label="isActive ? 'Aktiv' : 'Rediger'"
-        @click.stop="onEdit"
-      />
+      <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn edit" role="button"
+        tabindex="0" :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
     </div>
   </div>
 </template>
@@ -133,12 +107,10 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
   display: flex;
 }
 
-
 .colPhone,
 .colEmail {
   @include bodyText;
 }
-
 
 .colActions {
   justify-content: flex-end;
