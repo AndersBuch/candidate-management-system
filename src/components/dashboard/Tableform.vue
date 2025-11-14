@@ -36,7 +36,7 @@ function showToast() {
     title: 'Gemt!',
     subtitle: 'Din ændring blev gemt.',
     variant: 'success',
-    duration: 3000,
+    duration: 90000,
     showUndo: true
   })
 }
