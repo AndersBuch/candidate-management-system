@@ -1,6 +1,8 @@
 <script setup>
 import Button from '@/components/atoms/Button.vue'
 import Hero from '@/components/atoms/Hero.vue'
+
+const emit = defineEmits(['scroll-to-jobs'])
 </script>
 
 <template>
@@ -9,7 +11,7 @@ import Hero from '@/components/atoms/Hero.vue'
     <div class="heroContainer">
       <div class="heroTextContainer">
         <h1>Rekruttering er vores håndværk – tekniske profiler er vores speciale</h1>
-        <Button label="Aktuelle stillinger" type="default" aria-label="Aktuelle stillinger" />
+        <Button label="Aktuelle stillinger" type="default" aria-label="Aktuelle stillinger" @click="emit('scroll-to-jobs')" />
         
       </div>
     </div>
