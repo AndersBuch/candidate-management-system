@@ -43,15 +43,25 @@ function onAccept() {
   showModal.value = false
   router.push('/pagethree')   
 }
+
+
+const jobTableRef = ref(null)
+
+
+const scrollToJobs = () => {
+  if (jobTableRef.value?.$el) {
+    jobTableRef.value.$el.scrollIntoView({ behavior: 'smooth' })
+  }
+}
 </script>
 
 <template>
   <Header />
-  <HeroSectionPageOne />
+  <HeroSectionPageOne @scroll-to-jobs="scrollToJobs"  />
   <main>
 
     <SectionTitle title="Aktuelle stillinger" subtitle="102 åbne stillinger" />
-    <JobTable @open-privacy-modal="openPrivacyModal" />
+    <JobTable @open-privacy-modal="openPrivacyModal" ref="jobTableRef" />
     <Modal
     v-if="showModal" 
     modalTitle="Privat politik"
