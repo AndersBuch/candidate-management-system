@@ -13,14 +13,16 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
   <div class="dashboardLayout">
     <SideMenu />
 
+      <section class="dashboardContentWrapper">
+        <div class="dashboardContent">
+          <div v-if="activeCompany && activePosition" class="dashboardHeader">
+            <h1 class="companyTitle">{{ activeCompany.name }}</h1>
+            <p class="positionTitle">{{ activePosition.name }}</p>
+          </div>
+          <Tableform />
+        </div>
 
-      <header v-if="activeCompany && activePosition" class="dashboardHeader">
-        <h1 class="companyTitle">{{ activeCompany.name }}</h1>
-        <p class="positionTitle">{{ activePosition.name }}</p>
-      </header>
-
-      <section class="dashboardContent">
-        <Tableform />
+        
       </section>
 
   </div>
@@ -29,7 +31,8 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
 <style scoped lang="scss">
 .dashboardLayout {
   display: flex;
-  height: 100vh;
+
+
 }
 
 
@@ -37,7 +40,8 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
 .dashboardHeader {
   background: #ffffff;
   padding: 20px 28px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 10px;
 
   .companyTitle {
     margin: 0;
@@ -54,9 +58,9 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
   }
 }
 
-.dashboardContent {
-  padding: 24px;
+.dashboardContentWrapper {
   overflow-y: auto;
   flex: 1;
+  max-height: 1080px;
 }
 </style>

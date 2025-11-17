@@ -224,8 +224,8 @@
 /* Ikonerne inde i BasicIconAndLogo (pga. scoped skal vi bruge :deep) */
 .companyButton :deep(svg),
 .positionButton :deep(svg) {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   fill: $whiteColor;
   
