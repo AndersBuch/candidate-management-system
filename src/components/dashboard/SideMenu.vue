@@ -1,4 +1,4 @@
-<script setup>
+<script setup> 
   import { storeToRefs } from 'pinia'
   import { useCompanyStore } from '@/stores/useCompanyStore'
   import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
@@ -23,74 +23,73 @@
     </div>
 
     <!-- Firmaer og stillinger -->
-<section class="menuSection">
-  <div class="menuSectionInner">
-    <h2 class="menuTitle">Firma</h2>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- ⬇️ companyList er flyttet ud af menuSectionInner -->
-  <ul class="companyList">
-    <li
-      v-for="company in companies"
-      :key="company.id"
-      class="companyItem"
-      :class="{ activeCompanySection: company.id === activeCompanyId }"
-    >
-      <!-- Tekst + ikon i centreret kolonne -->
+    <section class="menuSection">
       <div class="menuSectionInner">
-        <button
-          class="companyButton"
-          @click="selectCompany(company.id)"
+        <h2 class="menuTitle">Firma</h2>
+      </div>
+
+      <div class="divider"></div>
+
+      <ul class="companyList">
+        <li
+          v-for="company in companies"
+          :key="company.id"
+          class="companyItem"
+          :class="{ activeCompanySection: company.id === activeCompanyId }"
         >
-          <BasicIconAndLogo name="Box" :iconSize="true" />
-          <span class="companyName">{{ company.name }}</span>
-        </button>
-      </div>
-
-      <!-- FULL-WIDTH divider -->
-      <div
-        v-if="company.id === activeCompanyId"
-        class="activeDivider"
-      ></div>
-
-      <!-- Stillinger, også i samme smalle kolonne -->
-      <div
-        v-if="company.id === activeCompanyId"
-        class="menuSectionInner"
-      >
-        <ul class="positionList">
-          <li
-            v-for="position in company.positions"
-            :key="position.id"
-            class="positionItem"
-          >
+          <div class="menuSectionInner">
             <button
-              class="positionButton"
-              :class="{ isActivePosition: position.id === activePositionId }"
-              @click="selectPosition(company.id, position.id)"
+              class="companyButton"
+              @click="selectCompany(company.id)"
             >
-              <span class="positionName">
-                <BasicIconAndLogo name="Users" :iconSize="true" />
-                {{ position.name }}
-              </span>
+              <BasicIconAndLogo name="Box" :iconSize="true" />
+              <span class="companyName">{{ company.name }}</span>
             </button>
-          </li>
-        </ul>
-      </div>
-    </li>
-  </ul>
-</section>
+          </div>
+
+          <!-- FULL-WIDTH divider -->
+          <div
+            v-if="company.id === activeCompanyId"
+            class="activeDivider"
+          ></div>
+
+          <!-- Stillinger -->
+          <div
+            v-if="company.id === activeCompanyId"
+            class="menuSectionInner"
+          >
+            <ul class="positionList">
+              <li
+                v-for="position in company.positions"
+                :key="position.id"
+                class="positionItem"
+              >
+                <button
+                  class="positionButton"
+                  :class="{ isActivePosition: position.id === activePositionId }"
+                  @click="selectPosition(company.id, position.id)"
+                >
+                  <BasicIconAndLogo name="Users" :iconSize="true" />
+                  <span class="positionText">{{ position.name }}</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </section>
 
     <!-- Tilføje firma -->
     <section class="menuSection">
       <div class="menuSectionInner">
-          <h2 class="menuTitle">Tilføj Firma</h2>
+        <h2 class="menuTitle">Tilføj Firma</h2>
       </div>
       <div class="divider"></div>
       <div class="menuSectionInner">
-        <button class="addCompany"><BasicIconAndLogo name="Plus" :iconSize="true" />Tilføj Firma</button>
+        <button class="addCompany">
+          <BasicIconAndLogo name="Plus" :iconSize="true" />
+          Tilføj Firma
+        </button>
       </div>
     </section>
 
@@ -99,9 +98,12 @@
       <div class="menuSectionInner">
         <h2 class="menuTitle">Tools</h2>
       </div>
-        <div class="divider"></div>
+      <div class="divider"></div>
       <div class="menuSectionInner">
-        <button class="logoutButton"><BasicIconAndLogo name="Logout" :iconSize="true" /> Log ud</button>
+        <button class="logoutButton">
+          <BasicIconAndLogo name="Logout" :iconSize="true" />
+          Log ud
+        </button>
       </div>
     </section>
   </aside>
@@ -114,7 +116,7 @@
   border-right: 2px solid $lightGrey;
   display: flex;
   flex-direction: column;
-  align-items: stretch; // alt fylder 100%
+  align-items: stretch;
   height: 100vh;
 }
 
@@ -128,7 +130,7 @@
 
 .menuSection {
   display: flex;
-  justify-content: center; // centrer indre kolonne vandret
+  justify-content: center;
   align-items: center;
   flex-direction: column;
   width: 100%;
@@ -141,7 +143,7 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  max-width: 125px;  // god bredde til menuindhold
+  max-width: 125px; // god bredde til menuindhold
   margin: 0 auto;
 }
 
@@ -153,7 +155,7 @@
 }
 
 .activeDivider {
-  width: 100%;     // NU er det hele menuSection
+  width: 100%;
   height: 2px;
   background-color: $lightGrey;
   margin: 4px 0 8px 0;
@@ -175,12 +177,31 @@
   margin-bottom: 6px;
 }
 
-
-
-
-/* Basis-stil for knapper */
+/* Firma- og stillingsknapper: samme grid-layout */
 .companyButton,
-.positionButton,
+.positionButton {
+  border: none;
+  padding: 6px 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  @include bodyText;
+  color: $black;
+
+  display: grid;
+  grid-template-columns: 24px 1fr; // ikon + tekst-kolonne
+  column-gap: 6px;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Indryk stillinger uden at flytte højrekanten */
+.positionButton {
+  padding-left: 16px;
+}
+
+/* Add / logout-knapper kan forblive flex */
 .addCompany,
 .logoutButton {
   border: none;
@@ -191,11 +212,19 @@
   @include bodyText;
   color: $black;
 
-    /* ikon + tekst på samme linje */
   display: flex;
   align-items: center;
-  gap: 6px;  // afstand mellem ikon og tekst
+  gap: 6px;
   width: 100%;
+}
+
+/* Tekst med ellipsis – firma og stilling har samme bredde */
+.companyName,
+.positionText {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Hele sektionen for aktivt firma → blå tekst */
@@ -203,10 +232,9 @@
   .companyButton,
   .positionButton,
   .companyName,
-  .positionName {
+  .positionText {
     color: $primaryBlue;
   }
-
 }
 
 .companyItem.activeCompanySection {
@@ -216,30 +244,25 @@
   .positionButton :deep(path),
   .positionButton :deep(circle),
   .positionButton :deep(rect) {
-    stroke: $primaryBlue;      // farven på stregerne
-    fill: transparent;         // ingen solid baggrund
+    stroke: $primaryBlue;
+    fill: transparent;
   }
 }
 
 /* Ikonerne inde i BasicIconAndLogo (pga. scoped skal vi bruge :deep) */
 .companyButton :deep(svg),
-.positionButton :deep(svg) {
+.positionButton :deep(svg),
+.addCompany :deep(svg),
+.logoutButton :deep(svg) {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
   fill: $whiteColor;
-  
-}
-
-/* Stillingsnavn (ikon + tekst) på linje – hvis du vil have ekstra kontrol */
-.positionName {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .positionList {
-  margin-left: 16px; // indrykning af stillinger
+  margin-left: 0;
+  width: 100%;
 
   .positionItem {
     @include bodyText;
