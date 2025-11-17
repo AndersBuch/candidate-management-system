@@ -1,5 +1,6 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import Button from '@/components/atoms/Button.vue'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 
 const props = defineProps({
@@ -7,7 +8,7 @@ const props = defineProps({
     title: { type: String, required: true },
     subtitle: { type: String, default: '' },
     variant: { type: String, default: 'success' }, // 'success' | 'danger'
-    duration: { type: Number, default: 90000 }, // ms
+    duration: { type: Number, default: 3000 }, // ms
     showUndo: { type: Boolean, default: true },
     undoLabel: { type: String, default: 'Fortryd' }
 })
@@ -47,11 +48,21 @@ onBeforeUnmount(() => clearTimer())
 // restart if duration changes
 watch(() => props.duration, () => startTimer())
 
-const variantClass = computed(() => (props.variant === 'danger' ? 'toast--danger' : 'toast--success'))
+const progressColor = computed(() => {
+    return props.variant === 'danger'
+        ? 'linear-gradient(90deg, #FF383C)'
+        : 'linear-gradient(90deg, #34C759)'
+})
+
+const variantClass = computed(() => (props.variant === 'danger' ? 'toastDanger' : 'toastSuccess'))
 const progressStyle = computed(() => ({
     animationDuration: `${props.duration}ms`,
-    animationPlayState: running.value ? 'running' : 'paused'
+    animationPlayState: running.value ? 'running' : 'paused',
+    background: props.variant === 'danger'
+        ? 'linear-gradient(90deg, #FF383C)' 
+        : 'linear-gradient(90deg, #34C759)'
 }))
+
 </script>
 
 <template>
@@ -60,10 +71,10 @@ const progressStyle = computed(() => ({
             <div class="toastIcon" aria-hidden>
                 <template v-if="props.variant === 'danger'">
                     <!-- trash / danger icon -->
-                <BasicIconAndLogo name="Thash" :iconSize="true" />
+                    <BasicIconAndLogo name="Thash" :iconSize="true" />
                 </template>
                 <template v-else>
-                <BasicIconAndLogo name="CheckCircle" :iconSize="true" />
+                    <BasicIconAndLogo name="CheckCircle" :iconSize="true" />
                 </template>
             </div>
 
@@ -72,13 +83,11 @@ const progressStyle = computed(() => ({
                 <div class="toastSubtitle" v-if="props.subtitle">{{ props.subtitle }}</div>
             </div>
 
-            <div class="toast__actions">
-                <button v-if="props.showUndo" class="toast__undo" @click="doUndo">{{ props.undoLabel }}</button>
-            </div>
+            <Button type="smalldashboard" label="Fortryd" @click="close" />
         </div>
 
-        <div class="toast__progress-wrap" aria-hidden>
-            <div class="toast__progress" :style="progressStyle"></div>
+        <div class="toastProgressWrap" aria-hidden>
+            <div class="toastProgress" :style="progressStyle"></div>
         </div>
     </div>
 </template>
@@ -115,52 +124,36 @@ const progressStyle = computed(() => ({
 
 .toastTitle {
     @include bigBodyText;
-    color: $black; 
+    color: $black;
+    margin-bottom: -5px
 }
 
 .toastSubtitle {
     @include bodyText;
-    color: $darkGrey; 
-}
-
-.toast__actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.toast__undo {
-    background: #0ea5e9;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-weight: 700;
-    cursor: pointer;
+    color: $darkGrey;
 }
 
 /* variants */
-.toast--success {
+.toastSuccess {
     background-color: $sekundareBlue;
 }
 
-.toast--danger {
-  background-color: rgba($dangerRed, 0.2);
+.toastDanger {
+    background-color: rgba($dangerRed, 0.2);
 }
 
 /* progress bar */
-.toast__progress-wrap {
+.toastProgressWrap {
     width: 100%;
     height: 6px;
-    background: rgba(0, 0, 0, 0.04);
+    background: $lightGrey;
     border-radius: 6px;
     overflow: hidden;
 }
 
-.toast__progress {
+.toastProgress {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #10b981, #059669);
     transform-origin: left center;
     animation-name: toastProgress;
     animation-timing-function: linear;
