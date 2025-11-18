@@ -1,5 +1,6 @@
 <script setup>
 import Button from '@/components/atoms/Button.vue'
+import StatusDropdown from '@/components/dashboard/StatusDropdown.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { computed, ref } from 'vue'
 
@@ -50,8 +51,13 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colPhone">{{ phone }}</div>
     <div class="col colEmail">{{ email }}</div>
 
-    <Button v-if="status" :type="status.toLowerCase()" :label="getStatusLabel(status)"
-      :aria-label="getStatusLabel(status)" @click.stop="$emit('statusClick', { name, status })" />
+<StatusDropdown
+  :model-value="status"
+  @update:modelValue="$emit('statusClick', $event)"
+
+  @click.stop
+/>
+
 
     <div class="col colActions">
       <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
