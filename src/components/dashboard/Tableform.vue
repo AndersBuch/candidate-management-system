@@ -22,8 +22,9 @@ function onStatusClick(row) {
 }
 
 function setActiveRow(index) {
-  activeIndex.value = index
+  activeIndex.value = activeIndex.value === index ? null : index
 }
+
 
 
 const toasts = ref([])
@@ -80,6 +81,10 @@ function handleUndo(id) {
   :email="r.email"
   :status="r.status"
   :linkedin-url="r.linkedin"
+
+  :is-active="activeIndex === i"
+  @rowClick="setActiveRow(i)"
+
   @statusClick="newStatus => rows[i].status = newStatus"
 />
 

@@ -14,7 +14,8 @@ const props = defineProps({
   isActive: Boolean   // <-- prop fra parent
 })
 
-const emit = defineEmits(['edit', 'statusClick', 'rowClick'])
+const emit = defineEmits(["statusClick", "toggle", "rowClick"])
+
 
 function handleClick() {
   emit('rowClick')  // sender besked til parent om, at denne række blev klikket
@@ -51,12 +52,16 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colPhone">{{ phone }}</div>
     <div class="col colEmail">{{ email }}</div>
 
+<div class="colStatus">
 <StatusDropdown
   :model-value="status"
-  @update:modelValue="$emit('statusClick', $event)"
-
-  @click.stop
+  :is-open="isActive"
+  @toggle="emit('toggle')"
+  @update:modelValue="emit('statusClick', $event)"
 />
+
+</div>
+
 
 
     <div class="col colActions">
@@ -78,19 +83,33 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
   padding: 18px 20px;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.25s ease-in-out;
+  position: relative;     
+}
 
-  &:hover {
-    transform: scale(1.01);
-  }
+.colStatus {
+  position: relative; 
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .rowEven {
   background: $sekundareBlue;
+  transition: 0.2s ease;
+
+  &:hover {
+    background-color: $hoverLightBlue;
+  }
+
 }
 
 .rowOdd {
   background: $whiteColor;
+  transition: 0.2s ease;
+
+  &:hover {
+    background-color: $lightGrey;
+  }
 }
 
 .activeRow {
