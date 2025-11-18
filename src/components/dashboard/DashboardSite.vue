@@ -2,6 +2,7 @@
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import SearchBar from "@/components/dashboard/SearchBar.vue"
 import Tableform from '@/components/dashboard/Tableform.vue'
+import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
 
 import { storeToRefs } from 'pinia'
 import { ref } from "vue"
@@ -11,6 +12,13 @@ const search = ref("")
 const companyStore = useCompanyStore()
 
 const { activeCompany, activePosition } = storeToRefs(companyStore)
+
+// State til modal
+const isModalOpen = ref(false)
+
+function openModal() {
+  isModalOpen.value = true
+}
 </script>
 
 <template>
@@ -27,6 +35,16 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
           <Tableform />
         </div>
 
+
+        <!-- Modal -->
+        <AddPersonModal v-model:modelValue="isModalOpen" modalTitle="Hej! Dette er en test">
+          <p>Her er lidt indhold i modalen.</p>
+        </AddPersonModal>
+
+        <!-- Knap -->
+        <button class="testButton" @click="openModal">
+          Åbn AddPersonModal
+        </button>
         
       </section>
 
@@ -37,10 +55,7 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
 .dashboardLayout {
   display: flex;
 
-
 }
-
-
 
 .dashboardHeader {
   background: #ffffff;

@@ -1,59 +1,60 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { watch } from 'vue'
 import Backdrop from '@/components/atoms/Backdrop.vue';
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
+// Props
 const props = defineProps({
+  modelValue: { type: Boolean, default: false },
   modalTitle: { type: String, default: '' },
-  titleAlign: { type: String, default: 'left' } // "center" | "left"
+  titleAlign: { type: String, default: 'left' }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['update:modelValue', 'close'])
 
+// Lås scroll
 const lockScroll = () => {
-  if (typeof document === 'undefined') return
-
   const body = document.body
   const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth
-
-  // lås scroll
   body.classList.add('no-scroll')
-  // kompensér for den forsvundne scrollbar så siden ikke “hopper”
-  if (scrollBarWidth > 0) {
-    body.style.paddingRight = `${scrollBarWidth}px`
-  }
+  if (scrollBarWidth > 0) body.style.paddingRight = `${scrollBarWidth}px`
 }
 
+// Frigiv scroll
 const unlockScroll = () => {
-  if (typeof document === 'undefined') return
-
   const body = document.body
   body.classList.remove('no-scroll')
   body.style.paddingRight = ''
 }
 
-onMounted(() => {
-  lockScroll()
+// Watch v-model
+watch(() => props.modelValue, (val) => {
+  if (val) lockScroll()
+  else unlockScroll()
 })
 
-onUnmounted(() => {
-  unlockScroll()
-})
-
+// Luk modal
+function close() {
+  emit('update:modelValue', false)
+  emit('close')
+}
 </script>
 
 <template>
-  <Backdrop>
+  <Backdrop v-if="props.modelValue">
     <div class="modal">
       <div class="modalHeader" :style="{ textAlign: props.titleAlign }">
-        <h2>{{ modalTitle }}</h2> <BasicIconAndLogo name="X" :xxSmall="true" @click="emit('close')" class="closeIcon" />
+        <h2>{{ props.modalTitle }}</h2>
+        <BasicIconAndLogo name="X" :xxSmall="true" @click="close" class="closeIcon" />
       </div>
-      <div  class="modalBody">
+      <div class="modalBody">
         <slot></slot>
       </div>
     </div>
   </Backdrop>
 </template>
+
+
 
 <style scoped lang="scss">
 
