@@ -5,7 +5,8 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 const props = defineProps({
   modalTitle: { type: String, default: '' },
-  titleAlign: { type: String, default: 'left' } // "center" | "left"
+  titleAlign: { type: String, default: 'left' },
+  height: { type: String, default: 'auto' }
 })
 
 const emit = defineEmits(['close'])
@@ -44,7 +45,8 @@ onUnmounted(() => {
 
 <template>
   <Backdrop>
-    <div class="modal">
+    <div class="modal" :style="{ height: props.height, maxHeight: '90vh' }">
+
       <div class="modalHeader" :style="{ textAlign: props.titleAlign }">
         <h2>{{ modalTitle }}</h2> <BasicIconAndLogo name="X" :xxSmall="true" @click="emit('close')" class="closeIcon" />
       </div>
@@ -58,6 +60,8 @@ onUnmounted(() => {
 <style scoped lang="scss">
 
 .modal {
+  display: flex;
+  flex-direction: column;
   padding: 40px;
   border-radius: 15px;
   background-color: $whiteColor;
@@ -89,6 +93,15 @@ onUnmounted(() => {
 }
 .modalBody{
   @include bodyText;
+    flex: 1; // fylder al ledig højde
+  overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* Firefox */
+
+  &::-webkit-scrollbar {
+    width: 0px; /* Chrome, Safari */
+    background: transparent; /* gør den usynlig */
+  }
 }
 
 }

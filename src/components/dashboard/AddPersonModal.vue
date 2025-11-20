@@ -91,9 +91,10 @@ const submitForm = () => {
     modalTitle="Min seje modal"
     titleAlign="left"
     @close="closeModal"
+    height="900px"
   >
     <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
-      <div class="modalScrollWrapper">
+
 <div class="formGrid">
       <FormField
         id="name"
@@ -225,7 +226,6 @@ const submitForm = () => {
     <button @click="closeModal">
       Luk modal
     </button>
-    </div>
   </Modal>
 </template>
 
@@ -238,48 +238,6 @@ const submitForm = () => {
 
   }
 
-/* Overstyr og gør scroll på indholdet pålidelig */
-.modalScrollWrapper {
-  /* Gør så modalet starter lidt nede */
-  margin-top: 40px;
 
-  /* Max-højde på indholdet */
-  max-height: 900px;
-
-  /* MEN aldrig større end viewporten minus lidt plads */
-  max-height: min(900px, calc(100vh - 150px));
-
-  /* Scroll kun på indholdet */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-  /* Sørg for plads rundt om indholdet */
-  padding-right: 12px;
-
-  /* Dette sikrer at wrapperen ikke presser modalens højde */
-  box-sizing: border-box;
-
-  /* Hvis modalens body er flex (nogle er), så undgå at den presser sig selv ud */
-  min-height: 0;
-}
-
-
-/* Hvis din grid eller inputs sætter et min-height, sørg for at de kan krympe */
-.modalScrollWrapper .formGrid {
-  box-sizing: border-box;
-  /* tillad at grid krymper i højde inden i wrapperen */
-  min-height: 0;
-}
-
-/* Hvis knappen "Luk" skal blive synlig under scrollet indhold,
-   kan du eventuelt lave den sticky i bunden af wrapperen */
-.modalScrollWrapper .buttonContainer {
-  margin-top: 0.5rem;
-}
-
-/* Debug-helper (fjern efter test) — viser wrapperens grænser */
-.modalScrollWrapper.debug {
-  outline: 2px dashed rgba(0,0,0,0.15);
-}
 
 </style>
