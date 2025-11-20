@@ -217,9 +217,28 @@ const submitForm = () => {
         @blur="formData.touched.message = true"
         class="noteField"
       ></FormField>
-
-
 </div>
+
+<div class="uploadeButtons">
+  <div class="uploadItem">
+    <h3>CV</h3>
+    <Button type="dashboardPrimary" label="Upload" aria-label="Upload CV" />
+  </div>
+  <div class="uploadItem">
+    <h3>Billede</h3>
+    <Button type="dashboardPrimary" label="Upload" aria-label="Billede" />
+  </div>
+  <div class="uploadItem">
+    <h3>Andre dokumenter</h3>
+    <Button type="dashboardPrimary" label="Upload" aria-label="Upload Andre dokumenter" />
+  </div>
+  <div class="uploadItem">
+    <h3>Ansøgning</h3>
+    <Button type="dashboardPrimary" label="Upload" aria-label="Upload Ansøgning" />
+  </div>
+</div>
+
+
 
     <div class="buttonContainer">
       <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
@@ -230,6 +249,30 @@ const submitForm = () => {
 </template>
 
 <style lang="scss">
+
+.uploadeButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem 2rem; // rækkeafstand 2rem, kolonneafstand 2rem
+  margin-bottom: 9rem; // ekstra luft i bunden
+
+  .uploadItem {
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      @include bigBodyText;
+      color: $black;
+      margin-bottom: 0.5rem; // afstand mellem h3 og knap
+    }
+  }
+
+  // Tilføj ekstra afstand mellem øverste og nederste rækker
+  .uploadItem:nth-child(3),
+  .uploadItem:nth-child(4) {
+    margin-top: 9rem; // mere luft mellem øverste og nederste række
+  }
+}
 
   .formGrid {
     display: grid;
