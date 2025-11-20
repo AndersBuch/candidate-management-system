@@ -3,6 +3,7 @@ import SideMenu from '@/components/dashboard/SideMenu.vue'
 import SearchBar from "@/components/dashboard/SearchBar.vue"
 import Tableform from '@/components/dashboard/Tableform.vue'
 import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
+import EditModal from '@/components/dashboard/EditModal.vue'
 
 import { storeToRefs } from 'pinia'
 import { ref } from "vue"
@@ -38,6 +39,7 @@ function openModal() {
 
         <!-- Modal -->
         <AddPersonModal />
+        <EditModal />
 
 
       </section>
