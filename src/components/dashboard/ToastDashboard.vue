@@ -83,7 +83,7 @@ const progressStyle = computed(() => ({
                 <div class="toastSubtitle" v-if="props.subtitle">{{ props.subtitle }}</div>
             </div>
 
-            <Button type="smalldashboard" label="Fortryd" @click="close" />
+            <Button type="smallDashboard" label="Fortryd" @click="close" />
         </div>
 
         <div class="toastProgressWrap" aria-hidden>

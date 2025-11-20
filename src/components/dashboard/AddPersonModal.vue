@@ -1,6 +1,11 @@
 <script setup>
-import { ref } from 'vue'
 import Modal from '@/components/Modal.vue'
+import InputField from '@/components/atoms/InputField.vue'
+import FormLabel from '@/components/molecules/FormLabel.vue'
+import FormField from '@/components/molecules/FormField.vue'
+import Button from '@/components/atoms/Button.vue'
+
+import { ref, reactive, computed, watch } from 'vue'
 
 const showModal = ref(false)
 
@@ -10,6 +15,68 @@ const openModal = () => {
 
 const closeModal = () => {
   showModal.value = false
+}
+
+const formData = reactive({
+  name: '',
+  lastname: '',
+  email: '',
+  phone: '',
+  address: '',
+  city: '',
+  postal: '',
+  message: '',
+  linkedin: '',
+  age: '',
+  company: '',
+  status: '',
+
+  touched: {
+    name: false,
+    lastname: false,
+    email: false,
+    phone: false,
+    address: false,
+    city: false,
+    postal: false,
+    linkedin: false,
+    message: false
+  }
+})
+
+
+
+// Funktion der sikrer kun tal og max-længde
+const handleNumberInput = (event, maxLength, key) => {
+  const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
+  formData[key] = value.slice(0, maxLength) // Begræns længde
+}
+
+// Simpel emailvalidering
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
+// Computed fejlbesked til email
+const emailErrorMessage = computed(() => {
+  if (formData.email.trim() === '') return 'Email må ikke være tom.'
+  if (!isValidEmail(formData.email)) return 'Indtast en gyldig emailadresse med @.'
+  return ''
+})
+
+
+// Computed for hele formen - tjek for fejl
+const hasErrors = computed(() => !!emailErrorMessage.value)
+
+const submitForm = () => {
+  // Marker alle felter som touched, så fejl vises
+  Object.keys(formData.touched).forEach(key => formData.touched[key] = true)
+
+  // Tjek fejl inden submit
+  if (!hasErrors.value) {
+    console.log('Form sendes:', formData)
+    // Her kan du kalde API eller email-funktion
+  } else {
+    console.log('Der er fejl i formularen')
+  }
 }
 </script>
 
@@ -22,19 +89,197 @@ const closeModal = () => {
   <Modal
     v-if="showModal"
     modalTitle="Min seje modal"
-    titleAlign="center"
+    titleAlign="left"
     @close="closeModal"
   >
     <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
-    <p>
-      Her er noget custom indhold i modal'en 🎉
+      <div class="modalScrollWrapper">
+<div class="formGrid">
+      <FormField
+        id="name"
+        label="Fornavn"
+        placeholder="Fornavn"
+        v-model="formData.name"
+        :touched="formData.touched.name"
+        @blur="formData.touched.name = true"
+      />
 
-    </p>
+      <FormField
+        id="lastname"
+        label="Efternavn"
+        placeholder="Efternavn"
+        v-model="formData.lastname"
+        :touched="formData.touched.lastname"
+        @blur="formData.touched.lastname = true"
+      />
+
+            <!-- Email med fejlbesked -->
+      <FormField
+        id="email"
+        label="Email"
+        placeholder="Indtast din email"
+        v-model="formData.email"
+        :error="!!emailErrorMessage"          
+        :touched="formData.touched.email"
+        :error-message="emailErrorMessage"  
+        @input="formData.touched.email = true"
+        @blur="formData.touched.email = true"
+      />
+
+      <FormField
+        id="address"
+        label="Adresse"
+        placeholder="Adresse"
+        v-model="formData.address"
+        :touched="formData.touched.address"
+        @blur="formData.touched.address = true"
+      />
+
+      <!-- Postnummer -->
+      <FormField
+        id="postal"
+        label="Postnummer"
+        placeholder="Postnummer"
+        fieldType="text"
+        v-model="formData.postal"
+        :touched="formData.touched.postal"
+        @input="handleNumberInput($event, 4, 'postal')"
+        @blur="formData.touched.postal = true"
+      />
+
+      <FormField
+        id="status"
+        label="Status"
+        placeholder="Kontaktes"
+        v-model="formData.address"
+        :touched="formData.touched.address"
+        @blur="formData.touched.address = true"
+      />
+
+      <FormField
+        id="city"
+        label="By"
+        placeholder="Indtast by"
+        v-model="formData.city"
+        :touched="formData.touched.city"
+        @blur="formData.touched.city = true"
+      />
+
+      <!-- Telefon -->
+      <FormField
+        id="phone"
+        label="Telefon"
+        placeholder="Indtast telefon"
+        fieldType="text"
+        v-model="formData.phone"
+        :touched="formData.touched.phone"
+        @input="handleNumberInput($event, 10, 'phone')"
+        @blur="formData.touched.phone = true"
+      />
+
+      <FormField
+        id="linkedin"
+        label="LinkedIn"
+        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
+        v-model="formData.linkedin"
+        :touched="formData.touched.linkedin"
+        @blur="formData.touched.linkedin = true"
+      />
+
+
+<FormLabel/>
+
+            <FormField
+        id="age"
+        label="Alder"
+        placeholder="Alder"
+        v-model="formData.address"
+        :touched="formData.touched.address"
+        @blur="formData.touched.address = true"
+      />
+
+      <FormField
+        id="company"
+        label="Nuværenede Firma"
+        placeholder="Nuværenede Firma"
+        v-model="formData.address"
+        :touched="formData.touched.address"
+        @blur="formData.touched.address = true"
+      />
+
+      <FormField
+        id="message"
+        label="Note"
+        placeholder="Maks 150 tegn"
+        v-model="formData.address"
+        :touched="formData.touched.address"
+        @blur="formData.touched.address = true"
+      />
+
+    <div class="buttonContainer">
+       <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" />
+       <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" />
+    </div>
+</div>
+
     <button @click="closeModal">
       Luk modal
     </button>
+    </div>
   </Modal>
 </template>
 
 <style lang="scss">
+
+  .formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+
+  }
+
+/* Overstyr og gør scroll på indholdet pålidelig */
+.modalScrollWrapper {
+  /* Gør så modalet starter lidt nede */
+  margin-top: 40px;
+
+  /* Max-højde på indholdet */
+  max-height: 900px;
+
+  /* MEN aldrig større end viewporten minus lidt plads */
+  max-height: min(900px, calc(100vh - 150px));
+
+  /* Scroll kun på indholdet */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  /* Sørg for plads rundt om indholdet */
+  padding-right: 12px;
+
+  /* Dette sikrer at wrapperen ikke presser modalens højde */
+  box-sizing: border-box;
+
+  /* Hvis modalens body er flex (nogle er), så undgå at den presser sig selv ud */
+  min-height: 0;
+}
+
+
+/* Hvis din grid eller inputs sætter et min-height, sørg for at de kan krympe */
+.modalScrollWrapper .formGrid {
+  box-sizing: border-box;
+  /* tillad at grid krymper i højde inden i wrapperen */
+  min-height: 0;
+}
+
+/* Hvis knappen "Luk" skal blive synlig under scrollet indhold,
+   kan du eventuelt lave den sticky i bunden af wrapperen */
+.modalScrollWrapper .buttonContainer {
+  margin-top: 0.5rem;
+}
+
+/* Debug-helper (fjern efter test) — viser wrapperens grænser */
+.modalScrollWrapper.debug {
+  outline: 2px dashed rgba(0,0,0,0.15);
+}
+
 </style>

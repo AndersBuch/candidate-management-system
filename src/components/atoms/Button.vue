@@ -46,7 +46,8 @@ const difftentButton = computed(() => ({
 
   //DASHBOARD KNAPPER
   dashboardPrimaryButton: props.type === 'dashboardPrimary' && !props.active,
-  smallDashboardButton: props.type === 'smalldashboard' && !props.active,
+  smallDashboardButton: props.type === 'smallDashboard' && !props.active,
+  smallSecondaryButton: props.type === 'smallSecondaryButton' && !props.active,
 
   //DASHBOARD STATUS
 acceptedButton: props.type === 'accepted' && !props.active,
@@ -214,6 +215,21 @@ button {
 
   &:hover {
     background-color: $hoverBlue;
+  }
+}
+
+.smallSecondaryButton {
+  background-color: $whiteColor;
+  color: $black;
+  width: 100px;
+  height: 35px;
+
+  &:hover {
+    background-color: $hoverLightBlue;
+  }
+
+  p {
+    color: $black;
   }
 }
 
