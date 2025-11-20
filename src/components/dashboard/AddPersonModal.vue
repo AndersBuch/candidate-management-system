@@ -229,18 +229,7 @@ const submitForm = () => {
 
 <style lang="scss">
 
-.statusDropdown {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 5px;
-  border: 1px solid $sekundareBlue;
-  background-color: $whiteColor;
-  appearance: none; /* fjerner default browser pil */
-  background-image: url("data:image/svg+xml,%3Csvg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  background-size: 1rem;
-}
+
 
   .formGrid {
     display: grid;
