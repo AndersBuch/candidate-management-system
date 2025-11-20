@@ -25,20 +25,25 @@ watch(localValue, (newVal) => emit('update:modelValue', newVal))
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
 
+function onStatusChange(payload) {
+  // payload = { id, value } from dropdown
+  emit('statusChange', { rowId: props.rowId, value: payload.value })
+}
+
 </script>
 
 
 <template>
   <div class="formGroup">
-    <label :for="id" :class="{ errorLabel: isError }">
-      <template v-if="link">
-        <a :href="link" target="_blank" rel="noopener noreferrer">{{ label }}</a>
-      </template>
-      <template v-else>{{ label }}</template>
-    </label>
-
+    <label :for="id" :class="{ errorLabel: isError }">{{ label }}</label>
+    
     <div class="inputWrapper">
+      <!-- Hvis der er slot, brug den -->
+      <slot v-if="$slots.default"></slot>
+
+      <!-- Ellers default input -->
       <input
+        v-else
         :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType"
         :id="id"
         :placeholder="placeholder"
@@ -66,7 +71,9 @@ const isError = computed(() => props.error && props.touched)
   </div>
 </template>
 
+
 <style scoped lang="scss">
+
 .formGroup {
   display: flex;
   flex-direction: column;
@@ -131,6 +138,7 @@ const isError = computed(() => props.error && props.touched)
     position: relative;
     display: flex;
     align-items: center;
+    overflow: visible;
 
     input {
       width: 100%;
