@@ -1,32 +1,39 @@
 <script setup>
 import { ref } from 'vue'
-import Modal from '@/components/Modal.vue'  // din modal
+import Modal from '@/components/Modal.vue'
 
-const isModalOpen = ref(false)
+const showModal = ref(false)
 
-function openModal() {
-  isModalOpen.value = true
+const openModal = () => {
+  showModal.value = true
 }
 
-function closeModal() {
-  isModalOpen.value = false
+const closeModal = () => {
+  showModal.value = false
 }
 </script>
 
 <template>
-  <div>
+  <button @click="openModal">
+    Åben denne her
+  </button>
 
-    <!-- Modal -->
-    <Modal 
-      v-if="isModalOpen" 
-      modalTitle="Hej! Dette er en test" 
-      titleAlign="center" 
-      @close="closeModal"
-    >
-      <p>Her er lidt indhold i modalen.</p>
-      <p>Du kan putte hvad du vil her!</p>
-    </Modal>
-  </div>
+  <!-- Brug af modal-komponenten -->
+  <Modal
+    v-if="showModal"
+    modalTitle="Min seje modal"
+    titleAlign="center"
+    @close="closeModal"
+  >
+    <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
+    <p>
+      Her er noget custom indhold i modal'en 🎉
+
+    </p>
+    <button @click="closeModal">
+      Luk modal
+    </button>
+  </Modal>
 </template>
 
 <style lang="scss">

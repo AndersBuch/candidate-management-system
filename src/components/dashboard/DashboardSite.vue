@@ -37,15 +37,9 @@ function openModal() {
 
 
         <!-- Modal -->
-        <AddPersonModal v-model:modelValue="isModalOpen" modalTitle="Hej! Dette er en test">
-          <p>Her er lidt indhold i modalen.</p>
-        </AddPersonModal>
+        <AddPersonModal />
 
-        <!-- Knap -->
-        <button class="testButton" @click="openModal">
-          Åbn AddPersonModal
-        </button>
-        
+
       </section>
 
   </div>
