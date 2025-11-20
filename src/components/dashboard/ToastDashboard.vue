@@ -56,17 +56,15 @@ const progressColor = computed(() => {
 
 const variantClass = computed(() => (props.variant === 'danger' ? 'toastDanger' : 'toastSuccess'))
 const progressStyle = computed(() => ({
-    animationDuration: `${props.duration}ms`,
-    animationPlayState: running.value ? 'running' : 'paused',
     background: props.variant === 'danger'
-        ? 'linear-gradient(90deg, #FF383C)' 
+        ? 'linear-gradient(90deg, #FF383C)'
         : 'linear-gradient(90deg, #34C759)'
 }))
 
 </script>
 
 <template>
-    <div class="toast" :class="variantClass" role="status" @mouseenter="pause" @mouseleave="resume" aria-live="polite">
+    <div class="toast" :class="variantClass" :style="{'--duration': props.duration + 'ms'}" role="status" @mouseenter="pause" @mouseleave="resume" aria-live="polite">
         <div class="toastInner">
             <div class="toastIcon" aria-hidden>
                 <template v-if="props.variant === 'danger'">
@@ -87,7 +85,8 @@ const progressStyle = computed(() => ({
         </div>
 
         <div class="toastProgressWrap" aria-hidden>
-            <div class="toastProgress" :style="progressStyle"></div>
+            <div class="toastProgress" :class="{ paused: !running }" :style="{ background: progressColor }">
+            </div>
         </div>
     </div>
 </template>
@@ -152,21 +151,25 @@ const progressStyle = computed(() => ({
 }
 
 .toastProgress {
-    height: 100%;
-    width: 0%;
-    transform-origin: left center;
-    animation-name: toastProgress;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0); // STARTPOINT
+  animation: toastProgress var(--duration) linear forwards;
 }
 
 @keyframes toastProgress {
-    from {
-        width: 0%;
-    }
-
-    to {
-        width: 100%;
-    }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
+
+
+.toastProgress.paused {
+    animation-play-state: paused;
+}
+
 </style>
