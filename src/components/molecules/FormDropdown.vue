@@ -46,12 +46,12 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
       <div class="statusDropdown" :id="`statusDropdown-${id}`">
         <button type="button" class="fdButton" @click="toggle" :aria-expanded="open">
           <span class="sd__label">{{ selected }}</span>
-          <BasicIconAndLogo :name="'ArrowBlue'" :class="{ rotated: open }" />
+          <BasicIconAndLogo :name="'ArrowBlue'" class="arrow" :class="{ rotated: open }" />
         </button>
 
         <ul v-if="open" class="fdList" role="menu">
           <li v-for="opt in options" :key="opt" role="menuitem">
-            <button type="button" class="sd__item" @click="select(opt)">
+            <button type="button" class="fdItem" @click="select(opt)">
               {{ opt }}
             </button>
           </li>
@@ -62,6 +62,14 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 </template>
 
 <style scoped lang="scss">
+
+.arrow {
+  transition: transform 0.4s ease;
+}
+
+.arrow.rotated {
+  transform: rotate(180deg);
+}
 
 .formGroup {
   display: flex;
@@ -111,16 +119,17 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
     border-radius: 5px;
     z-index: 1200;
     @include bodyText;
+    list-style: none;
     padding: 4px 0;
     box-sizing: border-box;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   }
 
   /* dropdown items */
-  .sd__item {
+  .fdItem {
     width: 100%;
     text-align: left;
-    padding: 8px 0.5rem;
+    padding: 8px 8px;
     background: transparent;
     border: none;
     @include bodyText;
@@ -129,8 +138,8 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
     box-sizing: border-box;
 
     &:hover {
-      background: rgba(0,0,0,0.04);
-      border-radius: 3px;
+      background: $lightGrey;
+      border-radius: 5px;
     }
   }
 }

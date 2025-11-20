@@ -88,7 +88,7 @@ const submitForm = () => {
   <!-- Brug af modal-komponenten -->
   <Modal
     v-if="showModal"
-    modalTitle="Min seje modal"
+    modalTitle="Tilføj kandidat"
     titleAlign="left"
     @close="closeModal"
     height="900px"
@@ -192,44 +192,44 @@ const submitForm = () => {
         id="age"
         label="Alder"
         placeholder="Alder"
-        v-model="formData.address"
-        :touched="formData.touched.address"
-        @blur="formData.touched.address = true"
+        v-model="formData.age"
+        :touched="formData.touched.age"
+        @input="handleNumberInput($event, 2, 'age')"
+        @blur="formData.touched.age = true"
       />
 
       <FormField
         id="company"
         label="Nuværenede Firma"
         placeholder="Nuværenede Firma"
-        v-model="formData.address"
-        :touched="formData.touched.address"
-        @blur="formData.touched.address = true"
+        v-model="formData.company"
+        :touched="formData.touched.company"
+        @blur="formData.touched.company = true"
       />
 
       <FormField
         id="message"
         label="Note"
         placeholder="Maks 150 tegn"
-        v-model="formData.address"
-        :touched="formData.touched.address"
-        @blur="formData.touched.address = true"
-      />
+        fieldType="textarea"
+        v-model="formData.message"
+        :touched="formData.touched.message"
+        @blur="formData.touched.message = true"
+        class="noteField"
+      ></FormField>
+
+
 </div>
 
     <div class="buttonContainer">
-      <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" />
+      <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
       <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" />
     </div>
 
-    <button @click="closeModal">
-      Luk modal
-    </button>
   </Modal>
 </template>
 
 <style lang="scss">
-
-
 
   .formGrid {
     display: grid;

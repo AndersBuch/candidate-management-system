@@ -42,7 +42,18 @@ function onStatusChange(payload) {
       <slot v-if="$slots.default"></slot>
 
       <!-- Ellers default input -->
-      <input
+      <textarea
+        v-if="fieldType === 'textarea'"
+        :id="id"
+        :placeholder="placeholder"
+        v-model="localValue"
+        @blur="emit('blur')"
+        @input="emit('input', $event)"
+        :maxlength="150"
+        :class="['textareaField', { hasValue: hasValue }]"
+      ></textarea>
+
+      <input  
         v-else
         :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType"
         :id="id"
@@ -156,5 +167,31 @@ function onStatusChange(payload) {
       justify-content: center;
     }
   }
+
+  .textareaField {
+  width: 100%;
+  height: 135px;         // større højde ✔️
+  resize: none;          // lås størrelse
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid $sekundareBlue;
+  background-color: $whiteColor;
+  @include bodyText;
+
+  &::placeholder {
+    color: $darkGrey;
+  }
+
+  &:focus {
+    border-color: $darkGrey;
+    outline: none;
+  }
+  
+    &.hasValue {
+      border-color: $darkGrey;
+      color: $black;
+    }
+}
+
 
 </style>
