@@ -4,6 +4,7 @@ import { useCompanyStore } from '@/stores/useCompanyStore'
 
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import Tableform from '@/components/dashboard/Tableform.vue' // ← din ven laver denne
+import ExtendedCandidateInfo from './ExtendedCandidateInfo.vue'
 
 const companyStore = useCompanyStore()
 const { activeCompany, activePosition } = storeToRefs(companyStore)
@@ -25,6 +26,7 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
         
       </section>
 
+    <ExtendedCandidateInfo />
   </div>
 </template>
 
