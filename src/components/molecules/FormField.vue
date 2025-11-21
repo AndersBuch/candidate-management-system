@@ -25,20 +25,36 @@ watch(localValue, (newVal) => emit('update:modelValue', newVal))
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
 
+function onStatusChange(payload) {
+  // payload = { id, value } from dropdown
+  emit('statusChange', { rowId: props.rowId, value: payload.value })
+}
+
 </script>
 
 
 <template>
   <div class="formGroup">
-    <label :for="id" :class="{ errorLabel: isError }">
-      <template v-if="link">
-        <a :href="link" target="_blank" rel="noopener noreferrer">{{ label }}</a>
-      </template>
-      <template v-else>{{ label }}</template>
-    </label>
-
+    <label :for="id" :class="{ errorLabel: isError }">{{ label }}</label>
+    
     <div class="inputWrapper">
-      <input
+      <!-- Hvis der er slot, brug den -->
+      <slot v-if="$slots.default"></slot>
+
+      <!-- Ellers default input -->
+      <textarea
+        v-if="fieldType === 'textarea'"
+        :id="id"
+        :placeholder="placeholder"
+        v-model="localValue"
+        @blur="emit('blur')"
+        @input="emit('input', $event)"
+        :maxlength="150"
+        :class="['textareaField', { hasValue: hasValue }]"
+      ></textarea>
+
+      <input  
+        v-else
         :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType"
         :id="id"
         :placeholder="placeholder"
@@ -66,7 +82,9 @@ const isError = computed(() => props.error && props.touched)
   </div>
 </template>
 
+
 <style scoped lang="scss">
+
 .formGroup {
   display: flex;
   flex-direction: column;
@@ -131,6 +149,7 @@ const isError = computed(() => props.error && props.touched)
     position: relative;
     display: flex;
     align-items: center;
+    overflow: visible;
 
     input {
       width: 100%;
@@ -148,5 +167,31 @@ const isError = computed(() => props.error && props.touched)
       justify-content: center;
     }
   }
+
+  .textareaField {
+  width: 100%;
+  height: 135px;         // større højde ✔️
+  resize: none;          // lås størrelse
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid $sekundareBlue;
+  background-color: $whiteColor;
+  @include bodyText;
+
+  &::placeholder {
+    color: $darkGrey;
+  }
+
+  &:focus {
+    border-color: $darkGrey;
+    outline: none;
+  }
+  
+    &.hasValue {
+      border-color: $darkGrey;
+      color: $black;
+    }
+}
+
 
 </style>

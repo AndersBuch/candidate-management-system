@@ -5,10 +5,10 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 const emit = defineEmits(["update:modelValue"])
 
 const props = defineProps({
-    modelValue: {
-        type: String,
-        required: true
-    },
+  modelValue: {
+    type: String,
+    required: true
+  },
 })
 
 const isOpen = ref(false)
@@ -22,74 +22,63 @@ const options = [
 
 function getLabelColor(value) {
   switch (value) {
-    case 'Accepted': return '#34C759'; 
-    case 'Pending':  return '#FF8D28'; 
-    case 'Contact':  return '#CB30E0'; 
-    case 'Rejected': return '#FF383C'; 
+    case 'Accepted': return '#34C759';
+    case 'Pending': return '#FF8D28';
+    case 'Contact': return '#CB30E0';
+    case 'Rejected': return '#FF383C';
     default: return '#333';
   }
 }
 
 
 function selectOption(opt) {
-    emit("update:modelValue", opt.value)
-    isOpen.value = false
+  emit("update:modelValue", opt.value)
+  isOpen.value = false
 }
 
 // REF til dropdown-wrapper
 const dropdownRef = ref(null)
 
 function handleClickOutside(event) {
-    if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-        isOpen.value = false
-    }
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    isOpen.value = false
+  }
 }
 
 onMounted(() => {
-    document.addEventListener('click', handleClickOutside)
+  document.addEventListener('click', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
-    document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <template>
-<div class="dropdownWrapper" ref="dropdownRef">
-  <!-- STATUS BUTTON -->
-  <Button 
-    :label="modelValue"
-    :type="modelValue.toLowerCase()"
-    aria-label="Status knap"
-    @click="isOpen = !isOpen"
-  />
+  <div class="dropdownWrapper" ref="dropdownRef">
+    <!-- STATUS BUTTON -->
+    <Button :label="modelValue" :type="modelValue.toLowerCase()" aria-label="Status knap" @click="isOpen = !isOpen" />
 
-  <!-- DROPDOWN MENU MED TRANSITION -->
-  <transition name="slide">
-    <div v-if="isOpen" class="dropdownMenu">
-      <p>Status</p>
-      <div class="divider"></div>
+    <!-- DROPDOWN MENU MED TRANSITION -->
+    <transition name="slide">
+      <div v-if="isOpen" class="dropdownMenu">
+        <p>Status</p>
+        <div class="divider"></div>
 
-<button
-  v-for="o in options"
-  :key="o.label"
-  class="dropdownItem"
-  :style="{ color: getLabelColor(o.value) }"
-  @click="selectOption(o)"
->
-  {{ o.label }}
-</button>
+        <button v-for="o in options" :key="o.label" class="dropdownItem" :style="{ color: getLabelColor(o.value) }"
+          @click="selectOption(o)">
+          {{ o.label }}
+        </button>
 
-    </div>
-  </transition>
-</div>
+      </div>
+    </transition>
+  </div>
 
 </template>
 
 
 
 <style scoped lang="scss">
-
 .slide-enter-from,
 .slide-leave-to {
   opacity: 0;
@@ -110,7 +99,7 @@ onBeforeUnmount(() => {
 .dropdownWrapper {
   position: relative;
   display: inline-block;
-  
+
 }
 
 .dropdownMenu {
@@ -122,12 +111,12 @@ onBeforeUnmount(() => {
   text-align: center;
   border-radius: 15px;
   padding: 10px 0;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-  z-index: 99999; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  z-index: 99999;
 
   p {
-      @include bigBodyText;
-      padding: 6px 20px;
+    @include bigBodyText;
+    padding: 6px 20px;
   }
 }
 
