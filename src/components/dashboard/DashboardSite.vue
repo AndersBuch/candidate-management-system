@@ -1,11 +1,15 @@
 <script setup>
+import SideMenu from '@/components/dashboard/SideMenu.vue'
+import SearchBar from "@/components/dashboard/SearchBar.vue"
+import Tableform from '@/components/dashboard/Tableform.vue'
+
 import { storeToRefs } from 'pinia'
+import { ref } from "vue"
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
-import SideMenu from '@/components/dashboard/SideMenu.vue'
-import Tableform from '@/components/dashboard/Tableform.vue' // ← din ven laver denne
-
+const search = ref("")
 const companyStore = useCompanyStore()
+
 const { activeCompany, activePosition } = storeToRefs(companyStore)
 </script>
 
@@ -16,6 +20,7 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
       <section class="dashboardContentWrapper">
         <div class="dashboardContent">
           <div v-if="activeCompany && activePosition" class="dashboardHeader">
+            <SearchBar v-model="search" placeholder="Søg..." />
             <h1 class="companyTitle">{{ activeCompany.name }}</h1>
             <p class="positionTitle">{{ activePosition.name }}</p>
           </div>
