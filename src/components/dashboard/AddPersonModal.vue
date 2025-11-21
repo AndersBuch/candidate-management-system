@@ -5,6 +5,7 @@ import FormLabel from '@/components/molecules/FormLabel.vue'
 import FormField from '@/components/molecules/FormField.vue'
 import Button from '@/components/atoms/Button.vue'
 import FormDropdown from '@/components/molecules/FormDropdown.vue'
+import UploadButton from '@/components/dashboard/UploadButton.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
@@ -51,6 +52,10 @@ const handleNumberInput = (event, maxLength, key) => {
   const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
   formData[key] = value.slice(0, maxLength) // Begræns længde
 }
+
+// Placeholder funktioner til UploadeBoks
+function handleFile(f) { console.log('valgt fil', f) }
+function handleError(e) { console.warn('upload error', e) }
 
 // Simpel emailvalidering
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -219,26 +224,51 @@ const submitForm = () => {
       ></FormField>
 </div>
 
-<div class="uploadeButtons">
-  <div class="uploadItem">
-    <h3>CV</h3>
-    <Button type="dashboardPrimary" label="Upload" aria-label="Upload CV" />
-  </div>
-  <div class="uploadItem">
-    <h3>Billede</h3>
-    <Button type="dashboardPrimary" label="Upload" aria-label="Billede" />
-  </div>
-  <div class="uploadItem">
-    <h3>Andre dokumenter</h3>
-    <Button type="dashboardPrimary" label="Upload" aria-label="Upload Andre dokumenter" />
-  </div>
-  <div class="uploadItem">
-    <h3>Ansøgning</h3>
-    <Button type="dashboardPrimary" label="Upload" aria-label="Upload Ansøgning" />
-  </div>
-</div>
+  <div class="uploadeButtons">
+  <UploadButton
+    title="CV"
+    button-text="Upload"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    :multiple="false"       
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
 
+  <UploadButton
+    title="Billede"
+    button-text="Upload"
+    accept=".png,.jpg"
+    :max-size-mb="2"
+    :multiple="false"       
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
 
+    <UploadButton
+    title="Andre dokumenter"
+    button-text="Upload"
+    accept=".pdf,.doc,.docx,.png,.jpg"
+    :max-size-mb="2"
+    :multiple="true"   
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+    <UploadButton
+    title="Ansøgning"
+    button-text="Upload"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    :multiple="false"       
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+  </div>
 
     <div class="buttonContainer">
       <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
@@ -254,7 +284,7 @@ const submitForm = () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem 2rem; // rækkeafstand 2rem, kolonneafstand 2rem
-  margin-bottom: 9rem; // ekstra luft i bunden
+  margin-bottom: 50px; // ekstra luft i bunden
 
   .uploadItem {
     display: flex;
@@ -278,6 +308,7 @@ const submitForm = () => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem 2rem;
+    margin-bottom: 20px;
   }
 
 .buttonContainer {
