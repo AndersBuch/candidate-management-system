@@ -9,7 +9,7 @@ const props = defineProps({
   huge: Boolean,
   small: Boolean,
   exstraSmall: Boolean,
-  xxSmall: Boolean
+  iconSize: Boolean
 })
 
 
@@ -28,7 +28,7 @@ const filePath = computed(() => `${import.meta.env.BASE_URL}icons/${props.name}.
       huge: props.huge,
       small: props.small,
       exstraSmall: props.exstraSmall,
-      xxSmall: props.xxSmall
+      iconSize: props.iconSize
     }"
   />
 </template>
@@ -57,9 +57,9 @@ svg {
     width: 50px;
     height: 50px;
   }
-      &.xxSmall {
-    width: 40px;
-    height: 40px;
+    &.iconSize {
+    width: 24px;
+    height: 24px;
   }
 }
 </style>

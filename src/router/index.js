@@ -15,6 +15,16 @@ const routes = [
   path: '/pagethree',
     name: 'PageThree',
     component: () => import('../components/pages/PageThirdKandidat.vue')
+  },
+      {
+  path: '/dashboardsite',
+    name: 'DashboardSite',
+    component: () => import('../components/dashboard/DashboardSite.vue')
+  },
+    {
+  path: '/login',
+    name: 'LogInDashboard',
+    component: () => import('../components/dashboard/LogInDashboard.vue')
   }
 ]
 

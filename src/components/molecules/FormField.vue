@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue'
+import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -10,58 +11,84 @@ const props = defineProps({
   error: { type: Boolean, default: false },
   touched: { type: Boolean, default: false },
   errorMessage: { type: String, default: '' },
-  link: { type: String, default: '' } // <-- Ny prop til link
+  showToggle: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:modelValue', 'blur', 'input'])
+
 const localValue = ref(props.modelValue)
+const showPassword = ref(false)
 
-
+watch(() => props.modelValue, (newVal) => (localValue.value = newVal))
+watch(localValue, (newVal) => emit('update:modelValue', newVal))
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
+
+function onStatusChange(payload) {
+  // payload = { id, value } from dropdown
+  emit('statusChange', { rowId: props.rowId, value: payload.value })
+}
+
 </script>
+
 
 <template>
   <div class="formGroup">
-    <!-- Hvis der er et link, render <a> i label -->
-    <label :for="id" :class="{ errorLabel: isError }">
-      <template v-if="link">
-        <a :href="link" target="_blank" rel="noopener noreferrer">{{ label }}</a>
-      </template>
-      <template v-else>{{ label }}</template>
-    </label>
+    <label :for="id" :class="{ errorLabel: isError }">{{ label }}</label>
+    
+    <div class="inputWrapper">
+      <!-- Hvis der er slot, brug den -->
+      <slot v-if="$slots.default"></slot>
 
-    <textarea
-      v-if="fieldType === 'textarea'"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="localValue"
-      @blur="emit('blur')"
-      @input="emit('input', $event)"
-      :class="{ errorField: isError, hasValue: hasValue }"
-    ></textarea>
+      <!-- Ellers default input -->
+      <textarea
+        v-if="fieldType === 'textarea'"
+        :id="id"
+        :placeholder="placeholder"
+        v-model="localValue"
+        @blur="emit('blur')"
+        @input="emit('input', $event)"
+        :maxlength="150"
+        :class="['textareaField', { hasValue: hasValue }]"
+      ></textarea>
 
-    <input
-      v-else
-      :type="fieldType"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="localValue"
-      @blur="emit('blur')"
-      @input="emit('input', $event)"
-      :class="{ errorField: isError, hasValue: hasValue }"
-    />
+      <input  
+        v-else
+        :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType"
+        :id="id"
+        :placeholder="placeholder"
+        v-model="localValue"
+        @blur="emit('blur')"
+        @input="emit('input', $event)"
+        :class="{ errorField: isError, hasValue: hasValue }"
+      />
 
-<p v-if="isError && errorMessage" class="errorMessage">{{ errorMessage }}</p>
+      <!-- Eye / EyeOff ikon -->
+      <button
+        v-if="showToggle"
+        type="button"
+        class="eyeToggle"
+        @click="showPassword = !showPassword"
+      >
+        <BasicIconAndLogo
+          :name="showPassword ? 'Eye' : 'EyeOff'"
+          :iconSize="true"
+        />
+      </button>
+    </div>
+
+    <p v-if="isError && errorMessage" class="errorMessage">{{ errorMessage }}</p>
   </div>
 </template>
 
+
 <style scoped lang="scss">
+
 .formGroup {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 
   label {
     margin-bottom: 0.5rem;
@@ -115,5 +142,56 @@ const isError = computed(() => props.error && props.touched)
   .errorLabel {
     color: $dangerRed;
   }
+  
 }
+
+ .inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+
+    input {
+      width: 100%;
+      padding-right: 2.5rem; // plads til ikonet
+    }
+
+    .eyeToggle {
+      position: absolute;
+      right: 0.6rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .textareaField {
+  width: 100%;
+  height: 135px;         // større højde ✔️
+  resize: none;          // lås størrelse
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid $sekundareBlue;
+  background-color: $whiteColor;
+  @include bodyText;
+
+  &::placeholder {
+    color: $darkGrey;
+  }
+
+  &:focus {
+    border-color: $darkGrey;
+    outline: none;
+  }
+  
+    &.hasValue {
+      border-color: $darkGrey;
+      color: $black;
+    }
+}
+
+
 </style>

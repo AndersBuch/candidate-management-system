@@ -1,14 +1,23 @@
 <script setup>
-import FormField from '@/components/molecules/FormField.vue'
+import Modal from '@/components/Modal.vue'
+import InputField from '@/components/atoms/InputField.vue'
 import FormLabel from '@/components/molecules/FormLabel.vue'
+import FormField from '@/components/molecules/FormField.vue'
 import Button from '@/components/atoms/Button.vue'
-import UploadeBoks from '@/components/molecules/UploadeBoks.vue'
+import FormDropdown from '@/components/molecules/FormDropdown.vue'
+import UploadButton from '@/components/dashboard/UploadButton.vue'
 
-import { reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 
-// Placeholder funktioner til UploadeBoks
-function handleFile(f) { console.log('valgt fil', f) }
-function handleError(e) { console.warn('upload error', e) }
+const showModal = ref(false)
+
+const openModal = () => {
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
 
 const formData = reactive({
   name: '',
@@ -20,6 +29,10 @@ const formData = reactive({
   postal: '',
   message: '',
   linkedin: '',
+  age: '',
+  company: '',
+  status: '',
+
   touched: {
     name: false,
     lastname: false,
@@ -29,17 +42,20 @@ const formData = reactive({
     city: false,
     postal: false,
     linkedin: false,
-    message: false
+    message: false,
+    status: false
   }
 })
-
-
 
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
   const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
   formData[key] = value.slice(0, maxLength) // Begræns længde
 }
+
+// Placeholder funktioner til UploadeBoks
+function handleFile(f) { console.log('valgt fil', f) }
+function handleError(e) { console.warn('upload error', e) }
 
 // Simpel emailvalidering
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -70,8 +86,21 @@ const submitForm = () => {
 </script>
 
 <template>
-  <form class="customForm" @submit.prevent="submitForm">
-    <div class="formGrid">
+  <button @click="openModal">
+    Åben denne her
+  </button>
+
+  <!-- Brug af modal-komponenten -->
+  <Modal
+    v-if="showModal"
+    modalTitle="Tilføj kandidat"
+    titleAlign="left"
+    @close="closeModal"
+    height="900px"
+  >
+    <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
+
+<div class="formGrid">
       <FormField
         id="name"
         label="Fornavn"
@@ -88,6 +117,19 @@ const submitForm = () => {
         v-model="formData.lastname"
         :touched="formData.touched.lastname"
         @blur="formData.touched.lastname = true"
+      />
+
+            <!-- Email med fejlbesked -->
+      <FormField
+        id="email"
+        label="Email"
+        placeholder="Indtast din email"
+        v-model="formData.email"
+        :error="!!emailErrorMessage"          
+        :touched="formData.touched.email"
+        :error-message="emailErrorMessage"  
+        @input="formData.touched.email = true"
+        @blur="formData.touched.email = true"
       />
 
       <FormField
@@ -109,6 +151,13 @@ const submitForm = () => {
         :touched="formData.touched.postal"
         @input="handleNumberInput($event, 4, 'postal')"
         @blur="formData.touched.postal = true"
+      />
+
+      <FormDropdown
+        v-model="formData.status"
+        :options="statusOptions"
+        label="Status"
+        :touched="formData.touched.status"
       />
 
       <FormField
@@ -142,119 +191,132 @@ const submitForm = () => {
       />
 
 
-      <!-- Email med fejlbesked -->
-<FormField
-  id="email"
-  label="Email"
-  placeholder="Indtast din email"
-  v-model="formData.email"
-  :error="!!emailErrorMessage"          
-  :touched="formData.touched.email"
-  :error-message="emailErrorMessage"  
-  @input="formData.touched.email = true"
-  @blur="formData.touched.email = true"
-/>
-
 <FormLabel/>
 
-    </div>
+            <FormField
+        id="age"
+        label="Alder"
+        placeholder="Alder"
+        v-model="formData.age"
+        :touched="formData.touched.age"
+        @input="handleNumberInput($event, 2, 'age')"
+        @blur="formData.touched.age = true"
+      />
 
-    <div class="UploadeBokse">
-  <UploadeBoks
-    title="Upload CV"
-    hint="Klik på knappen eller træk filer her"
-    secondary-text="Fil typer: doc(x) og pdf maks 2MB"
-    success-text="Filen er upload"
-    error-text="Kun pdf/doc(x) op til 2MB"
-    button-text="Upload CV"
-    accept=".pdf,.doc,.docx"
-    :max-size-mb="2"
-    :multiple="false"
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
+      <FormField
+        id="company"
+        label="Nuværenede Firma"
+        placeholder="Nuværenede Firma"
+        v-model="formData.company"
+        :touched="formData.touched.company"
+        @blur="formData.touched.company = true"
+      />
 
-  <UploadeBoks
-    title="Upload profil billede"
-    hint="Klik på knappen eller træk filer her"
-    secondary-text="Fil typer: jpg og png maks 2MB"
-    success-text="profil billede klar"
-    error-text="Kun .png eller .jpg op til 2MB"
-    button-text="Upload profil billede"
-    accept=".png, .jpg"
-    :max-size-mb="2"
-    :multiple="false"
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
-
-    <UploadeBoks
-    title="Upload ansøgning"
-    hint="Klik på knappen eller træk filer her"
-    secondary-text="Fil typer: doc(x) og pdf maks 2MB"
-    success-text="Filen er upload"
-    error-text="Kun pdf/doc(x) op til 2MB"
-    button-text="Upload ansøgning"
-    accept=".pdf,.doc,.docx"
-    :max-size-mb="2"
-    :multiple="false"
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
-
-<UploadeBoks
-  title="Upload andre dokumenter"
-  hint="Klik på knappen eller træk filer her"
-  secondary-text="Fil typer: doc(x) og pdf maks 2MB"
-  success-text="Filerne er uploadet"
-  error-text="Kun pdf/doc(x) op til 2MB"
-  button-text="Upload dokumenter"
-  accept=".pdf,.doc,.docx"
-  :max-size-mb="2"
-  :multiple="true"       
-  @file-selected="handleFile"
-  @error="handleError"
-  @file-removed="handleRemoved"
-/>
+      <FormField
+        id="message"
+        label="Note"
+        placeholder="Maks 150 tegn"
+        fieldType="textarea"
+        v-model="formData.message"
+        :touched="formData.touched.message"
+        @blur="formData.touched.message = true"
+        class="noteField"
+      ></FormField>
 </div>
 
+  <div class="uploadeButtons">
+  <UploadButton
+    title="CV"
+    button-text="Upload"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    :multiple="false"       
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+  <UploadButton
+    title="Billede"
+    button-text="Upload"
+    accept=".png,.jpg"
+    :max-size-mb="2"
+    :multiple="false"       
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+    <UploadButton
+    title="Andre dokumenter"
+    button-text="Upload"
+    accept=".pdf,.doc,.docx,.png,.jpg"
+    :max-size-mb="2"
+    :multiple="true"   
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+
+    <UploadButton
+    title="Ansøgning"
+    button-text="Upload"
+    accept=".pdf,.doc,.docx"
+    :max-size-mb="2"
+    :multiple="false"       
+    @file-selected="handleFile"
+    @error="handleError"
+    @file-removed="handleRemoved"
+  />
+  </div>
+
     <div class="buttonContainer">
-       <Button type="default" label="Send dit CV" aria-label="Send dit CV" />
+      <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
+      <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" />
     </div>
-  </form>
+
+  </Modal>
 </template>
 
-<style scoped lang="scss">
-.customForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+<style lang="scss">
+
+.uploadeButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem 2rem; // rækkeafstand 2rem, kolonneafstand 2rem
+  margin-bottom: 50px; // ekstra luft i bunden
+
+  .uploadItem {
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      @include bigBodyText;
+      color: $black;
+      margin-bottom: 0.5rem; // afstand mellem h3 og knap
+    }
+  }
+
+  // Tilføj ekstra afstand mellem øverste og nederste rækker
+  .uploadItem:nth-child(3),
+  .uploadItem:nth-child(4) {
+    margin-top: 9rem; // mere luft mellem øverste og nederste række
+  }
+}
 
   .formGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem 2rem;
+    margin-bottom: 20px;
   }
-
-  button {
-    align-self: flex-start;
-    margin-top: 1rem;
-  }
-}
-.UploadeBokse {
-  display: inline-block;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 
 .buttonContainer {
   display: flex;
-  justify-content: center;
-  align-items: center;                
-  margin-bottom: 40px;        
+  justify-content: flex-end; /* Skubber knapper til højre */
+  gap: 20px; 
+  bottom: 0; /* altid nederst */
 }
+
 
 </style>

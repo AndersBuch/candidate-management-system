@@ -116,95 +116,71 @@ const stateClass = computed(() => {
 </script>
 
 <template>
-  <div class="uploadeBoksRoot">
+  <div class="uploadeButtonRoot">
+
+    <!-- Titel -->
     <div class="UploadTitle">
       <h3>{{ props.title }}</h3>
-
-      <div class="fileMeta" v-if="files.length">
-        <template v-for="(name, index) in fileNames" :key="index">
-          <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
-          <BasicIconAndLogo
-            class="basicIconAndLogo"
-            name="CloseGrey"
-            @click.prevent="removeFile(index)"
-            :iconSize="true"
-          />
-        </template>
-      </div>
+      <p v-if="errorMessage" class="uploadError">{{ errorMessage }}</p>
     </div>
 
+    <!-- Upload-knap -->
     <div
-      class="uploadBox"
+      class="uploadButton"
       :class="[stateClass, { dragging }]"
       @drop="onDrop"
       @dragover="onDragOver"
       @dragleave="onDragLeave"
     >
-      <div class="uploadHeader">
-        <BasicIconAndLogo :name="files.length && !errorMessage ? 'Check' : 'CloudIcon'" :iconSize="true" />
-      </div>
-
-      <div class="uploadInner">
-        <div class="centerContent">
-          <p class="pop">{{ props.hint }}</p>
-
-          <p class="uploadHint errorText" v-if="errorMessage">{{ errorMessage }}</p>
-          <p class="uploadHint successText" v-else-if="files.length">{{ props.successText }}</p>
-          <p class="secondaryText" v-else>{{ props.secondaryText }}</p>
-
-          <div class="actions">
-            <input
-              ref="fileInput"
-              :id="inputId"
-              class="fileInput"
-              type="file"
-              :accept="props.accept"
-              :multiple="props.multiple" 
-              @change="onInputChange"
-            />
-            <Button @click="triggerFileInput" :label="props.buttonText" :aria-label="props.buttonText" />
-          </div>
-        </div>
+      <div class="actions">
+        <input
+          ref="fileInput"
+          :id="inputId"
+          class="fileInput"
+          type="file"
+          :accept="props.accept"
+          :multiple="props.multiple"
+          @change="onInputChange"
+        />
+        <Button 
+          type="dashboardPrimary" 
+          @click="triggerFileInput" 
+          :label="props.buttonText" 
+          :aria-label="props.buttonText" 
+        />
       </div>
     </div>
+
+    <!-- ✔ FILE META LIGGER NU HER -->
+<div class="fileMeta" v-if="files.length">
+  <div class="fileRow" v-for="(name, index) in fileNames" :key="index">
+    <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
+    <BasicIconAndLogo
+      class="basicIconAndLogo"
+      name="CloseGrey"
+      @click.prevent="removeFile(index)"
+      :iconSize="true"
+    />
+  </div>
+</div>
+
+
   </div>
 </template>
 
+
 <style scoped lang="scss">
-.uploadBox {
-  border: 2px dashed $primaryBlue;
-  border-radius: 5px;
-  padding: 18px;
-  background: $sekundareBlue;
-  transition: border-color .15s, background .15s;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
 
-.uploadBox.error {
-  border-color: $dangerRed;
-  background-color: rgba($dangerRed, 0.1);
-
-}
-.uploadBox.success {
-  border-color: $goodGreen;
-  background: rgba($goodGreen, 0.1);
-}
-
-.uploadHeader {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+.uploadeButtonRoot {
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 .UploadTitle { //lavet
   display:flex;
   align-items:center;
   justify-content:flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   h3 {
     @include bigBodyText;
@@ -214,18 +190,36 @@ const stateClass = computed(() => {
 
 }
 
+.actions {
+    margin-bottom: 10px;
+}
+
+.fileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-width: 0; // VIGTIGSTE LINJE!
+  max-width: 330px; 
+  overflow: hidden;
+}
+
 .fileMeta { 
   display: flex;
-  align-items: center;
-  flex-wrap: wrap; 
-  gap: 10px;
-  max-width: 100%; 
+  flex-direction: column;   // ⬅ hver fil på en ny linje
+  gap: 8px;
 
   .fileLink {
     color: $goodGreen;
     text-decoration: underline;
     @include bodyText;
     cursor: default;
+    min-width: 0;
+    flex: 1 1 auto;  
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 
     &:hover {
       color: rgba($goodGreen, 0.8);
@@ -236,6 +230,7 @@ const stateClass = computed(() => {
     cursor: pointer;
     display: inline-flex; 
     transition: opacity .15s ease;
+    flex: 0 0 24px;
   }
 
   .basicIconAndLogo:hover {
@@ -244,70 +239,33 @@ const stateClass = computed(() => {
 }
 
 
-/* center content */
-.uploadInner {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:8px 0;
-}
-
-.centerContent {  //Lavet
-  text-align:center; 
-  display:flex; 
-  flex-direction:column; 
-  align-items:center; }
-
-.pop { 
-  margin:0; 
-  color:$primaryBlue; 
-  @include bigBodyText;
-} 
-
-.secondaryText { 
-  margin:0; 
-  color:$darkGrey;
-  @include bodyText; 
-} 
-
-.successText { 
-  color:$goodGreen;
-  @include bodyText; 
-}
-
-.errorText { 
-  color:$dangerRed;
-  @include bodyText; 
-}
-
-.actions { 
-  margin-top:8px; 
-  display:flex; 
-  justify-content:center; 
-}
-
 .fileInput { 
-  display:none; 
+  display:none;
 }
 
-.uploadBox.dragging { 
+.uploadError {
+  color: $dangerRed;   // rød farve til fejl
+  font-size: 0.875rem; // lidt mindre end h3
+  margin-top: 4px;     // afstand mellem titel og fejl
+}
+
+.uploadButton.dragging { 
   background: rgba($primaryBlue, 0.1); 
   }
 
-  .uploadBox.dragging {
+  .uploadButton.dragging {
   border-color: rgba($primaryBlue, 8%);
   background: rgba($primaryBlue, 0.2);
 }
 
 /* når boksen er i error-tilstand men brugeren trækker */
-.uploadBox.error.dragging {
+.uploadButton.error.dragging {
   border-color: $dangerRed; 
   background: rgba($dangerRed, 0.2); 
 }
 
 /* når boksen er i success-tilstand men brugeren trækker */
-.uploadBox.success.dragging {
+.uploadButton.success.dragging {
   border-color: $goodGreen;
   background: rgba($goodGreen, 0.2); 
 }
