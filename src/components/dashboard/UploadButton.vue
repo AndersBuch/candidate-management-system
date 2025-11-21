@@ -245,12 +245,13 @@ const stateClass = computed(() => {
 
 .uploadError {
   color: $dangerRed;   // rød farve til fejl
-  font-size: 0.875rem; // lidt mindre end h3
+  @include bodyText; // lidt mindre end h3
   margin-top: 4px;     // afstand mellem titel og fejl
 }
 
 .uploadButton.dragging { 
   background: rgba($primaryBlue, 0.1); 
+  border-radius: 5px;
   }
 
   .uploadButton.dragging {

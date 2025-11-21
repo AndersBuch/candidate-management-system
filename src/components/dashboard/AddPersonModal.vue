@@ -87,7 +87,7 @@ const submitForm = () => {
 
 <template>
   <button @click="openModal">
-    Åben denne her
+    Tilføjer kandidat
   </button>
 
   <!-- Brug af modal-komponenten -->
