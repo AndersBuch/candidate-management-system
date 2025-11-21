@@ -87,13 +87,13 @@ const submitForm = () => {
 
 <template>
   <button @click="openModal">
-    Tilføjer kandidat
+    Rediger kandidat
   </button>
 
   <!-- Brug af modal-komponenten -->
   <Modal
     v-if="showModal"
-    modalTitle="Tilføj kandidat"
+    modalTitle="Rediger kandidat"
     titleAlign="left"
     @close="closeModal"
     height="900px"
