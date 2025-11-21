@@ -58,7 +58,6 @@ function handleUndo(id) {
     </div>
     <div class="headerItem">
       <p>Tlf</p>
-      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
     </div>
     <div class="headerItem">
       <p>Email</p>
