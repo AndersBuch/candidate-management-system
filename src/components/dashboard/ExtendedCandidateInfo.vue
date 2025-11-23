@@ -47,7 +47,6 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
     <BasicIconAndLogo name="Edit" :iconSize="true" />
   </div>
 
-  <!-- Lige nu bare tekst – senere kan du bytte til textarea / form -->
   <p class="note-text">
     Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af
     fremtidens fødevaretekno-logi? Har du erfaring med at styre og overvåge
@@ -66,7 +65,11 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 
 <style scoped lang="scss">
 
-
+.exstendedCandidateContainer {
+  height: 1080px;
+  max-width: 500px;
+  overflow-y: auto;
+}
 
 .flexContainer {
   display: flex;
@@ -76,6 +79,13 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   gap: 10px;
   padding: 0 80px;
 }
+
+
+.flexContainer:first-child {
+  padding-top: 20px;
+}
+
+
 
 .adminName {
   @include boldBodyText;
@@ -121,6 +131,10 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   gap: 10px;
   padding: 0 80px;
   margin-top: 24px;
+}
+
+.flexContainer.note:last-child {
+  padding-bottom: 20px;
 }
 
 .note-header {
