@@ -1,4 +1,13 @@
 <script setup>
+
+import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
+import SideMenu from '@/components/dashboard/SideMenu.vue'
+import Tableform from '@/components/dashboard/Tableform.vue'
+import ExtendedCandidateInfo from './ExtendedCandidateInfo.vue'
+
+import { ref } from 'vue'
+const showExtendedInfo = ref(false)
+
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import SearchBar from "@/components/dashboard/SearchBar.vue"
 import Tableform from '@/components/dashboard/Tableform.vue'
@@ -28,6 +37,10 @@ function openModal() {
 
       <section class="dashboardContentWrapper">
         <div class="dashboardContent">
+          <DashboardHeader />
+          <button @click="showExtendedInfo = !showExtendedInfo">
+            {{ showExtendedInfo ? 'Skjul udvidet info' : 'Vis udvidet info' }}
+          </button>
           <div v-if="activeCompany && activePosition" class="dashboardHeader">
             <SearchBar v-model="search" placeholder="Søg..." />
             <h1 class="companyTitle">{{ activeCompany.name }}</h1>
@@ -44,12 +57,30 @@ function openModal() {
 
       </section>
 
+      <Transition name="slide-right">
+        <ExtendedCandidateInfo v-if="showExtendedInfo" />
+      </Transition>
   </div>
 </template>
 
 <style scoped lang="scss">
 .dashboardLayout {
   display: flex;
+}
+
+.dashboardContentWrapper {
+  flex: 1;
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.2s ease;
+}
+
+/* Når komponenten kommer ind */
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(40px); /* Fra højre */
 
 }
 
@@ -74,9 +105,9 @@ function openModal() {
   }
 }
 
-.dashboardContentWrapper {
-  overflow-y: auto;
-  flex: 1;
-  max-height: 1080px;
+/* Når komponenten forsvinder */
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(40px); /* Til højre */
 }
 </style>
