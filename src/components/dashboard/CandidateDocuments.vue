@@ -73,7 +73,7 @@ const sections = ref([
             {{ file.name }}
           </a>
 
-          <Button type="smalldashboard" label="Download" aria-label="Download" />
+          <Button type="smallDashboard" label="Download" aria-label="Download" />
         </li>
       </ul>
     </div>
