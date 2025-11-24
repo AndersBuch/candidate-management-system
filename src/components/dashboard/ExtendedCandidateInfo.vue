@@ -10,14 +10,14 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 
 <aside class="exstendedCandidateContainer">
 
-<section class="flexContainer">
+<section class="flexContainer flexContainer--center">
   <BasicIconAndLogo name="User" :iconSize="true" />
   <h2 class="adminName">Claus Bjerring - Admin</h2>
 </section>
 
 <div class="divider"></div>
 
-<section class="flexContainer">
+<section class="flexContainer flexContainer--center">
   <div class="iconContainer">
     <BasicIconAndLogo name="Edit" :iconSize="true" />
     <BasicIconAndLogo name="Thash" :iconSize="true" />
@@ -29,7 +29,7 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 
 <div class="divider"></div>
 
-<section class="flexContainer">
+<section class="flexContainer flexContainer--left ">
   <dl class="info-grid">
   <DefinitionRow label="Alder" value="" />
   <DefinitionRow label="Køn" value="Mand" />
@@ -43,7 +43,7 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 </dl>
 </section>
 
-<section class="flexContainer note">
+<section class="flexContainer  flexContainer--left note">
   <div class="note-header">
     <span class="note-label">Note</span>
     <BasicIconAndLogo name="Edit" :iconSize="true" />
@@ -56,7 +56,7 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   </p>
 </section>
 
-<section class="flexContainer note">
+<section class="flexContainer flexContainer--left  note">
   <CandidateDocuments />
 </section>
 
@@ -68,9 +68,10 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 <style scoped lang="scss">
 
 .exstendedCandidateContainer {
-  height: 100%;
+  height: 100vh;
   max-width: 500px;
   overflow-y: auto;
+  margin: 0 auto; 
 }
 
 .exstendedCandidateContainer::-webkit-scrollbar {
@@ -83,12 +84,16 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 
 }
 
+.flexContainer--center {
+  align-items: center;
+}
 
+.flexContainer--left {
+  align-items: flex-start;
+}
 
 .flexContainer {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
   gap: 10px;
   padding: 0 80px;

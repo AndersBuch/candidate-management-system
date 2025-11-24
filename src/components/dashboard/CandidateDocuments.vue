@@ -107,7 +107,7 @@ const sections = ref([
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 4px;
+  padding: 10px 0px;
 }
 
 /* Filnavn */
