@@ -4,12 +4,12 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import ToastDashboard from '@/components/dashboard/ToastDashboard.vue'
 import { ref } from 'vue'
 
-const rows = [
+const rows = ref([
   { name: 'Hans Hansen Ole', phone: '22283910', email: 'kontaktmail@gmail.com', status: 'Accepted', linkedin: 'https://...' },
   { name: 'Agnes Kofoed', phone: '55724901', email: 'promailhe@hotmail.com', status: 'Pending', linkedin: '' },
   { name: 'Mette Jensen', phone: '40392211', email: 'mette.jensen@gmail.com', status: 'Rejected', linkedin: '' },
   { name: 'Jonas N.', phone: '22335544', email: 'jonas@firmamail.dk', status: 'Contact', linkedin: '' }
-]
+])
 
 const activeIndex = ref(null)
 
@@ -22,9 +22,8 @@ function onStatusClick(row) {
 }
 
 function setActiveRow(index) {
-  activeIndex.value = index
+  activeIndex.value = activeIndex.value === index ? null : index
 }
-
 
 const toasts = ref([])
 
@@ -33,9 +32,9 @@ function showToast() {
 
   toasts.value.push({
     id,
-    title: 'Gemt!',
-    subtitle: 'Din ændring blev gemt.',
-    variant: 'danger',
+    title: 'Kandidat tilføjet',
+    subtitle: 'Mads Mikkels Ole',
+    variant: 'sucess',
     duration: 3000,
     showUndo: true
   })
@@ -59,7 +58,6 @@ function handleUndo(id) {
     </div>
     <div class="headerItem">
       <p>Tlf</p>
-      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
     </div>
     <div class="headerItem">
       <p>Email</p>
@@ -72,20 +70,14 @@ function handleUndo(id) {
   </div>
 
   <TableField v-for="(r, i) in rows" :key="i" :index="i" :name="r.name" :phone="r.phone" :email="r.email"
-    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @edit="() => onEdit(r)"
-    @statusClick="onStatusClick(r)" @rowClick="setActiveRow(i)" />
+    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow(i)"
+    @statusClick="newStatus => rows[i].status = newStatus" />
 
 
   <button @click="showToast">Vis toast</button>
 
   <div class="toastContainer">
-    <ToastDashboard 
-      v-for="t in toasts"
-      :key="t.id"
-      v-bind="t"
-      @close="removeToast"
-      @undo="handleUndo"
-    />
+    <ToastDashboard v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" @undo="handleUndo" />
   </div>
 
 </template>

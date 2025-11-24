@@ -1,5 +1,6 @@
 <script setup>
 import Button from '@/components/atoms/Button.vue'
+import StatusDropdown from '@/components/dashboard/StatusDropdown.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { computed, ref } from 'vue'
 
@@ -13,7 +14,8 @@ const props = defineProps({
   isActive: Boolean   // <-- prop fra parent
 })
 
-const emit = defineEmits(['edit', 'statusClick', 'rowClick'])
+const emit = defineEmits(["statusClick", "toggle", "rowClick"])
+
 
 function handleClick() {
   emit('rowClick')  // sender besked til parent om, at denne række blev klikket
@@ -50,8 +52,17 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colPhone">{{ phone }}</div>
     <div class="col colEmail">{{ email }}</div>
 
-    <Button v-if="status" :type="status.toLowerCase()" :label="getStatusLabel(status)"
-      :aria-label="getStatusLabel(status)" @click.stop="$emit('statusClick', { name, status })" />
+<div class="colStatus">
+<StatusDropdown
+  :model-value="status"
+  :is-open="isActive"
+  @toggle="emit('toggle')"
+  @update:modelValue="emit('statusClick', $event)"
+/>
+
+</div>
+
+
 
     <div class="col colActions">
       <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
@@ -72,19 +83,33 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
   padding: 18px 20px;
   border-radius: 5px;
   cursor: pointer;
-  transition: all 0.25s ease-in-out;
+  position: relative;     
+}
 
-  &:hover {
-    transform: scale(1.01);
-  }
+.colStatus {
+  position: relative; 
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .rowEven {
   background: $sekundareBlue;
+  transition: 0.2s ease;
+
+  &:hover {
+    background-color: $hoverLightBlue;
+  }
+
 }
 
 .rowOdd {
   background: $whiteColor;
+  transition: 0.2s ease;
+
+  &:hover {
+    background-color: $lightGrey;
+  }
 }
 
 .activeRow {
