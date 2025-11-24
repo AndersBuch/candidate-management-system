@@ -1,7 +1,7 @@
-<!-- components/dashboard/CandidateDocuments.vue -->
 <script setup>
-import { ref } from 'vue'
 import Button from '@/components/atoms/Button.vue'
+
+import { ref } from 'vue'
 
 const sections = ref([
   {
@@ -55,25 +55,25 @@ const sections = ref([
     <div
       v-for="section in sections"
       :key="section.id"
-      class="documents__section"
+      class="documentsSection"
     >
-      <h3 class="documents__title">{{ section.title }}</h3>
+      <h3 class="documentsTitle">{{ section.title }}</h3>
 
-      <ul class="documents__list">
+      <ul class="documentsList">
         <li
           v-for="file in section.files"
           :key="file.id"
-          class="documents__item"
+          class="documentsItem"
         >
           <a
-            class="documents__file-link"
+            class="documentsFileLink"
             :href="file.url"
             download
           >
             {{ file.name }}
           </a>
 
-          <Button type="smallDashboard" label="Download" aria-label="Download" />
+          <Button type="smallDashboard" label="Download" aria-label="Download dokumenter" />
         </li>
       </ul>
     </div>
@@ -86,23 +86,23 @@ const sections = ref([
 
 }
 
-.documents__section + .documents__section {
+.documentsSection {
   margin-top: 24px;
 }
 
-.documents__title {
+.documentsTitle {
   @include boldBodyText;
   margin-bottom: 4px;
 }
 
 /* Liste med filer */
-.documents__list {
+.documentsList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.documents__item {
+.documentsItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -111,7 +111,7 @@ const sections = ref([
 }
 
 /* Filnavn */
-.documents__file-link {
+.documentsFileLink {
   color: $goodGreen;
   text-decoration: underline;
   overflow-x: hidden;

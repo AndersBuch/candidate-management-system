@@ -29,7 +29,6 @@ function openModal() {
 
       <section class="dashboardContentWrapper">
         <div class="dashboardContent">
-          <SearchBar v-model="search" placeholder="Søg..." />
           <DashboardHeader />
           <button @click="showExtendedInfo = !showExtendedInfo">
             {{ showExtendedInfo ? 'Skjul udvidet info' : 'Vis udvidet info' }}

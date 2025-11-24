@@ -11,7 +11,6 @@
 </template>
 
 <style scoped lang="scss">
-
 .backdrop {
   position: fixed;
   inset: 0;
@@ -20,5 +19,4 @@
   align-items: center;
   justify-content: center;
 }
-
 </style>

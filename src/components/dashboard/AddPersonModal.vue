@@ -67,7 +67,6 @@ const emailErrorMessage = computed(() => {
   return ''
 })
 
-
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
 
@@ -86,11 +85,16 @@ const submitForm = () => {
 </script>
 
 <template>
-  <button @click="openModal">
-    Tilføjer kandidat
-  </button>
+      <Button 
+        type="dashboardPrimary"
+        label="Tilføj kandidat"
+        aria-label="Tilføj kandidat"
+        :showIcon="true"
+        iconName="AddPerson"
+        @click="openModal"
+      />
 
-  <!-- Brug af modal-komponenten -->
+
   <Modal
     v-if="showModal"
     modalTitle="Tilføj kandidat"
@@ -190,10 +194,9 @@ const submitForm = () => {
         @blur="formData.touched.linkedin = true"
       />
 
-
 <FormLabel/>
 
-            <FormField
+      <FormField
         id="age"
         label="Alder"
         placeholder="Alder"
@@ -221,7 +224,7 @@ const submitForm = () => {
         :touched="formData.touched.message"
         @blur="formData.touched.message = true"
         class="noteField"
-      ></FormField>
+      />
 </div>
 
   <div class="uploadeButtons">
@@ -247,7 +250,7 @@ const submitForm = () => {
     @file-removed="handleRemoved"
   />
 
-    <UploadButton
+  <UploadButton
     title="Andre dokumenter"
     button-text="Upload"
     accept=".pdf,.doc,.docx,.png,.jpg"
@@ -258,7 +261,7 @@ const submitForm = () => {
     @file-removed="handleRemoved"
   />
 
-    <UploadButton
+  <UploadButton
     title="Ansøgning"
     button-text="Upload"
     accept=".pdf,.doc,.docx"
@@ -279,12 +282,11 @@ const submitForm = () => {
 </template>
 
 <style lang="scss">
-
 .uploadeButtons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem 2rem; // rækkeafstand 2rem, kolonneafstand 2rem
-  margin-bottom: 50px; // ekstra luft i bunden
+  gap: 2rem 2rem; 
+  margin-bottom: 50px; 
 
   .uploadItem {
     display: flex;
@@ -293,14 +295,13 @@ const submitForm = () => {
     h3 {
       @include bigBodyText;
       color: $black;
-      margin-bottom: 0.5rem; // afstand mellem h3 og knap
+      margin-bottom: 0.5rem; 
     }
   }
 
-  // Tilføj ekstra afstand mellem øverste og nederste rækker
   .uploadItem:nth-child(3),
   .uploadItem:nth-child(4) {
-    margin-top: 9rem; // mere luft mellem øverste og nederste række
+    margin-top: 9rem; 
   }
 }
 
@@ -313,10 +314,8 @@ const submitForm = () => {
 
 .buttonContainer {
   display: flex;
-  justify-content: flex-end; /* Skubber knapper til højre */
+  justify-content: flex-end; 
   gap: 20px; 
-  bottom: 0; /* altid nederst */
+  bottom: 0; 
 }
-
-
 </style>

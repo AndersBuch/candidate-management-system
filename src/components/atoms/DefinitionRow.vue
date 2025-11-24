@@ -26,7 +26,6 @@ const displayValue = computed(() => {
 </script>
 
 <template>
-  
   <div :class="['definition-row', { 'definition-row--full': full }]">
     <dt class="definition-row__label">{{ label }}</dt>
     <dd class="definition-row__value">{{ displayValue }}</dd>
@@ -47,7 +46,6 @@ const displayValue = computed(() => {
 .definition-row__value {
   @include bodyText;
 }
-
 
 .definition-row--full {
   grid-column: 1 / -1;

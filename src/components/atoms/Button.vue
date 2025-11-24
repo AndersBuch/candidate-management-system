@@ -50,28 +50,23 @@ const difftentButton = computed(() => ({
   smallSecondaryButton: props.type === 'smallSecondaryButton' && !props.active,
 
   //DASHBOARD STATUS
-acceptedButton: props.type === 'accepted' && !props.active,
-pendingButton: props.type === 'pending' && !props.active,
-contactButton: props.type === 'contact' && !props.active,
-rejectedButton: props.type === 'rejected' && !props.active,
+  acceptedButton: props.type === 'accepted' && !props.active,
+  pendingButton: props.type === 'pending' && !props.active,
+  contactButton: props.type === 'contact' && !props.active,
+  rejectedButton: props.type === 'rejected' && !props.active,
 
 }))
 </script>
 
 <template>
-  <button
-    :class="[difftentButton, { disabledButton: props.disabled }]"
-    :aria-label="props.ariaLabel"
-    :disabled="props.disabled"
-    @click.stop="!props.disabled && emit('click')"
-  >
+  <button :class="[difftentButton, { disabledButton: props.disabled }]" :aria-label="props.ariaLabel"
+    :disabled="props.disabled" @click.stop="!props.disabled && emit('click')">
     <BasicIconAndLogo v-if="showIcon && iconName" :name="iconName" />
     <p>{{ label }}</p>
   </button>
 </template>
 
 <style scoped lang="scss">
-
 .disabledButton {
   opacity: 0.5;
   cursor: not-allowed;
@@ -79,50 +74,49 @@ rejectedButton: props.type === 'rejected' && !props.active,
 }
 
 .acceptedButton {
-    background-color: $goodGreen;
-    border: none;
-    width: 100px;
-    height: 35px;
+  background-color: $goodGreen;
+  border: none;
+  width: 100px;
+  height: 35px;
 
-    &:hover {
-        background-color: rgba($goodGreen, 0.9);
-    }
+  &:hover {
+    background-color: rgba($goodGreen, 0.9);
+  }
 }
 
 .pendingButton {
-    background-color: $statusOrange;
-    border: none;
-    width: 100px;
-    height: 35px;
+  background-color: $statusOrange;
+  border: none;
+  width: 100px;
+  height: 35px;
 
-    &:hover {
-        background-color: rgba($statusOrange, 0.9);
-        
-    }
+  &:hover {
+    background-color: rgba($statusOrange, 0.9);
+
+  }
 }
 
 .contactButton {
-    background-color: $statusPurple;
-    border: none;
-    width: 100px;
-    height: 35px;
+  background-color: $statusPurple;
+  border: none;
+  width: 100px;
+  height: 35px;
 
-    &:hover {
-        background-color: rgba($statusPurple, 0.9);
-    }
+  &:hover {
+    background-color: rgba($statusPurple, 0.9);
+  }
 }
 
 .rejectedButton {
-    background-color: $dangerRed;
-    border: none;
-    width: 100px;
-    height: 35px;
+  background-color: $dangerRed;
+  border: none;
+  width: 100px;
+  height: 35px;
 
-    &:hover {
-        background-color: rgba($dangerRed, 0.9);
-    }
+  &:hover {
+    background-color: rgba($dangerRed, 0.9);
+  }
 }
-
 
 p {
   @include buttonText;
@@ -132,7 +126,7 @@ p {
 button {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   width: 215px;
   height: 45px;
   gap: 5px;
@@ -143,7 +137,7 @@ button {
 
 .defaultButton {
   background-color: $primaryBlue;
-  color: $whiteColor;  
+  color: $whiteColor;
   border: none;
 
   &:hover {
@@ -167,15 +161,15 @@ button {
 }
 
 .unActiveButton {
-    background-color: $darkGrey;
-    color: $whiteColor;
-    border: none;
+  background-color: $darkGrey;
+  color: $whiteColor;
+  border: none;
 }
 
 .activeUnAktivButton {
-    background-color: $primaryBlue;
-    color: $whiteColor;
-    border: none;
+  background-color: $primaryBlue;
+  color: $whiteColor;
+  border: none;
 
   &:hover {
     background-color: $hoverBlue;
@@ -183,11 +177,11 @@ button {
 }
 
 .smallButton {
-    background-color: $primaryBlue;
-    color: $whiteColor;
-    border: none;
-    width: 120px;
-    height: 37px;
+  background-color: $primaryBlue;
+  color: $whiteColor;
+  border: none;
+  width: 120px;
+  height: 37px;
 
   &:hover {
     background-color: $hoverBlue;
@@ -195,11 +189,11 @@ button {
 }
 
 .dashboardPrimaryButton {
-    background-color: $primaryBlue;
-    color: $whiteColor;
-    border: none;
-    width: 170px;
-    height: 35px;
+  background-color: $primaryBlue;
+  color: $whiteColor;
+  border: none;
+  width: 170px;
+  height: 35px;
 
   &:hover {
     background-color: $hoverBlue;
@@ -207,11 +201,11 @@ button {
 }
 
 .smallDashboardButton {
-    background-color: $primaryBlue;
-    color: $whiteColor;
-    border: none;
-    width: 100px;
-    height: 35px;
+  background-color: $primaryBlue;
+  color: $whiteColor;
+  border: none;
+  width: 100px;
+  height: 35px;
 
   &:hover {
     background-color: $hoverBlue;
@@ -232,5 +226,4 @@ button {
     color: $black;
   }
 }
-
 </style>

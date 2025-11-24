@@ -22,7 +22,6 @@ function onCheck(e) {
 }
 </script>
 
-
 <template>
   <div class="inputBoks">
     <label :for="id" class="checkboxLabel">
@@ -53,7 +52,6 @@ function onCheck(e) {
   position: relative;
 }
 
-/* Skjul den originale checkbox */
 .checkboxLabel input[type="checkbox"] {
   appearance: none;
   width: 24px;
@@ -96,6 +94,6 @@ function onCheck(e) {
 .checkboxLabel input[type="checkbox"]:checked+.labelText+.customCheckbox::after {
   content: '✔';
   color: $whiteColor;
-  font-size: 16px;
+  @include bodyText;
 }
 </style>
