@@ -2,6 +2,8 @@
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
+
+
 </script>
 
 <template>
@@ -78,6 +80,7 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   flex-direction: column;
   gap: 10px;
   padding: 0 80px;
+  width: 100%;
 }
 
 
@@ -124,12 +127,6 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 }
 
 .flexContainer.note {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0 80px;
   margin-top: 24px;
 }
 
@@ -149,7 +146,7 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 }
 
 .note-text {
-  max-width: 315px;
+  
   @include bodyText;
 
 }
