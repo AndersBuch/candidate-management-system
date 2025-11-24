@@ -38,9 +38,7 @@ const showExtendedInfo = ref(false)
 }
 
 .dashboardContentWrapper {
-  overflow-y: auto;
   flex: 1;
-  max-height: 1080px;
 }
 
 .slide-right-enter-active,

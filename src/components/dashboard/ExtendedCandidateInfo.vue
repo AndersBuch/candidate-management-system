@@ -68,10 +68,22 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 <style scoped lang="scss">
 
 .exstendedCandidateContainer {
-  height: 1080px;
+  height: 100%;
   max-width: 500px;
   overflow-y: auto;
 }
+
+.exstendedCandidateContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.exstendedCandidateContainer {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+}
+
+
 
 .flexContainer {
   display: flex;
