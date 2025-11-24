@@ -11,7 +11,7 @@ const sections = ref([
       {
         id: 'cv-1',
         name: 'MadsmikkeldsenCV.pdf',
-        url: '/dummy/MadsmikkeldsenCV.pdf', 
+        url: '/dummy/MadsmikkeldsenCV.pdf',
       },
     ],
   },
@@ -52,24 +52,12 @@ const sections = ref([
 
 <template>
   <div class="documents">
-    <div
-      v-for="section in sections"
-      :key="section.id"
-      class="documentsSection"
-    >
+    <div v-for="section in sections" :key="section.id" class="documentsSection">
       <h3 class="documentsTitle">{{ section.title }}</h3>
 
       <ul class="documentsList">
-        <li
-          v-for="file in section.files"
-          :key="file.id"
-          class="documentsItem"
-        >
-          <a
-            class="documentsFileLink"
-            :href="file.url"
-            download
-          >
+        <li v-for="file in section.files" :key="file.id" class="documentsItem">
+          <a class="documentsFileLink" :href="file.url" download>
             {{ file.name }}
           </a>
 
@@ -83,7 +71,6 @@ const sections = ref([
 <style scoped lang="scss">
 .documents {
   margin-top: 24px;
-
 }
 
 .documentsSection {
@@ -92,7 +79,6 @@ const sections = ref([
 
 .documentsTitle {
   @include boldBodyText;
-  margin-bottom: 4px;
 }
 
 /* Liste med filer */
@@ -117,5 +103,4 @@ const sections = ref([
   overflow-x: hidden;
   @include bodyText;
 }
-
 </style>

@@ -6,7 +6,6 @@ import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
 import { storeToRefs } from 'pinia'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
-
 const companyStore = useCompanyStore()
 
 const { activeCompany, activePosition } = storeToRefs(companyStore)
@@ -21,10 +20,9 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
 
     <div class="titleRow">
       <p class="positionTitle">{{ activePosition.name }}</p>
-
-  <AddPersonModal />
-      
+      <AddPersonModal />
     </div>
+
     <p class="applicationId">
       ID:<span class="idSpan">{{ activePosition.applicationId }}</span>
     </p>
@@ -39,13 +37,13 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
   margin-bottom: 10px;
 
   display: flex;
-  flex-direction: column;  // ← vigtig, så alt stacker korrekt
+  flex-direction: column; 
   gap: 5px;
 
   .titleRow {
     display: flex;
     align-items: center;
-    justify-content: space-between; // ← placerer knappen til højre for positionTitle
+    justify-content: space-between; 
     width: 100%;
     z-index: 999;
   }
@@ -69,5 +67,4 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
     color: $darkGrey;
   }
 }
-
 </style>
