@@ -44,7 +44,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Backdrop>
+  <Backdrop @clickOutside="$emit('close')">
     <div class="modal" :style="{ height: props.height, maxHeight: '90vh' }">
 
       <div class="modalHeader" :style="{ textAlign: props.titleAlign }">

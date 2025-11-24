@@ -2,76 +2,80 @@
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
+import EditModal from '@/components/dashboard/EditModal.vue'
 
+import { ref } from 'vue'
 
+const props = defineProps({
+  activeIndex: { type: [Number, String, null], default: null }
+})
+
+const showExtendedInfo = ref(false) 
 </script>
 
 <template>
+  <aside v-if="props.activeIndex !== null" class="exstendedCandidateContainer">
 
-<aside class="exstendedCandidateContainer">
+    <section class="flexContainer flexContainerCenter">
+      <BasicIconAndLogo name="User" :iconSize="true" />
+      <h2 class="adminName">Claus Bjerring - Admin</h2>
+    </section>
 
-<section class="flexContainer flexContainer--center">
-  <BasicIconAndLogo name="User" :iconSize="true" />
-  <h2 class="adminName">Claus Bjerring - Admin</h2>
-</section>
+    <div class="divider"></div>
 
-<div class="divider"></div>
+    <section class="flexContainer flexContainerCenter">
+      <div class="iconContainer">
+        <EditModal />
+        <BasicIconAndLogo name="Thash" :iconSize="true" />
+      </div>
+      <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture">
+      <h3 class="candidateName">Mads Mikkelsen Hansen</h3>
+      <BasicIconAndLogo name="LinkinIcon" :iconSize="true" />
+    </section>
 
-<section class="flexContainer flexContainer--center">
-  <div class="iconContainer">
-    <BasicIconAndLogo name="Edit" :iconSize="true" />
-    <BasicIconAndLogo name="Thash" :iconSize="true" />
-  </div>
-  <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture">
-  <h3 class="candidateName">Mads Mikkelsen Hansen</h3>
-  <BasicIconAndLogo name="LinkinIcon" :iconSize="true" />
-</section>
+    <div class="divider"></div>
 
-<div class="divider"></div>
+    <section class="flexContainer flexContainerLeft ">
+      <dl class="infoGrid">
+        <DefinitionRow label="Alder" value="" />
+        <DefinitionRow label="Køn" value="Mand" />
+        <DefinitionRow label="Telefon" value="11223344" />
+        <DefinitionRow label="Status" value="Afventer" />
+        <DefinitionRow label="Email" value="Madharenmail@gmail.com" full />
+        <DefinitionRow label="Adresse" value="Mullervej 2" />
+        <DefinitionRow label="Postnummer" value="5230" />
+        <DefinitionRow label="By" value="Odense" />
+        <DefinitionRow label="Nuværende firma" value="" />
+      </dl>
+    </section>
 
-<section class="flexContainer flexContainer--left ">
-  <dl class="info-grid">
-  <DefinitionRow label="Alder" value="" />
-  <DefinitionRow label="Køn" value="Mand" />
-  <DefinitionRow label="Telefon" value="11223344" />
-  <DefinitionRow label="Status" value="Afventer" />
-  <DefinitionRow label="Email" value="Madharenmail@gmail.com" full  />
-  <DefinitionRow label="Adresse" value="Mullervej 2"  />
-  <DefinitionRow label="Postnummer" value="5230" />
-  <DefinitionRow label="By" value="Odense" />
-  <DefinitionRow label="Nuværende firma" value=""  />
-</dl>
-</section>
+    <section class="flexContainer  flexContainerLeft note">
+      <div class="noteHeader">
+        <span class="noteLabel">Note</span>
+        <BasicIconAndLogo name="Edit" :iconSize="true" />
+      </div>
 
-<section class="flexContainer  flexContainer--left note">
-  <div class="note-header">
-    <span class="note-label">Note</span>
-    <BasicIconAndLogo name="Edit" :iconSize="true" />
-  </div>
+      <p class="noteText">
+        Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af
+        fremtidens fødevaretekno-logi? Har du erfaring med at styre og overvåge
+        produktionsprocesser?
+      </p>
+    </section>
 
-  <p class="note-text">
-    Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af
-    fremtidens fødevaretekno-logi? Har du erfaring med at styre og overvåge
-    produktionsprocesser?
-  </p>
-</section>
+    <section class="flexContainer flexContainerLeft note">
+      <CandidateDocuments />
+    </section>
 
-<section class="flexContainer flexContainer--left  note">
-  <CandidateDocuments />
-</section>
-
-</aside>
-
-
+  </aside>
 </template>
 
 <style scoped lang="scss">
-
 .exstendedCandidateContainer {
   height: 100vh;
   max-width: 500px;
   overflow-y: auto;
-  margin: 0 auto; 
+  margin: 0 auto;
+  color: $black;
 }
 
 .exstendedCandidateContainer::-webkit-scrollbar {
@@ -84,11 +88,11 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 
 }
 
-.flexContainer--center {
+.flexContainerCenter {
   align-items: center;
 }
 
-.flexContainer--left {
+.flexContainerLeft {
   align-items: flex-start;
 }
 
@@ -100,12 +104,9 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   width: 100%;
 }
 
-
 .flexContainer:first-child {
   padding-top: 20px;
 }
-
-
 
 .adminName {
   @include boldBodyText;
@@ -136,9 +137,10 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   @include boldBodyText;
 }
 
-.info-grid {
+.infoGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;  /* 2 kolonner */
+  grid-template-columns: 1fr 1fr;
+  /* 2 kolonner */
   column-gap: 40px;
   row-gap: 24px;
 }
@@ -151,21 +153,18 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
   padding-bottom: 20px;
 }
 
-.note-header {
+.noteHeader {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-
-.note-label {
+.noteLabel {
   @include boldBodyText;
 }
 
-.note-text {
-  
+.noteText {
   @include bodyText;
-
+  color: $black
 }
-
 </style>

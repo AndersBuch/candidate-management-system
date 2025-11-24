@@ -2,11 +2,16 @@
 import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import Tableform from '@/components/dashboard/Tableform.vue'
-import ExtendedCandidateInfo from './ExtendedCandidateInfo.vue'
+import ExtendedCandidateInfo from '@/components/dashboard/ExtendedCandidateInfo.vue'
 
 import { ref } from 'vue'
 
 const showExtendedInfo = ref(false)
+const activeIndex = ref(null)
+function handleOpenCandidate(index) {
+  activeIndex.value = index
+  showExtendedInfo.value = index !== null
+}
 </script>
 
 <template>
@@ -16,16 +21,14 @@ const showExtendedInfo = ref(false)
     <section class="dashboardContentWrapper">
       <div class="dashboardContent">
         <DashboardHeader />
-        <button @click="showExtendedInfo = !showExtendedInfo">
-          {{ showExtendedInfo ? 'Skjul udvidet info' : 'Vis udvidet info' }}
-        </button>
-        <Tableform />
+        <Tableform @openCandidate="handleOpenCandidate" />
       </div>
     </section>
 
     <Transition name="slide-right">
-      <ExtendedCandidateInfo v-if="showExtendedInfo" />
+      <ExtendedCandidateInfo v-if="showExtendedInfo" :active-index="activeIndex" />
     </Transition>
+
   </div>
 </template>
 

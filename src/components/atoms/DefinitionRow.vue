@@ -26,28 +26,28 @@ const displayValue = computed(() => {
 </script>
 
 <template>
-  <div :class="['definition-row', { 'definition-row--full': full }]">
-    <dt class="definition-row__label">{{ label }}</dt>
-    <dd class="definition-row__value">{{ displayValue }}</dd>
+  <div :class="['definitionRow', { 'definitionRowFull': full }]">
+    <dt class="definitionRowLabel">{{ label }}</dt>
+    <dd class="definitionRowValue">{{ displayValue }}</dd>
   </div>
 </template>
 
 <style scoped lang="scss">
-.definition-row {
+.definitionRow {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.definition-row__label {
+.definitionRowLabel {
   @include boldBodyText;
 }
 
-.definition-row__value {
+.definitionRowValue {
   @include bodyText;
 }
 
-.definition-row--full {
+.definitionRowFull {
   grid-column: 1 / -1;
 }
 </style>

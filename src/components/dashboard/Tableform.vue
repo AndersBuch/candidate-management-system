@@ -2,7 +2,10 @@
 import TableField from '@/components/dashboard/TableField.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import ToastDashboard from '@/components/dashboard/ToastDashboard.vue'
+import EditModal from '@/components/dashboard/EditModal.vue'
 import { ref } from 'vue'
+
+const emit = defineEmits(['openCandidate'])   // <-- tilføjet
 
 const rows = ref([
   { name: 'Hans Hansen Ole', phone: '22283910', email: 'kontaktmail@gmail.com', status: 'Accepted', linkedin: 'https://...' },
@@ -21,9 +24,30 @@ function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
 
+function updateStatus(index, newStatus) {
+  if (typeof index !== 'number') return
+  if (!rows.value[index]) return
+  rows.value[index].status = newStatus
+  console.log(`Status for row ${index} updated to:`, newStatus)
+}
+
+// ændret: sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
 function setActiveRow(index) {
   activeIndex.value = activeIndex.value === index ? null : index
+  emit('openCandidate', activeIndex.value)  // sender til DashboardSite
 }
+
+
+function getStatusLabel(status) {
+  switch (status?.toLowerCase()) {
+    case 'accepted': return 'Accepteret'
+    case 'pending': return 'Afventer'
+    case 'contact': return 'Kontakt'
+    case 'rejected': return 'Afvist'
+    default: return status || 'Ukendt'
+  }
+}
+
 
 const toasts = ref([])
 
@@ -48,6 +72,7 @@ function handleUndo(id) {
   console.log("Undo for:", id)
 }
 
+const showExtendedInfo = ref(false)
 </script>
 
 <template>
@@ -69,9 +94,20 @@ function handleUndo(id) {
     </div>
   </div>
 
-  <TableField v-for="(r, i) in rows" :key="i" :index="i" :name="r.name" :phone="r.phone" :email="r.email"
-    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow(i)"
-    @statusClick="newStatus => rows[i].status = newStatus" />
+<TableField
+  v-for="(r, i) in rows"
+  :key="i"
+  :index="i"
+  :name="r.name"
+  :phone="r.phone"
+  :email="r.email"
+  :status="r.status"
+  :linkedin-url="r.linkedin"
+  :is-active="activeIndex === i"
+  @rowClick="setActiveRow"
+  @statusClick="updateStatus"
+/>
+
 
 
   <button @click="showToast">Vis toast</button>
@@ -80,6 +116,7 @@ function handleUndo(id) {
     <ToastDashboard v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" @undo="handleUndo" />
   </div>
 
+  <EditModal />
 </template>
 
 
