@@ -3,6 +3,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import Tableform from '@/components/dashboard/Tableform.vue'
 import ExtendedCandidateInfo from '@/components/dashboard/ExtendedCandidateInfo.vue'
+import Fromi from '@/components/atoms/ConfimationForm.vue'
 
 import { ref } from 'vue'
 
@@ -22,6 +23,7 @@ function handleOpenCandidate(index) {
       <div class="dashboardContent">
         <DashboardHeader />
         <Tableform @openCandidate="handleOpenCandidate" />
+        <Fromi />
       </div>
     </section>
 

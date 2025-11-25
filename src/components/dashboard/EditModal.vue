@@ -12,6 +12,7 @@ import { ref, reactive, computed, watch } from 'vue'
 
 const showModal = ref(false)
 
+
 const openModal = () => {
   showModal.value = true
 }
@@ -93,9 +94,16 @@ function handleRemoved(file) {
 </script>
 
 <template>
-  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button" tabindex="0"
-    :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
-
+<BasicIconAndLogo 
+  :name="showModal ? 'EditWhite' : 'Edit'" 
+  :iconSize="true" 
+  class="iconBtn" 
+  role="button" 
+  tabindex="0" 
+  :aria-label="showModal ? 'Aktiv' : 'Rediger'" 
+  @click.stop="onEdit" 
+/>
+ <transition name="fade">
   <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
     <div class="formGrid">
@@ -166,6 +174,7 @@ function handleRemoved(file) {
     </div>
 
   </Modal>
+  </transition>
 </template>
 
 <style lang="scss">
@@ -217,5 +226,17 @@ function handleRemoved(file) {
     transform: scale(1.1);
     opacity: 0.9;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

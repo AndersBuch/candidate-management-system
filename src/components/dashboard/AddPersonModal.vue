@@ -109,7 +109,7 @@ function confirmAdd() {
 <template>
   <Button type="dashboardPrimary" label="Tilføj kandidat" aria-label="Tilføj kandidat" :showIcon="true"
     iconName="AddPerson" @click="openModal" />
-
+ <transition name="fade">
   <Modal v-if="showModal" modalTitle="Tilføj kandidat" titleAlign="left" @close="closeModal" height="900px">
     <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
 
@@ -180,6 +180,7 @@ function confirmAdd() {
     </div>
 
   </Modal>
+  </transition>
 
   <div class="toastWrapper">
     <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
@@ -233,5 +234,17 @@ function confirmAdd() {
   justify-content: flex-end;
   gap: 20px;
   bottom: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>
