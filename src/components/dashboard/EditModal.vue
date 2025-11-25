@@ -12,6 +12,7 @@ import { ref, reactive, computed, watch } from 'vue'
 
 const showModal = ref(false)
 
+
 const openModal = () => {
   showModal.value = true
 }
@@ -93,8 +94,15 @@ function handleRemoved(file) {
 </script>
 
 <template>
-  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button" tabindex="0"
-    :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
+<BasicIconAndLogo 
+  :name="showModal ? 'EditWhite' : 'Edit'" 
+  :iconSize="true" 
+  class="iconBtn" 
+  role="button" 
+  tabindex="0" 
+  :aria-label="showModal ? 'Aktiv' : 'Rediger'" 
+  @click.stop="onEdit" 
+/>
 
   <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
