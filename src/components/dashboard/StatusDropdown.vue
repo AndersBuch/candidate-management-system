@@ -1,5 +1,6 @@
 <script setup>
 import Button from '@/components/atoms/Button.vue'
+
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const emit = defineEmits(["update:modelValue"])
@@ -29,7 +30,6 @@ function getLabelColor(value) {
     default: return '#333';
   }
 }
-
 
 function selectOption(opt) {
   emit("update:modelValue", opt.value)
@@ -73,10 +73,7 @@ onBeforeUnmount(() => {
       </div>
     </transition>
   </div>
-
 </template>
-
-
 
 <style scoped lang="scss">
 .slide-enter-from,
@@ -111,7 +108,7 @@ onBeforeUnmount(() => {
   text-align: center;
   border-radius: 15px;
   padding: 10px 0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  box-shadow: $boxShadow;
   z-index: 99999;
 
   p {
@@ -119,7 +116,6 @@ onBeforeUnmount(() => {
     padding: 6px 20px;
   }
 }
-
 
 .divider {
   border-bottom: 2px solid $lightGrey;

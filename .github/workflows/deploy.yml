@@ -1,4 +1,4 @@
-name: CI & Deploy (main only)
+name: Build & Deploy Vue + API to simply.com
 
 on:
   push:
@@ -31,23 +31,22 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-  # Deploy only when pushing/merging to main
-  deploy-prod:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run build
-      - name: FTP deploy
+      - name: FTP deploy frontend
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/
-          server-dir: ${{ secrets.FTP_PATH }}   # fx /public_html/app/
-          dangerous-clean-slate: false         # så din manuelle .htaccess bliver
+          server-dir: /public_html/app/
+          dangerous-clean-slate: false
+
+      - name: FTP deploy backend API
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: api/
+          server-dir: /public_html/api/
+          dangerous-clean-slate: false

@@ -1,6 +1,7 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Button from '@/components/atoms/Button.vue'
+
 import { ref, computed } from 'vue'
 
 const props = defineProps({
@@ -12,14 +13,27 @@ const props = defineProps({
   buttonText: { type: String, default: 'Upload filer' },
   accept: { type: String, default: '.pdf, .doc, .docx, .png, .jpg' },
   maxSizeMB: { type: Number, default: 2 },
-  multiple: { type: Boolean, default: false } 
+  multiple: { type: Boolean, default: false }
 })
+
+const {
+  title,
+  hint,
+  secondaryText,
+  successText,
+  errorText,
+  buttonText,
+  accept,
+  maxSizeMB,
+  multiple
+} = props
+
 
 const emit = defineEmits(['file-selected', 'error', 'file-removed'])
 
 const fileInput = ref(null)
 const dragging = ref(false)
-const files = ref([]) 
+const files = ref([])
 const errorMessage = ref('')
 const inputId = 'upload-input-' + Date.now().toString(36)
 
@@ -28,15 +42,15 @@ function triggerFileInput() {
 }
 
 const acceptList = computed(() =>
-  props.accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+  accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
 )
 
 function validateAndAddFiles(fileList) {
   errorMessage.value = ''
-  const maxBytes = props.maxSizeMB * 1024 * 1024
+  const maxBytes = maxSizeMB * 1024 * 1024
 
   // Hvis multiple = false → tillad kun en fil
-  if (!props.multiple && fileList.length > 1) {
+  if (!multiple && fileList.length > 1) {
     errorMessage.value = 'Du kan kun uploade én fil her.'
     emit('error', { reason: 'single-only', count: fileList.length })
     return
@@ -56,29 +70,27 @@ function validateAndAddFiles(fileList) {
     })
 
     if (!extOk) {
-      errorMessage.value = props.errorText
+      errorMessage.value = errorText
       emit('error', { reason: 'type', file: f })
       continue
     }
 
     if (f.size > maxBytes) {
-      errorMessage.value = `Filen er for stor (max ${props.maxSizeMB}MB)`
+      errorMessage.value = `Filen er for stor (max ${maxSizeMB}MB)`
       emit('error', { reason: 'size', file: f })
       continue
     }
 
     // Hvis kun en fil må vælges, overskriv i stedet for at tilføje
-    if (!props.multiple) {
+    if (!multiple) {
       files.value = [f]
     } else {
       files.value.push(f)
     }
   }
 
-  emit('file-selected', props.multiple ? files.value : files.value[0])
+  emit('file-selected', multiple ? files.value : files.value[0])
 }
-
-
 
 function onInputChange(e) {
   const fileList = e.target.files
@@ -120,66 +132,42 @@ const stateClass = computed(() => {
 
     <!-- Titel -->
     <div class="UploadTitle">
-      <h3>{{ props.title }}</h3>
+      <h3>{{ title }}</h3>
       <p v-if="errorMessage" class="uploadError">{{ errorMessage }}</p>
     </div>
 
     <!-- Upload-knap -->
-    <div
-      class="uploadButton"
-      :class="[stateClass, { dragging }]"
-      @drop="onDrop"
-      @dragover="onDragOver"
-      @dragleave="onDragLeave"
-    >
+    <div class="uploadButton" :class="[stateClass, { dragging }]" @drop="onDrop" @dragover="onDragOver"
+      @dragleave="onDragLeave">
       <div class="actions">
-        <input
-          ref="fileInput"
-          :id="inputId"
-          class="fileInput"
-          type="file"
-          :accept="props.accept"
-          :multiple="props.multiple"
-          @change="onInputChange"
-        />
-        <Button 
-          type="dashboardPrimary" 
-          @click="triggerFileInput" 
-          :label="props.buttonText" 
-          :aria-label="props.buttonText" 
-        />
+        <input ref="fileInput" :id="inputId" class="fileInput" type="file" :accept="accept" :multiple="multiple"
+          @change="onInputChange" />
+        <Button type="dashboardPrimary" @click="triggerFileInput" :label="buttonText" :aria-label="buttonText" />
       </div>
     </div>
 
     <!-- ✔ FILE META LIGGER NU HER -->
-<div class="fileMeta" v-if="files.length">
-  <div class="fileRow" v-for="(name, index) in fileNames" :key="index">
-    <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
-    <BasicIconAndLogo
-      class="basicIconAndLogo"
-      name="CloseGrey"
-      @click.prevent="removeFile(index)"
-      :iconSize="true"
-    />
-  </div>
-</div>
-
-
+    <div class="fileMeta" v-if="files.length">
+      <div class="fileRow" v-for="(name, index) in fileNames" :key="index">
+        <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
+        <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeFile(index)"
+          :iconSize="true" />
+      </div>
+    </div>
   </div>
 </template>
 
-
 <style scoped lang="scss">
-
 .uploadeButtonRoot {
-    margin-bottom: 20px;
-    width: 100%;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
-.UploadTitle { //lavet
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
+.UploadTitle {
+  //lavet
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   margin-bottom: 10px;
 
   h3 {
@@ -187,11 +175,10 @@ const stateClass = computed(() => {
     margin-right: 20px;
 
   }
-
 }
 
 .actions {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .fileRow {
@@ -200,13 +187,13 @@ const stateClass = computed(() => {
   align-items: center;
   width: 100%;
   min-width: 0; // VIGTIGSTE LINJE!
-  max-width: 330px; 
+  max-width: 330px;
   overflow: hidden;
 }
 
-.fileMeta { 
+.fileMeta {
   display: flex;
-  flex-direction: column;   // ⬅ hver fil på en ny linje
+  flex-direction: column; // ⬅ hver fil på en ny linje
   gap: 8px;
 
   .fileLink {
@@ -215,7 +202,7 @@ const stateClass = computed(() => {
     @include bodyText;
     cursor: default;
     min-width: 0;
-    flex: 1 1 auto;  
+    flex: 1 1 auto;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -228,7 +215,7 @@ const stateClass = computed(() => {
 
   .basicIconAndLogo {
     cursor: pointer;
-    display: inline-flex; 
+    display: inline-flex;
     transition: opacity .15s ease;
     flex: 0 0 24px;
   }
@@ -238,37 +225,35 @@ const stateClass = computed(() => {
   }
 }
 
-
-.fileInput { 
-  display:none;
+.fileInput {
+  display: none;
 }
 
 .uploadError {
-  color: $dangerRed;   // rød farve til fejl
-  font-size: 0.875rem; // lidt mindre end h3
-  margin-top: 4px;     // afstand mellem titel og fejl
+  color: $dangerRed; // rød farve til fejl
+  @include bodyText; // lidt mindre end h3
+  margin-top: 4px; // afstand mellem titel og fejl
 }
 
-.uploadButton.dragging { 
-  background: rgba($primaryBlue, 0.1); 
-  }
+.uploadButton.dragging {
+  background: rgba($primaryBlue, 0.1);
+  border-radius: 5px;
+}
 
-  .uploadButton.dragging {
+.uploadButton.dragging {
   border-color: rgba($primaryBlue, 8%);
   background: rgba($primaryBlue, 0.2);
 }
 
 /* når boksen er i error-tilstand men brugeren trækker */
 .uploadButton.error.dragging {
-  border-color: $dangerRed; 
-  background: rgba($dangerRed, 0.2); 
+  border-color: $dangerRed;
+  background: rgba($dangerRed, 0.2);
 }
 
 /* når boksen er i success-tilstand men brugeren trækker */
 .uploadButton.success.dragging {
   border-color: $goodGreen;
-  background: rgba($goodGreen, 0.2); 
+  background: rgba($goodGreen, 0.2);
 }
-
-
 </style>

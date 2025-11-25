@@ -8,11 +8,12 @@ import Form from '@/components/organisms/FormComponent.vue'
   <Header />
   <HeroSectionPageThird />
   <main>
+
     <div class="formSection">
       <h2>Formular</h2>
       <Form />
+    </div>
 
-</div>
   </main>
 </template>
 
@@ -25,9 +26,6 @@ import Form from '@/components/organisms/FormComponent.vue'
     margin-bottom: 40px;
     margin-top: 65px;
   }
-  
-  }
 
-
+}
 </style>
-

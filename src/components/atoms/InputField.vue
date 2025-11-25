@@ -4,10 +4,12 @@ import { computed } from 'vue'
 const props = defineProps({
   label: { type: String, default: 'Tekst' },
   checked: { type: Boolean, default: false },
-  id: { type: String, default: null }
+  id: { type: String, default: null },
+  disabled: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:checked'])
+
 
 const uid = Math.random().toString(36).slice(2, 9)
 const id = props.id || `inputboks-${uid}`
@@ -21,7 +23,6 @@ function onCheck(e) {
   isChecked.value = e.target.checked
 }
 </script>
-
 
 <template>
   <div class="inputBoks">
@@ -53,7 +54,6 @@ function onCheck(e) {
   position: relative;
 }
 
-/* Skjul den originale checkbox */
 .checkboxLabel input[type="checkbox"] {
   appearance: none;
   width: 24px;
@@ -96,6 +96,6 @@ function onCheck(e) {
 .checkboxLabel input[type="checkbox"]:checked+.labelText+.customCheckbox::after {
   content: '✔';
   color: $whiteColor;
-  font-size: 16px;
+  @include bodyText;
 }
 </style>

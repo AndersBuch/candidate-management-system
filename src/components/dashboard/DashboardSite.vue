@@ -1,23 +1,17 @@
 <script setup>
+import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
 import SideMenu from '@/components/dashboard/SideMenu.vue'
-import SearchBar from "@/components/dashboard/SearchBar.vue"
 import Tableform from '@/components/dashboard/Tableform.vue'
-import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
+import ExtendedCandidateInfo from '@/components/dashboard/ExtendedCandidateInfo.vue'
+import Fromi from '@/components/atoms/ConfimationForm.vue'
 
-import { storeToRefs } from 'pinia'
-import { ref } from "vue"
-import { useCompanyStore } from '@/stores/useCompanyStore'
+import { ref } from 'vue'
 
-const search = ref("")
-const companyStore = useCompanyStore()
-
-const { activeCompany, activePosition } = storeToRefs(companyStore)
-
-// State til modal
-const isModalOpen = ref(false)
-
-function openModal() {
-  isModalOpen.value = true
+const showExtendedInfo = ref(false)
+const activeIndex = ref(null)
+function handleOpenCandidate(index) {
+  activeIndex.value = index
+  showExtendedInfo.value = index !== null
 }
 </script>
 
@@ -25,22 +19,17 @@ function openModal() {
   <div class="dashboardLayout">
     <SideMenu />
 
-      <section class="dashboardContentWrapper">
-        <div class="dashboardContent">
-          <div v-if="activeCompany && activePosition" class="dashboardHeader">
-            <SearchBar v-model="search" placeholder="Søg..." />
-            <h1 class="companyTitle">{{ activeCompany.name }}</h1>
-            <p class="positionTitle">{{ activePosition.name }}</p>
-          </div>
-          <Tableform />
-        </div>
+    <section class="dashboardContentWrapper">
+      <div class="dashboardContent">
+        <DashboardHeader />
+        <Tableform @openCandidate="handleOpenCandidate" />
+        <Fromi />
+      </div>
+    </section>
 
-
-        <!-- Modal -->
-        <AddPersonModal />
-
-
-      </section>
+    <Transition name="slide-right">
+      <ExtendedCandidateInfo v-if="showExtendedInfo" :active-index="activeIndex" />
+    </Transition>
 
   </div>
 </template>
@@ -48,33 +37,24 @@ function openModal() {
 <style scoped lang="scss">
 .dashboardLayout {
   display: flex;
-
-}
-
-.dashboardHeader {
-  background: #ffffff;
-  padding: 20px 28px;
-  border-bottom: 2px solid #e5e7eb;
-  margin-bottom: 10px;
-
-  .companyTitle {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    color: #222;
-  }
-
-  .positionTitle {
-    margin-top: 6px;
-    font-size: 15px;
-    color: #3a75ff;
-    font-weight: 500;
-  }
 }
 
 .dashboardContentWrapper {
-  overflow-y: auto;
   flex: 1;
-  max-height: 1080px;
+}
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.2s ease;
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(40px);
 }
 </style>

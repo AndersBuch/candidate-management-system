@@ -2,37 +2,41 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useCompanyStore = defineStore('company', () => {
-  // Dummydata: 2 firmaer med 2 stillinger hver
-  const companies = ref([
-    {
-      id: 1,
-      name: 'Insatech A/S',
-      positions: [
-        {
-          id: '1-1',
-          name: 'Maskinmester',
-        },
-        {
-          id: '1-2',
-          name: 'Elektriker',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Regal A/S',
-      positions: [
-        {
-          id: '2-1',
-          name: 'Svejser',
-        },
-        {
-          id: '2-2',
-          name: 'Projektleder',
-        },
-      ],
-    },
-  ])
+
+const companies = ref([
+  {
+    id: 1,
+    name: 'Insatech A/S',
+    positions: [
+      {
+        id: '1-1',
+        name: 'Maskinmester',
+        applicationId: '32&dnAj'
+      },
+      {
+        id: '1-2',
+        name: 'Elektriker',
+        applicationId: '993KD83'
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Regal A/S',
+    positions: [
+      {
+        id: '2-1',
+        name: 'Svejser',
+        applicationId: 'AB22DJ3'
+      },
+      {
+        id: '2-2',
+        name: 'Projektleder',
+        applicationId: '7ss8DJD'
+      },
+    ],
+  },
+])
 
   const activeCompanyId = ref(1)
   const activePositionId = ref('1-1')

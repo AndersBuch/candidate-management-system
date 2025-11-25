@@ -6,14 +6,14 @@ import Hero from '@/components/atoms/Hero.vue'
   <div class="heroWrapper">
     <Hero type="hero3" />
     <div class="heroContainer">
-        <h1>Lihme Protein Solutions ApS</h1>
+      <h1>Lihme Protein Solutions ApS</h1>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .heroWrapper {
-  position: relative; 
+  position: relative;
 }
 
 .heroContainer {
@@ -28,5 +28,4 @@ import Hero from '@/components/atoms/Hero.vue'
     color: $whiteColor;
   }
 }
-
 </style>
