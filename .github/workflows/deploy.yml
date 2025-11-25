@@ -1,4 +1,4 @@
-name: Build & Deploy Vue to simply.com
+name: Build & Deploy Vue + API to simply.com
 
 on:
   push:
@@ -22,12 +22,22 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: FTP deploy
+      - name: FTP deploy frontend
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: dist/   # skal ende med /
-          server-dir: ${{ endsWith(secrets.FTP_PATH, '/') && secrets.FTP_PATH || format('{0}/', secrets.FTP_PATH) }}
+          local-dir: dist/
+          server-dir: /public_html/app
+          dangerous-clean-slate: false
+
+      - name: FTP deploy backend API
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: api/
+          server-dir: /public_html/api
           dangerous-clean-slate: false
