@@ -48,6 +48,7 @@ const difftentButton = computed(() => ({
   dashboardPrimaryButton: props.type === 'dashboardPrimary' && !props.active,
   smallDashboardButton: props.type === 'smallDashboard' && !props.active,
   smallSecondaryButton: props.type === 'smallSecondaryButton' && !props.active,
+  smallRedButton: props.type === 'smallRedButton' && !props.active,
 
   //DASHBOARD STATUS
   acceptedButton: props.type === 'accepted' && !props.active,
@@ -219,11 +220,22 @@ button {
   height: 35px;
 
   &:hover {
-    background-color: $hoverLightBlue;
+    background-color: rgba($darkGrey, 0.3);
   }
 
   p {
     color: $black;
+  }
+}
+
+.smallRedButton {
+  background-color: $dangerRed;
+  border: none;
+  width: 100px;
+  height: 35px;
+
+  &:hover {
+    background-color: rgba($dangerRed, 0.7);
   }
 }
 </style>

@@ -10,21 +10,15 @@ defineProps({
   }
 })
 
-const model = defineModel() // v-model support
+const model = defineModel()
 </script>
 
 <template>
   <div class="searchWrapper">
     <BasicIconAndLogo name="Search" :iconSize="true" />
-    <input
-      type="text"
-      :placeholder="placeholder"
-      v-model="model"
-      class="searchInput"
-    />
+    <input type="text" :placeholder="placeholder" v-model="model" class="searchInput" />
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .searchWrapper {
@@ -52,5 +46,4 @@ const model = defineModel() // v-model support
   }
 
 }
-
 </style>

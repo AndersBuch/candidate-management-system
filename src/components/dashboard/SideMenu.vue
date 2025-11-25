@@ -1,7 +1,8 @@
 <script setup> 
+import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+
   import { storeToRefs } from 'pinia'
   import { useCompanyStore } from '@/stores/useCompanyStore'
-  import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
   const companyStore = useCompanyStore()
   const { companies, activeCompanyId, activePositionId } = storeToRefs(companyStore)

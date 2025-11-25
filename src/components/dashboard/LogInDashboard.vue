@@ -6,7 +6,6 @@ import Button from '@/components/atoms/Button.vue'
 import Hero from '@/components/atoms/Hero.vue'
 
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 const rememberme = ref(false)
 
@@ -84,7 +83,6 @@ function handleLogin() {
 </template>
 
 <style scoped lang="scss">
-/* Logo ovenpå hero */
 .mainLogo {
     position: absolute;
     top: 10%;
@@ -93,10 +91,9 @@ function handleLogin() {
     z-index: 3;
 }
 
-/* Login-card centrering */
 .loginPage {
     position: relative;
-    z-index: 2; // ligger over overlay
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -104,14 +101,12 @@ function handleLogin() {
     height: 100%;
 }
 
-/* Card styling */
 .card {
     width: 600px;
     height: auto;
     background: $whiteColor;
     padding: 50px;
     border-radius: 15px;
-
 
     h2 {
         @include heading3;
@@ -128,13 +123,11 @@ function handleLogin() {
     }
 }
 
-/* Form styling */
 .loginForm {
     display: grid;
     gap: 20px;
 }
 
-/* Husk mig styling */
 .rememberMe {
     display: flex;
     justify-content: space-between;

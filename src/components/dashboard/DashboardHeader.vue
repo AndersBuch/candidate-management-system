@@ -45,7 +45,6 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
     align-items: center;
     justify-content: space-between; 
     width: 100%;
-    z-index: 999;
   }
 
   .companyTitle {

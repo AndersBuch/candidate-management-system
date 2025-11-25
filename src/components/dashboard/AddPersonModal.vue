@@ -6,6 +6,7 @@ import FormField from '@/components/molecules/FormField.vue'
 import Button from '@/components/atoms/Button.vue'
 import FormDropdown from '@/components/molecules/FormDropdown.vue'
 import UploadButton from '@/components/dashboard/UploadButton.vue'
+import Toast from '@/components/dashboard/ToastDashboard.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
@@ -82,6 +83,28 @@ const submitForm = () => {
     console.log('Der er fejl i formularen')
   }
 }
+
+const toasts = ref([])
+
+function showToast() {
+    toasts.value.push({
+        id: Date.now(),
+        title: 'Kandidat tilføjet',
+        subtitle: 'Kandidaten blev tilføjet korrekt',
+        variant: 'success',
+        duration: 3000
+    })
+}
+
+function removeToast(id) {
+    toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
+function confirmAdd() {
+    closeModal()
+    showToast()
+}
+
 </script>
 
 <template>
@@ -93,7 +116,6 @@ const submitForm = () => {
         iconName="AddPerson"
         @click="openModal"
       />
-
 
   <Modal
     v-if="showModal"
@@ -275,13 +297,35 @@ const submitForm = () => {
 
     <div class="buttonContainer">
       <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
-      <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" />
+      <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" @click="confirmAdd" />
     </div>
 
   </Modal>
+
+      <div class="toastWrapper">
+<Toast
+  v-for="t in toasts"
+  :key="t.id"
+  :title="t.title"
+  :subtitle="t.subtitle"
+  :variant="t.variant"
+  :duration="t.duration"
+  @close="removeToast(t.id)"
+/>
+    </div>
 </template>
 
 <style lang="scss">
+
+.toastWrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
 .uploadeButtons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

@@ -18,7 +18,6 @@ const props = defineProps({
 
 const emit = defineEmits(["statusClick", "toggle", "rowClick"])
 
-
 function handleClick(event) {
   if (event.target.closest('.colStatus')) return
   emit('rowClick', props.index)   // sender besked til parent om, at denne række blev klikket
@@ -44,7 +43,7 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 </script>
 
 <template>
-  <div class="tableRow" :class="[rowClass, { activeRow: isActive }]" @click="handleClick" >
+  <div class="tableRow" :class="[rowClass, { activeRow: isActive }]" @click="handleClick">
     <div class="col colName">
       <div class="avatar">
         <BasicIconAndLogo :name="isActive ? 'UserWhite' : 'User'" :iconSize="true" />
@@ -55,25 +54,18 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colPhone">{{ phone }}</div>
     <div class="col colEmail">{{ email }}</div>
 
-   <div class="colStatus">
-  <StatusDropdown
-    :model-value="status"
-    :is-open="isActive"
-    @toggle="emit('rowClick', index)"
-    @update:modelValue="emit('statusClick', index, $event)"
-    @click.stop
-  />
-</div>
-
-
+    <div class="colStatus">
+      <StatusDropdown :model-value="status" :is-open="isActive" @toggle="emit('rowClick', index)"
+        @update:modelValue="emit('statusClick', $event)" @click.stop />
+    </div>
 
     <div class="col colActions">
-       <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
+      <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
         role="button" tabindex="0" aria-label="LinkedIn" @click.stop="openLinkedin" />
 
       <div class="notActions">
-  <EditModal />
-        </div>
+        <EditModal />
+      </div>
     </div>
   </div>
 </template>

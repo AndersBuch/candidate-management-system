@@ -90,7 +90,7 @@ const onEdit = () => {
 </script>
 
 <template>
-  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn edit" role="button"
+  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button"
     tabindex="0" :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
 
   <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">

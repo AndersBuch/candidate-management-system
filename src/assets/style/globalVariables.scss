@@ -8,6 +8,7 @@ $darkGrey: #969696;
 $lightGrey: #F2F2F2;
 $tableHeader: #F6FBFF;
 $dangerRed: #FF383C;
+$toastRed: #FFCACB;
 $goodGreen: #34C759;
 $whiteColor: #fff;
 $statusPurple: #CB30E0;
@@ -15,6 +16,7 @@ $statusOrange: #FF8D28;
 $backdropColor: #00000050;
 $modalDropShadow: #00000026;
 $privacyPolicyDropShadow: 0px 4px 13.1px 0px #00000026;
+$boxShadow: 0 4px 15px rgba(0, 0, 0, 0.12);
 
 @mixin heading1 {
   font-family: "Inter";

@@ -3,6 +3,7 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
+import DeleteModal from '@/components/dashboard/DeleteModal.vue'
 
 import { ref } from 'vue'
 
@@ -26,7 +27,7 @@ const showExtendedInfo = ref(false)
     <section class="flexContainer flexContainerCenter">
       <div class="iconContainer">
         <EditModal />
-        <BasicIconAndLogo name="Thash" :iconSize="true" />
+        <DeleteModal />
       </div>
       <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture">
       <h3 class="candidateName">Mads Mikkelsen Hansen</h3>

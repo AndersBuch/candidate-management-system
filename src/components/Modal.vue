@@ -67,6 +67,7 @@ onUnmounted(() => {
   background-color: $whiteColor;
   color: $black;
   box-shadow: $modalDropShadow;
+  z-index: 9999;
 
   .modalHeader {
     position: relative; 
