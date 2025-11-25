@@ -1,6 +1,5 @@
 <script setup>
 import SearchBar from '@/components/dashboard/SearchBar.vue'
-import Button from '@/components/atoms/Button.vue'
 import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
 
 import { storeToRefs } from 'pinia'

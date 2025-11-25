@@ -84,14 +84,17 @@ const submitForm = () => {
   }
 }
 
-const onEdit = () => {
-  openModal()
+const onEdit = () => openModal()
+
+function handleRemoved(file) {
+  console.log('Filen blev fjernet', file)
 }
+
 </script>
 
 <template>
-  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button"
-    tabindex="0" :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
+  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button" tabindex="0"
+    :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
 
   <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
@@ -169,8 +172,8 @@ const onEdit = () => {
 .uploadeButtons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem 2rem; 
-  margin-bottom: 50px; 
+  gap: 2rem 2rem;
+  margin-bottom: 50px;
 
   .uploadItem {
     display: flex;
@@ -185,7 +188,7 @@ const onEdit = () => {
 
   .uploadItem:nth-child(3),
   .uploadItem:nth-child(4) {
-    margin-top: 9rem; 
+    margin-top: 9rem;
   }
 }
 

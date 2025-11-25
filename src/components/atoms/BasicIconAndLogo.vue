@@ -13,7 +13,6 @@ const props = defineProps({
 })
 
 const filePath = computed(() => `${import.meta.env.BASE_URL}icons/${props.name}.svg`);
-
 </script>
 
 <template>

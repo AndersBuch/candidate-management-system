@@ -4,10 +4,12 @@ import { computed } from 'vue'
 const props = defineProps({
   label: { type: String, default: 'Tekst' },
   checked: { type: Boolean, default: false },
-  id: { type: String, default: null }
+  id: { type: String, default: null },
+  disabled: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:checked'])
+
 
 const uid = Math.random().toString(36).slice(2, 9)
 const id = props.id || `inputboks-${uid}`

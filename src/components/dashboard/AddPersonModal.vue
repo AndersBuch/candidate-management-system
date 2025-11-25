@@ -1,6 +1,5 @@
 <script setup>
 import Modal from '@/components/Modal.vue'
-import InputField from '@/components/atoms/InputField.vue'
 import FormLabel from '@/components/molecules/FormLabel.vue'
 import FormField from '@/components/molecules/FormField.vue'
 import Button from '@/components/atoms/Button.vue'
@@ -8,7 +7,7 @@ import FormDropdown from '@/components/molecules/FormDropdown.vue'
 import UploadButton from '@/components/dashboard/UploadButton.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
 
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed } from 'vue'
 
 const showModal = ref(false)
 
@@ -87,213 +86,93 @@ const submitForm = () => {
 const toasts = ref([])
 
 function showToast() {
-    toasts.value.push({
-        id: Date.now(),
-        title: 'Kandidat tilføjet',
-        subtitle: 'Kandidaten blev tilføjet korrekt',
-        variant: 'success',
-        duration: 3000
-    })
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat tilføjet',
+    subtitle: 'Kandidaten blev tilføjet korrekt',
+    variant: 'success',
+    duration: 3000
+  })
 }
 
 function removeToast(id) {
-    toasts.value = toasts.value.filter(t => t.id !== id)
+  toasts.value = toasts.value.filter(t => t.id !== id)
 }
 
 function confirmAdd() {
-    closeModal()
-    showToast()
+  closeModal()
+  showToast()
 }
 
 </script>
 
 <template>
-      <Button 
-        type="dashboardPrimary"
-        label="Tilføj kandidat"
-        aria-label="Tilføj kandidat"
-        :showIcon="true"
-        iconName="AddPerson"
-        @click="openModal"
-      />
+  <Button type="dashboardPrimary" label="Tilføj kandidat" aria-label="Tilføj kandidat" :showIcon="true"
+    iconName="AddPerson" @click="openModal" />
 
-  <Modal
-    v-if="showModal"
-    modalTitle="Tilføj kandidat"
-    titleAlign="left"
-    @close="closeModal"
-    height="900px"
-  >
+  <Modal v-if="showModal" modalTitle="Tilføj kandidat" titleAlign="left" @close="closeModal" height="900px">
     <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
 
-<div class="formGrid">
-      <FormField
-        id="name"
-        label="Fornavn"
-        placeholder="Fornavn"
-        v-model="formData.name"
-        :touched="formData.touched.name"
-        @blur="formData.touched.name = true"
-      />
+    <div class="formGrid">
+      <FormField id="name" label="Fornavn" placeholder="Fornavn" v-model="formData.name"
+        :touched="formData.touched.name" @blur="formData.touched.name = true" />
 
-      <FormField
-        id="lastname"
-        label="Efternavn"
-        placeholder="Efternavn"
-        v-model="formData.lastname"
-        :touched="formData.touched.lastname"
-        @blur="formData.touched.lastname = true"
-      />
+      <FormField id="lastname" label="Efternavn" placeholder="Efternavn" v-model="formData.lastname"
+        :touched="formData.touched.lastname" @blur="formData.touched.lastname = true" />
 
-            <!-- Email med fejlbesked -->
-      <FormField
-        id="email"
-        label="Email"
-        placeholder="Indtast din email"
-        v-model="formData.email"
-        :error="!!emailErrorMessage"          
-        :touched="formData.touched.email"
-        :error-message="emailErrorMessage"  
-        @input="formData.touched.email = true"
-        @blur="formData.touched.email = true"
-      />
+      <!-- Email med fejlbesked -->
+      <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
+        :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
+        @input="formData.touched.email = true" @blur="formData.touched.email = true" />
 
-      <FormField
-        id="address"
-        label="Adresse"
-        placeholder="Adresse"
-        v-model="formData.address"
-        :touched="formData.touched.address"
-        @blur="formData.touched.address = true"
-      />
+      <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
+        :touched="formData.touched.address" @blur="formData.touched.address = true" />
 
       <!-- Postnummer -->
-      <FormField
-        id="postal"
-        label="Postnummer"
-        placeholder="Postnummer"
-        fieldType="text"
-        v-model="formData.postal"
-        :touched="formData.touched.postal"
-        @input="handleNumberInput($event, 4, 'postal')"
-        @blur="formData.touched.postal = true"
-      />
+      <FormField id="postal" label="Postnummer" placeholder="Postnummer" fieldType="text" v-model="formData.postal"
+        :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
+        @blur="formData.touched.postal = true" />
 
-      <FormDropdown
-        v-model="formData.status"
-        :options="statusOptions"
-        label="Status"
-        :touched="formData.touched.status"
-      />
+      <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
+        :touched="formData.touched.status" />
 
-      <FormField
-        id="city"
-        label="By"
-        placeholder="Indtast by"
-        v-model="formData.city"
-        :touched="formData.touched.city"
-        @blur="formData.touched.city = true"
-      />
+      <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city" :touched="formData.touched.city"
+        @blur="formData.touched.city = true" />
 
       <!-- Telefon -->
-      <FormField
-        id="phone"
-        label="Telefon"
-        placeholder="Indtast telefon"
-        fieldType="text"
-        v-model="formData.phone"
-        :touched="formData.touched.phone"
-        @input="handleNumberInput($event, 10, 'phone')"
-        @blur="formData.touched.phone = true"
-      />
+      <FormField id="phone" label="Telefon" placeholder="Indtast telefon" fieldType="text" v-model="formData.phone"
+        :touched="formData.touched.phone" @input="handleNumberInput($event, 10, 'phone')"
+        @blur="formData.touched.phone = true" />
 
-      <FormField
-        id="linkedin"
-        label="LinkedIn"
-        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
-        v-model="formData.linkedin"
-        :touched="formData.touched.linkedin"
-        @blur="formData.touched.linkedin = true"
-      />
+      <FormField id="linkedin" label="LinkedIn"
+        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)" v-model="formData.linkedin"
+        :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
-<FormLabel/>
+      <FormLabel />
 
-      <FormField
-        id="age"
-        label="Alder"
-        placeholder="Alder"
-        v-model="formData.age"
-        :touched="formData.touched.age"
-        @input="handleNumberInput($event, 2, 'age')"
-        @blur="formData.touched.age = true"
-      />
+      <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
+        @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
 
-      <FormField
-        id="company"
-        label="Nuværenede Firma"
-        placeholder="Nuværenede Firma"
-        v-model="formData.company"
-        :touched="formData.touched.company"
-        @blur="formData.touched.company = true"
-      />
+      <FormField id="company" label="Nuværenede Firma" placeholder="Nuværenede Firma" v-model="formData.company"
+        :touched="formData.touched.company" @blur="formData.touched.company = true" />
 
-      <FormField
-        id="message"
-        label="Note"
-        placeholder="Maks 150 tegn"
-        fieldType="textarea"
-        v-model="formData.message"
-        :touched="formData.touched.message"
-        @blur="formData.touched.message = true"
-        class="noteField"
-      />
-</div>
+      <FormField id="message" label="Note" placeholder="Maks 150 tegn" fieldType="textarea" v-model="formData.message"
+        :touched="formData.touched.message" @blur="formData.touched.message = true" class="noteField" />
+    </div>
 
-  <div class="uploadeButtons">
-  <UploadButton
-    title="CV"
-    button-text="Upload"
-    accept=".pdf,.doc,.docx"
-    :max-size-mb="2"
-    :multiple="false"       
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
+    <div class="uploadeButtons">
+      <UploadButton title="CV" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
+        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
 
-  <UploadButton
-    title="Billede"
-    button-text="Upload"
-    accept=".png,.jpg"
-    :max-size-mb="2"
-    :multiple="false"       
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
+      <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg" :max-size-mb="2" :multiple="false"
+        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
 
-  <UploadButton
-    title="Andre dokumenter"
-    button-text="Upload"
-    accept=".pdf,.doc,.docx,.png,.jpg"
-    :max-size-mb="2"
-    :multiple="true"   
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
+      <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,.doc,.docx,.png,.jpg" :max-size-mb="2"
+        :multiple="true" @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
 
-  <UploadButton
-    title="Ansøgning"
-    button-text="Upload"
-    accept=".pdf,.doc,.docx"
-    :max-size-mb="2"
-    :multiple="false"       
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
-  </div>
+      <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
+        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+    </div>
 
     <div class="buttonContainer">
       <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
@@ -302,35 +181,28 @@ function confirmAdd() {
 
   </Modal>
 
-      <div class="toastWrapper">
-<Toast
-  v-for="t in toasts"
-  :key="t.id"
-  :title="t.title"
-  :subtitle="t.subtitle"
-  :variant="t.variant"
-  :duration="t.duration"
-  @close="removeToast(t.id)"
-/>
-    </div>
+  <div class="toastWrapper">
+    <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
+      :duration="t.duration" @close="removeToast(t.id)" />
+  </div>
 </template>
 
 <style lang="scss">
-
 .toastWrapper {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
 }
+
 .uploadeButtons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem 2rem; 
-  margin-bottom: 50px; 
+  gap: 2rem 2rem;
+  margin-bottom: 50px;
 
   .uploadItem {
     display: flex;
@@ -339,27 +211,27 @@ function confirmAdd() {
     h3 {
       @include bigBodyText;
       color: $black;
-      margin-bottom: 0.5rem; 
+      margin-bottom: 0.5rem;
     }
   }
 
   .uploadItem:nth-child(3),
   .uploadItem:nth-child(4) {
-    margin-top: 9rem; 
+    margin-top: 9rem;
   }
 }
 
-  .formGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem 2rem;
-    margin-bottom: 20px;
-  }
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+  margin-bottom: 20px;
+}
 
 .buttonContainer {
   display: flex;
-  justify-content: flex-end; 
-  gap: 20px; 
-  bottom: 0; 
+  justify-content: flex-end;
+  gap: 20px;
+  bottom: 0;
 }
 </style>
