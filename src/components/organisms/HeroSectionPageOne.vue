@@ -11,8 +11,8 @@ const emit = defineEmits(['scroll-to-jobs'])
     <div class="heroContainer">
       <div class="heroTextContainer">
         <h1>Rekruttering er vores håndværk – tekniske profiler er vores speciale</h1>
-        <Button label="Aktuelle stillinger" type="default" aria-label="Aktuelle stillinger" @click="emit('scroll-to-jobs')" />
-        
+        <Button label="Aktuelle stillinger" type="default" aria-label="Aktuelle stillinger"
+          @click="emit('scroll-to-jobs')" />
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@ const emit = defineEmits(['scroll-to-jobs'])
 
 <style scoped lang="scss">
 .heroWrapper {
-  position: relative; /* gør det muligt at placere tekst ovenpå hero */
+  position: relative;
 }
 
 .heroContainer {

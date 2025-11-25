@@ -70,8 +70,8 @@ onUnmounted(() => {
   z-index: 9999;
 
   .modalHeader {
-    position: relative; 
-    text-align: center; 
+    position: relative;
+    text-align: center;
     margin-bottom: 30px;
 
     h2 {
