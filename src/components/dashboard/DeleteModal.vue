@@ -45,7 +45,7 @@ function confirmDelete() {
 <template>
     <BasicIconAndLogo name="Thash" :iconSize="true" @click.stop="thashModal" class="iconBtn" />
 
-    <Modal v-if="showModal" @close="closeModal" height="260px">
+    <Modal v-if="showModal" @close="closeModal" height="260px" class="deleteCandidateModal">
 
         <div class="kandidateModal">
             <BasicIconAndLogo name="Thash" :iconSize="true" />
@@ -75,7 +75,7 @@ function confirmDelete() {
     z-index: 9999;
 }
 
-.modal .closeIcon {
+.deleteCandidateModal .closeIcon {
     display: none !important;
 }
 
