@@ -77,7 +77,6 @@ import Button from '@/components/atoms/Button.vue'
     gap: 16px;
     margin: 40px auto 0 auto;
 
-
     h2 {
         @include heading2;
     }

@@ -64,6 +64,10 @@ const submitForm = () => {
     console.log('Der er fejl i formularen')
   }
 }
+
+function handleRemoved(f) {
+  console.log('Filen fjernet', f)
+}
 </script>
 
 <template>

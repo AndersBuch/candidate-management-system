@@ -183,7 +183,7 @@ function confirmAdd() {
 
   <div class="toastWrapper">
     <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
-      :duration="t.duration" @close="removeToast(t.id)" />
+      :duration="t.duration" @close="removeToast(t.id)" @undo="handleUndo" />
   </div>
 </template>
 

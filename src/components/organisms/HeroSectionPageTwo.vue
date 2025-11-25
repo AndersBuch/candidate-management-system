@@ -9,20 +9,20 @@ import Hero from '@/components/atoms/Hero.vue'
     <div class="heroContainer">
       <div class="heroTextContainer">
         <h1>Procesoperatør - Pilotanlæg</h1>
-            <RouterLink to="/pagethree">
-            <Button label="Søg Job" type="default" aria-label="Ansøg nu" />
-            </RouterLink>
+        <RouterLink to="/pagethree">
+          <Button label="Søg Job" type="default" aria-label="Ansøg nu" />
+        </RouterLink>
       </div>
     </div>
-          <p class="heroBottomText">
-        KD / 1034 | Storkøbenhavn | Lihme Protein Solutions ApS
-      </p>
+    <p class="heroBottomText">
+      KD / 1034 | Storkøbenhavn | Lihme Protein Solutions ApS
+    </p>
   </div>
 </template>
 
 <style scoped lang="scss">
 .heroWrapper {
-  position: relative;  
+  position: relative;
 }
 
 .heroContainer {
@@ -31,13 +31,11 @@ import Hero from '@/components/atoms/Hero.vue'
   left: 50%;
   transform: translate(-50%, -50%);
 
-
   h1 {
     @include heading1;
     margin-bottom: 24px;
     color: $whiteColor;
   }
-
 
   button {
     display: block;

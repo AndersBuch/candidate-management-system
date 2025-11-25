@@ -12,20 +12,25 @@ const routes = [
     component: () => import('../components/pages/PageTwoKandidat.vue')
   },
   {
-  path: '/pagethree',
+    path: '/pagethree',
     name: 'PageThree',
     component: () => import('../components/pages/PageThirdKandidat.vue')
   },
-      {
-  path: '/dashboardsite',
+  {
+    path: '/dashboardsite',
     name: 'DashboardSite',
     component: () => import('../components/dashboard/DashboardSite.vue')
   },
-    {
-  path: '/login',
+  {
+    path: '/login',
     name: 'LogInDashboard',
     component: () => import('../components/dashboard/LogInDashboard.vue')
-  }
+  },
+{
+  path: '/:pathMatch(.*)*',
+  name: 'NotFound',
+  component: () => import('../components/pages/NotFound.vue')
+}
 ]
 
 const router = createRouter({

@@ -4,7 +4,7 @@ import StatusDropdown from '@/components/dashboard/StatusDropdown.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 
-import { computed, ref } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   index: Number,
@@ -13,14 +13,22 @@ const props = defineProps({
   email: String,
   status: String,
   linkedinUrl: String,
-  isActive: Boolean   // <-- prop fra parent
+  isActive: Boolean
 })
 
 const emit = defineEmits(["statusClick", "toggle", "rowClick"])
 
+const localStatus = ref(props.status)
+
+watch(localStatus, (newVal) => {
+  emit('statusClick', newVal)
+})
+
+const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
+
 function handleClick(event) {
   if (event.target.closest('.colStatus')) return
-  emit('rowClick', props.index)   // sender besked til parent om, at denne række blev klikket
+  emit('rowClick', props.index)
 }
 
 function openLinkedin() {
@@ -38,8 +46,6 @@ function getStatusLabel(status) {
     default: return status || 'Ukendt'
   }
 }
-
-const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 </script>
 
 <template>
@@ -55,8 +61,7 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colEmail">{{ email }}</div>
 
     <div class="colStatus">
-      <StatusDropdown :model-value="status" :is-open="isActive" @toggle="emit('rowClick', index)"
-        @update:modelValue="emit('statusClick', $event)" @click.stop />
+      <StatusDropdown v-model="localStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop />
     </div>
 
     <div class="col colActions">

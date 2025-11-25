@@ -6,7 +6,7 @@ import EditModal from '@/components/dashboard/EditModal.vue'
 
 import { ref } from 'vue'
 
-const emit = defineEmits(['openCandidate']) 
+const emit = defineEmits(['openCandidate'])
 
 const rows = ref([
   { name: 'Hans Hansen Ole', phone: '22283910', email: 'kontaktmail@gmail.com', status: 'Accepted', linkedin: 'https://...' },
@@ -45,12 +45,11 @@ const toasts = ref([])
 
 function showToast() {
   const id = Date.now()
-
   toasts.value.push({
     id,
     title: 'Kandidat tilføjet',
     subtitle: 'Mads Mikkels Ole',
-    variant: 'sucess',
+    variant: 'success', // rettet her
     duration: 3000,
     showUndo: true
   })
@@ -87,7 +86,8 @@ const showExtendedInfo = ref(false)
   </div>
 
   <TableField v-for="(r, i) in rows" :key="i" :index="i" :name="r.name" :phone="r.phone" :email="r.email"
-    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow" />
+    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow"
+    @statusClick="onStatusClick(r)" @edit="onEdit(r)" />
 </template>
 
 <style lang="scss">

@@ -8,10 +8,36 @@ import DeleteModal from '@/components/dashboard/DeleteModal.vue'
 import { ref } from 'vue'
 
 const props = defineProps({
-  activeIndex: { type: [Number, String, null], default: null }
+  activeIndex: { type: [Number, String, null], default: null },
+  candidate: {
+    type: Object,
+    default: () => ({
+      firstName: 'Mads',
+      lastName: 'Mikkelsen Hansen',
+      age: '',
+      gender: 'Mand',
+      phone: '11223344',
+      status: 'Afventer',
+      email: 'Madharenmail@gmail.com',
+      address: 'Mullervej 2',
+      postal: '5230',
+      city: 'Odense',
+      company: '',
+      note: 'Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser?',
+      profilePicture: '/img/TestProfilePicture.jpg',
+      linkedin: ''
+    })
+  }
 })
 
-const showExtendedInfo = ref(false) 
+const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+
+const openEditModal = () => showEditModal.value = true
+const closeEditModal = () => showEditModal.value = false
+
+const openDeleteModal = () => showDeleteModal.value = true
+const closeDeleteModal = () => showDeleteModal.value = false
 </script>
 
 <template>
@@ -19,56 +45,54 @@ const showExtendedInfo = ref(false)
 
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
-      <h2 class="adminName">Claus Bjerring - Admin</h2>
+       <h2 class="adminName">Claus Bjerring - Admin</h2>
     </section>
 
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerCenter">
       <div class="iconContainer">
-        <EditModal />
-        <DeleteModal />
+        <EditModal @click.native="openEditModal"/>
+        <DeleteModal @click.native="openDeleteModal"/>
       </div>
-      <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture">
-      <h3 class="candidateName">Mads Mikkelsen Hansen</h3>
-      <BasicIconAndLogo name="LinkinIcon" :iconSize="true" />
+   <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture">      <h3 class="candidateName">{{ candidate.firstName }} {{ candidate.lastName }}</h3>
+      <BasicIconAndLogo name="LinkinIcon" :iconSize="true" v-if="candidate.linkedin"/>
     </section>
 
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerLeft ">
       <dl class="infoGrid">
-        <DefinitionRow label="Alder" value="" />
-        <DefinitionRow label="Køn" value="Mand" />
-        <DefinitionRow label="Telefon" value="11223344" />
-        <DefinitionRow label="Status" value="Afventer" />
-        <DefinitionRow label="Email" value="Madharenmail@gmail.com" full />
-        <DefinitionRow label="Adresse" value="Mullervej 2" />
-        <DefinitionRow label="Postnummer" value="5230" />
-        <DefinitionRow label="By" value="Odense" />
-        <DefinitionRow label="Nuværende firma" value="" />
+        <DefinitionRow label="Alder" :value="candidate.age" />
+        <DefinitionRow label="Køn" :value="candidate.gender" />
+        <DefinitionRow label="Telefon" :value="candidate.phone" />
+        <DefinitionRow label="Status" :value="candidate.status" />
+        <DefinitionRow label="Email" :value="candidate.email" full />
+        <DefinitionRow label="Adresse" :value="candidate.address" />
+        <DefinitionRow label="Postnummer" :value="candidate.postal" />
+        <DefinitionRow label="By" :value="candidate.city" />
+        <DefinitionRow label="Nuværende firma" :value="candidate.company" />
       </dl>
     </section>
 
-    <section class="flexContainer  flexContainerLeft note">
+    <section class="flexContainer flexContainerLeft note">
       <div class="noteHeader">
         <span class="noteLabel">Note</span>
-        <BasicIconAndLogo name="Edit" :iconSize="true" />
+        <BasicIconAndLogo name="Edit" :iconSize="true" @click="openEditModal" />
       </div>
-
-      <p class="noteText">
-        Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af
-        fremtidens fødevaretekno-logi? Har du erfaring med at styre og overvåge
-        produktionsprocesser?
-      </p>
+      <p class="noteText">{{ candidate.note }}</p>
     </section>
 
     <section class="flexContainer flexContainerLeft note">
       <CandidateDocuments />
     </section>
 
+    <!-- Modals -->
+    <EditModal v-if="showEditModal" :candidate="candidate" @close="closeEditModal"/>
+    <DeleteModal v-if="showDeleteModal" :candidateId="candidate.id" @close="closeDeleteModal"/>
   </aside>
 </template>
+
 
 <style scoped lang="scss">
 .exstendedCandidateContainer {

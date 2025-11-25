@@ -1,22 +1,27 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import { defineProps, defineEmits } from 'vue'
 
-import { defineProps, defineModel } from 'vue'
-
-defineProps({
+const props = defineProps({
+  modelValue: String,
   placeholder: {
     type: String,
-    default: "Søg..."
+    default: 'Søg...'
   }
 })
 
-const model = defineModel()
+const emit = defineEmits(['update:modelValue'])
+
+function updateValue(event) {
+  emit('update:modelValue', event.target.value)
+}
 </script>
 
 <template>
   <div class="searchWrapper">
     <BasicIconAndLogo name="Search" :iconSize="true" />
-    <input type="text" :placeholder="placeholder" v-model="model" class="searchInput" />
+    <input type="text" :placeholder="props.placeholder" :value="props.modelValue" @input="updateValue"
+      class="searchInput" />
   </div>
 </template>
 

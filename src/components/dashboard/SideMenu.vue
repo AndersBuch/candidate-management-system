@@ -1,19 +1,19 @@
-<script setup> 
+<script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
-  import { storeToRefs } from 'pinia'
-  import { useCompanyStore } from '@/stores/useCompanyStore'
+import { storeToRefs } from 'pinia'
+import { useCompanyStore } from '@/stores/useCompanyStore'
 
-  const companyStore = useCompanyStore()
-  const { companies, activeCompanyId, activePositionId } = storeToRefs(companyStore)
+const companyStore = useCompanyStore()
+const { companies, activeCompanyId, activePositionId } = storeToRefs(companyStore)
 
-  const selectCompany = (id) => {
-    companyStore.selectCompany(id)
-  }
+const selectCompany = (id) => {
+  companyStore.selectCompany(id)
+}
 
-  const selectPosition = (companyId, positionId) => {
-    companyStore.selectPosition(companyId, positionId)
-  }
+const selectPosition = (companyId, positionId) => {
+  companyStore.selectPosition(companyId, positionId)
+}
 </script>
 
 <template>
@@ -32,44 +32,24 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
       <div class="divider"></div>
 
       <ul class="companyList">
-        <li
-          v-for="company in companies"
-          :key="company.id"
-          class="companyItem"
-          :class="{ activeCompanySection: company.id === activeCompanyId }"
-        >
+        <li v-for="company in companies" :key="company.id" class="companyItem"
+          :class="{ activeCompanySection: company.id === activeCompanyId }">
           <div class="menuSectionInner">
-            <button
-              class="companyButton"
-              @click="selectCompany(company.id)"
-            >
+            <button class="companyButton" @click="selectCompany(company.id)">
               <BasicIconAndLogo name="Box" :iconSize="true" />
               <span class="companyName">{{ company.name }}</span>
             </button>
           </div>
 
           <!-- FULL-WIDTH divider -->
-          <div
-            v-if="company.id === activeCompanyId"
-            class="activeDivider"
-          ></div>
+          <div v-if="company.id === activeCompanyId" class="activeDivider"></div>
 
           <!-- Stillinger -->
-          <div
-            v-if="company.id === activeCompanyId"
-            class="menuSectionInner"
-          >
+          <div v-if="company.id === activeCompanyId" class="menuSectionInner">
             <ul class="positionList">
-              <li
-                v-for="position in company.positions"
-                :key="position.id"
-                class="positionItem"
-              >
-                <button
-                  class="positionButton"
-                  :class="{ isActivePosition: position.id === activePositionId }"
-                  @click="selectPosition(company.id, position.id)"
-                >
+              <li v-for="position in company.positions" :key="position.id" class="positionItem">
+                <button class="positionButton" :class="{ isActivePosition: position.id === activePositionId }"
+                  @click="selectPosition(company.id, position.id)">
                   <BasicIconAndLogo name="Users" :iconSize="true" />
                   <span class="positionText">{{ position.name }}</span>
                 </button>
@@ -138,13 +118,12 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   margin-bottom: 20px;
 }
 
-/* Indre kolonne som ligger i midten, men er venstrejusteret */
 .menuSectionInner {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  max-width: 125px; // god bredde til menuindhold
+  max-width: 125px;
   margin: 0 auto;
 }
 
@@ -178,7 +157,6 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   margin-bottom: 6px;
 }
 
-/* Firma- og stillingsknapper: samme grid-layout */
 .companyButton,
 .positionButton {
   border: none;
@@ -190,19 +168,17 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   color: $black;
 
   display: grid;
-  grid-template-columns: 24px 1fr; // ikon + tekst-kolonne
+  grid-template-columns: 24px 1fr;
   column-gap: 6px;
   align-items: center;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Indryk stillinger uden at flytte højrekanten */
 .positionButton {
   padding-left: 16px;
 }
 
-/* Add / logout-knapper kan forblive flex */
 .addCompany,
 .logoutButton {
   border: none;
@@ -219,7 +195,6 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   width: 100%;
 }
 
-/* Tekst med ellipsis – firma og stilling har samme bredde */
 .companyName,
 .positionText {
   min-width: 0;
@@ -228,8 +203,8 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   text-overflow: ellipsis;
 }
 
-/* Hele sektionen for aktivt firma → blå tekst */
 .companyItem.activeCompanySection {
+
   .companyButton,
   .positionButton,
   .companyName,
@@ -239,6 +214,7 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 }
 
 .companyItem.activeCompanySection {
+
   .companyButton :deep(path),
   .companyButton :deep(circle),
   .companyButton :deep(rect),
@@ -250,7 +226,6 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   }
 }
 
-/* Ikonerne inde i BasicIconAndLogo (pga. scoped skal vi bruge :deep) */
 .companyButton :deep(svg),
 .positionButton :deep(svg),
 .addCompany :deep(svg),
@@ -271,7 +246,6 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
   }
 }
 
-/* Aktiv stilling → kun bold (farven arves fra firma-sektionen) */
 .positionButton.isActivePosition {
   @include boldBodyText;
 }

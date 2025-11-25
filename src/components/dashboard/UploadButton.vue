@@ -16,6 +16,19 @@ const props = defineProps({
   multiple: { type: Boolean, default: false }
 })
 
+const {
+  title,
+  hint,
+  secondaryText,
+  successText,
+  errorText,
+  buttonText,
+  accept,
+  maxSizeMB,
+  multiple
+} = props
+
+
 const emit = defineEmits(['file-selected', 'error', 'file-removed'])
 
 const fileInput = ref(null)
@@ -29,15 +42,15 @@ function triggerFileInput() {
 }
 
 const acceptList = computed(() =>
-  props.accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
+  accept.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
 )
 
 function validateAndAddFiles(fileList) {
   errorMessage.value = ''
-  const maxBytes = props.maxSizeMB * 1024 * 1024
+  const maxBytes = maxSizeMB * 1024 * 1024
 
   // Hvis multiple = false → tillad kun en fil
-  if (!props.multiple && fileList.length > 1) {
+  if (!multiple && fileList.length > 1) {
     errorMessage.value = 'Du kan kun uploade én fil her.'
     emit('error', { reason: 'single-only', count: fileList.length })
     return
@@ -57,26 +70,26 @@ function validateAndAddFiles(fileList) {
     })
 
     if (!extOk) {
-      errorMessage.value = props.errorText
+      errorMessage.value = errorText
       emit('error', { reason: 'type', file: f })
       continue
     }
 
     if (f.size > maxBytes) {
-      errorMessage.value = `Filen er for stor (max ${props.maxSizeMB}MB)`
+      errorMessage.value = `Filen er for stor (max ${maxSizeMB}MB)`
       emit('error', { reason: 'size', file: f })
       continue
     }
 
     // Hvis kun en fil må vælges, overskriv i stedet for at tilføje
-    if (!props.multiple) {
+    if (!multiple) {
       files.value = [f]
     } else {
       files.value.push(f)
     }
   }
 
-  emit('file-selected', props.multiple ? files.value : files.value[0])
+  emit('file-selected', multiple ? files.value : files.value[0])
 }
 
 function onInputChange(e) {
@@ -119,7 +132,7 @@ const stateClass = computed(() => {
 
     <!-- Titel -->
     <div class="UploadTitle">
-      <h3>{{ props.title }}</h3>
+      <h3>{{ title }}</h3>
       <p v-if="errorMessage" class="uploadError">{{ errorMessage }}</p>
     </div>
 
@@ -127,10 +140,9 @@ const stateClass = computed(() => {
     <div class="uploadButton" :class="[stateClass, { dragging }]" @drop="onDrop" @dragover="onDragOver"
       @dragleave="onDragLeave">
       <div class="actions">
-        <input ref="fileInput" :id="inputId" class="fileInput" type="file" :accept="props.accept"
-          :multiple="props.multiple" @change="onInputChange" />
-        <Button type="dashboardPrimary" @click="triggerFileInput" :label="props.buttonText"
-          :aria-label="props.buttonText" />
+        <input ref="fileInput" :id="inputId" class="fileInput" type="file" :accept="accept" :multiple="multiple"
+          @change="onInputChange" />
+        <Button type="dashboardPrimary" @click="triggerFileInput" :label="buttonText" :aria-label="buttonText" />
       </div>
     </div>
 
@@ -143,7 +155,6 @@ const stateClass = computed(() => {
       </div>
     </div>
   </div>
-
 </template>
 
 <style scoped lang="scss">

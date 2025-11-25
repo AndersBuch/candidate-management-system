@@ -103,7 +103,6 @@ const scrollToJobs = () => {
     height: 100%;
     overflow-y: auto;
   }
-
 }
 
 .centerContent {

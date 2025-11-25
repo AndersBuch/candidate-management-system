@@ -1,7 +1,5 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-
-import { ref } from 'vue'
 </script>
 
 <template>

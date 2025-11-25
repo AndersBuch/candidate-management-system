@@ -13,7 +13,7 @@ const { activeCompany, activePosition } = storeToRefs(companyStore)
 <template>
   <div v-if="activeCompany && activePosition" class="dashboardHeader">
 
-    <SearchBar v-model="search" placeholder="Søg..." />
+    <SearchBar v-model="searchTerm" placeholder="Søg kandidat..." />
 
     <h1 class="companyTitle">{{ activeCompany.name }}</h1>
 

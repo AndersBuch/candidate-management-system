@@ -14,7 +14,7 @@ const form = reactive({
     email: '',
     password: '',
 })
-const showPassword = ref(false)
+
 const error = ref(null)
 
 // Dummy brugere
