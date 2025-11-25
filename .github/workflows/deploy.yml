@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/
-          server-dir: /public_html/app
+          server-dir: /public_html/app/
           dangerous-clean-slate: false
 
       - name: FTP deploy backend API
@@ -48,5 +48,5 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: api/
-          server-dir: /public_html/api
+          server-dir: /public_html/api/
           dangerous-clean-slate: false
