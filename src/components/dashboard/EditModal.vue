@@ -6,6 +6,7 @@ import FormField from '@/components/molecules/FormField.vue'
 import Button from '@/components/atoms/Button.vue'
 import FormDropdown from '@/components/molecules/FormDropdown.vue'
 import UploadButton from '@/components/dashboard/UploadButton.vue'
+import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
@@ -67,7 +68,6 @@ const emailErrorMessage = computed(() => {
   return ''
 })
 
-
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
 
@@ -83,192 +83,82 @@ const submitForm = () => {
     console.log('Der er fejl i formularen')
   }
 }
+
+const onEdit = () => openModal()
+
+function handleRemoved(file) {
+  console.log('Filen blev fjernet', file)
+}
+
 </script>
 
 <template>
-  <button @click="openModal">
-    Rediger kandidat
-  </button>
+  <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button" tabindex="0"
+    :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
 
-  <!-- Brug af modal-komponenten -->
-  <Modal
-    v-if="showModal"
-    modalTitle="Rediger kandidat"
-    titleAlign="left"
-    @close="closeModal"
-    height="900px"
-  >
-    <!-- Indholdet herinde bliver vist i <slot> i din Modal.vue -->
+  <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
-<div class="formGrid">
-      <FormField
-        id="name"
-        label="Fornavn"
-        placeholder="Fornavn"
-        v-model="formData.name"
-        :touched="formData.touched.name"
-        @blur="formData.touched.name = true"
-      />
+    <div class="formGrid">
+      <FormField id="name" label="Fornavn" placeholder="Fornavn" v-model="formData.name"
+        :touched="formData.touched.name" @blur="formData.touched.name = true" />
 
-      <FormField
-        id="lastname"
-        label="Efternavn"
-        placeholder="Efternavn"
-        v-model="formData.lastname"
-        :touched="formData.touched.lastname"
-        @blur="formData.touched.lastname = true"
-      />
-
-            <!-- Email med fejlbesked -->
-      <FormField
-        id="email"
-        label="Email"
-        placeholder="Indtast din email"
-        v-model="formData.email"
-        :error="!!emailErrorMessage"          
-        :touched="formData.touched.email"
-        :error-message="emailErrorMessage"  
-        @input="formData.touched.email = true"
-        @blur="formData.touched.email = true"
-      />
-
-      <FormField
-        id="address"
-        label="Adresse"
-        placeholder="Adresse"
-        v-model="formData.address"
-        :touched="formData.touched.address"
-        @blur="formData.touched.address = true"
-      />
-
-      <!-- Postnummer -->
-      <FormField
-        id="postal"
-        label="Postnummer"
-        placeholder="Postnummer"
-        fieldType="text"
-        v-model="formData.postal"
-        :touched="formData.touched.postal"
-        @input="handleNumberInput($event, 4, 'postal')"
-        @blur="formData.touched.postal = true"
-      />
-
-      <FormDropdown
-        v-model="formData.status"
-        :options="statusOptions"
-        label="Status"
-        :touched="formData.touched.status"
-      />
-
-      <FormField
-        id="city"
-        label="By"
-        placeholder="Indtast by"
-        v-model="formData.city"
-        :touched="formData.touched.city"
-        @blur="formData.touched.city = true"
-      />
-
-      <!-- Telefon -->
-      <FormField
-        id="phone"
-        label="Telefon"
-        placeholder="Indtast telefon"
-        fieldType="text"
-        v-model="formData.phone"
-        :touched="formData.touched.phone"
-        @input="handleNumberInput($event, 10, 'phone')"
-        @blur="formData.touched.phone = true"
-      />
-
-      <FormField
-        id="linkedin"
-        label="LinkedIn"
-        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
-        v-model="formData.linkedin"
-        :touched="formData.touched.linkedin"
-        @blur="formData.touched.linkedin = true"
-      />
+      <FormField id="lastname" label="Efternavn" placeholder="Efternavn" v-model="formData.lastname"
+        :touched="formData.touched.lastname" @blur="formData.touched.lastname = true" />
 
 
-<FormLabel/>
+      <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
+        :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
+        @input="formData.touched.email = true" @blur="formData.touched.email = true" />
 
-            <FormField
-        id="age"
-        label="Alder"
-        placeholder="Alder"
-        v-model="formData.age"
-        :touched="formData.touched.age"
-        @input="handleNumberInput($event, 2, 'age')"
-        @blur="formData.touched.age = true"
-      />
+      <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
+        :touched="formData.touched.address" @blur="formData.touched.address = true" />
 
-      <FormField
-        id="company"
-        label="Nuværenede Firma"
-        placeholder="Nuværenede Firma"
-        v-model="formData.company"
-        :touched="formData.touched.company"
-        @blur="formData.touched.company = true"
-      />
 
-      <FormField
-        id="message"
-        label="Note"
-        placeholder="Maks 150 tegn"
-        fieldType="textarea"
-        v-model="formData.message"
-        :touched="formData.touched.message"
-        @blur="formData.touched.message = true"
-        class="noteField"
-      ></FormField>
-</div>
+      <FormField id="postal" label="Postnummer" placeholder="Postnummer" fieldType="text" v-model="formData.postal"
+        :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
+        @blur="formData.touched.postal = true" />
 
-  <div class="uploadeButtons">
-  <UploadButton
-    title="CV"
-    button-text="Upload"
-    accept=".pdf,.doc,.docx"
-    :max-size-mb="2"
-    :multiple="false"       
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
+      <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
+        :touched="formData.touched.status" />
 
-  <UploadButton
-    title="Billede"
-    button-text="Upload"
-    accept=".png,.jpg"
-    :max-size-mb="2"
-    :multiple="false"       
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
+      <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city" :touched="formData.touched.city"
+        @blur="formData.touched.city = true" />
 
-    <UploadButton
-    title="Andre dokumenter"
-    button-text="Upload"
-    accept=".pdf,.doc,.docx,.png,.jpg"
-    :max-size-mb="2"
-    :multiple="true"   
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
 
-    <UploadButton
-    title="Ansøgning"
-    button-text="Upload"
-    accept=".pdf,.doc,.docx"
-    :max-size-mb="2"
-    :multiple="false"       
-    @file-selected="handleFile"
-    @error="handleError"
-    @file-removed="handleRemoved"
-  />
-  </div>
+      <FormField id="phone" label="Telefon" placeholder="Indtast telefon" fieldType="text" v-model="formData.phone"
+        :touched="formData.touched.phone" @input="handleNumberInput($event, 10, 'phone')"
+        @blur="formData.touched.phone = true" />
+
+      <FormField id="linkedin" label="LinkedIn"
+        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)" v-model="formData.linkedin"
+        :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
+
+
+      <FormLabel />
+
+      <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
+        @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
+
+      <FormField id="company" label="Nuværenede Firma" placeholder="Nuværenede Firma" v-model="formData.company"
+        :touched="formData.touched.company" @blur="formData.touched.company = true" />
+
+      <FormField id="message" label="Note" placeholder="Maks 150 tegn" fieldType="textarea" v-model="formData.message"
+        :touched="formData.touched.message" @blur="formData.touched.message = true" class="noteField"></FormField>
+    </div>
+
+    <div class="uploadeButtons">
+      <UploadButton title="CV" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
+        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+
+      <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg" :max-size-mb="2" :multiple="false"
+        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+
+      <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,.doc,.docx,.png,.jpg" :max-size-mb="2"
+        :multiple="true" @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+
+      <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
+        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+    </div>
 
     <div class="buttonContainer">
       <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
@@ -279,12 +169,11 @@ const submitForm = () => {
 </template>
 
 <style lang="scss">
-
 .uploadeButtons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem 2rem; // rækkeafstand 2rem, kolonneafstand 2rem
-  margin-bottom: 50px; // ekstra luft i bunden
+  gap: 2rem 2rem;
+  margin-bottom: 50px;
 
   .uploadItem {
     display: flex;
@@ -293,30 +182,40 @@ const submitForm = () => {
     h3 {
       @include bigBodyText;
       color: $black;
-      margin-bottom: 0.5rem; // afstand mellem h3 og knap
+      margin-bottom: 0.5rem;
     }
   }
 
-  // Tilføj ekstra afstand mellem øverste og nederste rækker
   .uploadItem:nth-child(3),
   .uploadItem:nth-child(4) {
-    margin-top: 9rem; // mere luft mellem øverste og nederste række
+    margin-top: 9rem;
   }
 }
 
-  .formGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem 2rem;
-    margin-bottom: 20px;
-  }
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+  margin-bottom: 20px;
+}
 
 .buttonContainer {
   display: flex;
-  justify-content: flex-end; /* Skubber knapper til højre */
-  gap: 20px; 
-  bottom: 0; /* altid nederst */
+  justify-content: flex-end;
+  gap: 20px;
+  bottom: 0;
 }
 
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 
+  &:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
 </style>

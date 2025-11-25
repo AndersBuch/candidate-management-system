@@ -1,5 +1,6 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+
 import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
@@ -24,57 +25,28 @@ watch(localValue, (newVal) => emit('update:modelValue', newVal))
 
 const hasValue = computed(() => String(localValue.value).trim().length > 0)
 const isError = computed(() => props.error && props.touched)
-
-function onStatusChange(payload) {
-  // payload = { id, value } from dropdown
-  emit('statusChange', { rowId: props.rowId, value: payload.value })
-}
-
 </script>
-
 
 <template>
   <div class="formGroup">
     <label :for="id" :class="{ errorLabel: isError }">{{ label }}</label>
-    
+
     <div class="inputWrapper">
       <!-- Hvis der er slot, brug den -->
       <slot v-if="$slots.default"></slot>
 
       <!-- Ellers default input -->
-      <textarea
-        v-if="fieldType === 'textarea'"
-        :id="id"
-        :placeholder="placeholder"
-        v-model="localValue"
-        @blur="emit('blur')"
-        @input="emit('input', $event)"
-        :maxlength="150"
-        :class="['textareaField', { hasValue: hasValue }]"
-      ></textarea>
+      <textarea v-if="fieldType === 'textarea'" :id="id" :placeholder="placeholder" v-model="localValue"
+        @blur="emit('blur')" @input="emit('input', $event)" :maxlength="150"
+        :class="['textareaField', { hasValue: hasValue }]"></textarea>
 
-      <input  
-        v-else
-        :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType"
-        :id="id"
-        :placeholder="placeholder"
-        v-model="localValue"
-        @blur="emit('blur')"
-        @input="emit('input', $event)"
-        :class="{ errorField: isError, hasValue: hasValue }"
-      />
+      <input v-else :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id"
+        :placeholder="placeholder" v-model="localValue" @blur="emit('blur')" @input="emit('input', $event)"
+        :class="{ errorField: isError, hasValue: hasValue }" />
 
       <!-- Eye / EyeOff ikon -->
-      <button
-        v-if="showToggle"
-        type="button"
-        class="eyeToggle"
-        @click="showPassword = !showPassword"
-      >
-        <BasicIconAndLogo
-          :name="showPassword ? 'Eye' : 'EyeOff'"
-          :iconSize="true"
-        />
+      <button v-if="showToggle" type="button" class="eyeToggle" @click="showPassword = !showPassword">
+        <BasicIconAndLogo :name="showPassword ? 'Eye' : 'EyeOff'" :iconSize="true" />
       </button>
     </div>
 
@@ -82,9 +54,7 @@ function onStatusChange(payload) {
   </div>
 </template>
 
-
 <style scoped lang="scss">
-
 .formGroup {
   display: flex;
   flex-direction: column;
@@ -142,36 +112,36 @@ function onStatusChange(payload) {
   .errorLabel {
     color: $dangerRed;
   }
-  
+
 }
 
- .inputWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    overflow: visible;
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: visible;
 
-    input {
-      width: 100%;
-      padding-right: 2.5rem; // plads til ikonet
-    }
-
-    .eyeToggle {
-      position: absolute;
-      right: 0.6rem;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  input {
+    width: 100%;
+    padding-right: 2.5rem;
   }
 
-  .textareaField {
+  .eyeToggle {
+    position: absolute;
+    right: 0.6rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.textareaField {
   width: 100%;
-  height: 135px;         // større højde ✔️
-  resize: none;          // lås størrelse
+  height: 135px;
+  resize: none;
   padding: 20px;
   border-radius: 5px;
   border: 1px solid $sekundareBlue;
@@ -186,12 +156,10 @@ function onStatusChange(payload) {
     border-color: $darkGrey;
     outline: none;
   }
-  
-    &.hasValue {
-      border-color: $darkGrey;
-      color: $black;
-    }
+
+  &.hasValue {
+    border-color: $darkGrey;
+    color: $black;
+  }
 }
-
-
 </style>

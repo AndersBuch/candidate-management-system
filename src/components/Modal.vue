@@ -44,7 +44,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Backdrop>
+  <Backdrop @clickOutside="$emit('close')">
     <div class="modal" :style="{ height: props.height, maxHeight: '90vh' }">
 
       <div class="modalHeader" :style="{ textAlign: props.titleAlign }">
@@ -67,10 +67,11 @@ onUnmounted(() => {
   background-color: $whiteColor;
   color: $black;
   box-shadow: $modalDropShadow;
+  z-index: 9999;
 
   .modalHeader {
-    position: relative; 
-    text-align: center; 
+    position: relative;
+    text-align: center;
     margin-bottom: 30px;
 
     h2 {

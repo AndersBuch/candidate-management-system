@@ -2,7 +2,11 @@
 import TableField from '@/components/dashboard/TableField.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import ToastDashboard from '@/components/dashboard/ToastDashboard.vue'
+import EditModal from '@/components/dashboard/EditModal.vue'
+
 import { ref } from 'vue'
+
+const emit = defineEmits(['openCandidate'])
 
 const rows = ref([
   { name: 'Hans Hansen Ole', phone: '22283910', email: 'kontaktmail@gmail.com', status: 'Accepted', linkedin: 'https://...' },
@@ -21,20 +25,31 @@ function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
 
+// ændret: sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
 function setActiveRow(index) {
   activeIndex.value = activeIndex.value === index ? null : index
+  emit('openCandidate', activeIndex.value)  // sender til DashboardSite
+}
+
+function getStatusLabel(status) {
+  switch (status?.toLowerCase()) {
+    case 'accepted': return 'Accepteret'
+    case 'pending': return 'Afventer'
+    case 'contact': return 'Kontakt'
+    case 'rejected': return 'Afvist'
+    default: return status || 'Ukendt'
+  }
 }
 
 const toasts = ref([])
 
 function showToast() {
   const id = Date.now()
-
   toasts.value.push({
     id,
     title: 'Kandidat tilføjet',
     subtitle: 'Mads Mikkels Ole',
-    variant: 'sucess',
+    variant: 'success', // rettet her
     duration: 3000,
     showUndo: true
   })
@@ -48,6 +63,7 @@ function handleUndo(id) {
   console.log("Undo for:", id)
 }
 
+const showExtendedInfo = ref(false)
 </script>
 
 <template>
@@ -70,23 +86,14 @@ function handleUndo(id) {
   </div>
 
   <TableField v-for="(r, i) in rows" :key="i" :index="i" :name="r.name" :phone="r.phone" :email="r.email"
-    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow(i)"
-    @statusClick="newStatus => rows[i].status = newStatus" />
-
-
-  <button @click="showToast">Vis toast</button>
-
-  <div class="toastContainer">
-    <ToastDashboard v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" @undo="handleUndo" />
-  </div>
-
+    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow"
+    @statusClick="onStatusClick(r)" @edit="onEdit(r)" />
 </template>
-
 
 <style lang="scss">
 .tableHeader {
   display: grid;
-  grid-template-columns: 2.8fr 1fr 3fr 1.2fr 0.8fr; // samme som tableRow
+  grid-template-columns: 2.8fr 1fr 3fr 1.2fr 0.8fr;
   gap: 12px;
   padding: 10px 20px;
 }

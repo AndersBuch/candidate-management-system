@@ -1,6 +1,7 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Button from '@/components/atoms/Button.vue'
+
 import { ref, computed } from 'vue'
 
 const props = defineProps({
@@ -12,14 +13,14 @@ const props = defineProps({
   buttonText: { type: String, default: 'Upload filer' },
   accept: { type: String, default: '.pdf, .doc, .docx, .png, .jpg' },
   maxSizeMB: { type: Number, default: 2 },
-  multiple: { type: Boolean, default: false } 
+  multiple: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['file-selected', 'error', 'file-removed'])
 
 const fileInput = ref(null)
 const dragging = ref(false)
-const files = ref([]) 
+const files = ref([])
 const errorMessage = ref('')
 const inputId = 'upload-input-' + Date.now().toString(36)
 
@@ -78,8 +79,6 @@ function validateAndAddFiles(fileList) {
   emit('file-selected', props.multiple ? files.value : files.value[0])
 }
 
-
-
 function onInputChange(e) {
   const fileList = e.target.files
   if (fileList.length) validateAndAddFiles(fileList)
@@ -123,23 +122,14 @@ const stateClass = computed(() => {
       <div class="fileMeta" v-if="files.length">
         <template v-for="(name, index) in fileNames" :key="index">
           <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
-          <BasicIconAndLogo
-            class="basicIconAndLogo"
-            name="CloseGrey"
-            @click.prevent="removeFile(index)"
-            :iconSize="true"
-          />
+          <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeFile(index)"
+            :iconSize="true" />
         </template>
       </div>
     </div>
 
-    <div
-      class="uploadBox"
-      :class="[stateClass, { dragging }]"
-      @drop="onDrop"
-      @dragover="onDragOver"
-      @dragleave="onDragLeave"
-    >
+    <div class="uploadBox" :class="[stateClass, { dragging }]" @drop="onDrop" @dragover="onDragOver"
+      @dragleave="onDragLeave">
       <div class="uploadHeader">
         <BasicIconAndLogo :name="files.length && !errorMessage ? 'Check' : 'CloudIcon'" :iconSize="true" />
       </div>
@@ -153,15 +143,8 @@ const stateClass = computed(() => {
           <p class="secondaryText" v-else>{{ props.secondaryText }}</p>
 
           <div class="actions">
-            <input
-              ref="fileInput"
-              :id="inputId"
-              class="fileInput"
-              type="file"
-              :accept="props.accept"
-              :multiple="props.multiple" 
-              @change="onInputChange"
-            />
+            <input ref="fileInput" :id="inputId" class="fileInput" type="file" :accept="props.accept"
+              :multiple="props.multiple" @change="onInputChange" />
             <Button @click="triggerFileInput" :label="props.buttonText" :aria-label="props.buttonText" />
           </div>
         </div>
@@ -185,41 +168,40 @@ const stateClass = computed(() => {
 .uploadBox.error {
   border-color: $dangerRed;
   background-color: rgba($dangerRed, 0.1);
-
 }
+
 .uploadBox.success {
   border-color: $goodGreen;
   background: rgba($goodGreen, 0.1);
 }
 
 .uploadHeader {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.UploadTitle { //lavet
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
+.UploadTitle {
+  //lavet
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   margin-bottom: 20px;
 
   h3 {
     @include bigBodyText;
     margin-right: 20px;
-
   }
-
 }
 
-.fileMeta { 
+.fileMeta {
   display: flex;
   align-items: center;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   gap: 10px;
-  max-width: 100%; 
+  max-width: 100%;
 
   .fileLink {
     color: $goodGreen;
@@ -234,7 +216,7 @@ const stateClass = computed(() => {
 
   .basicIconAndLogo {
     cursor: pointer;
-    display: inline-flex; 
+    display: inline-flex;
     transition: opacity .15s ease;
   }
 
@@ -243,74 +225,69 @@ const stateClass = computed(() => {
   }
 }
 
-
-/* center content */
 .uploadInner {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
 }
 
-.centerContent {  //Lavet
-  text-align:center; 
-  display:flex; 
-  flex-direction:column; 
-  align-items:center; }
+.centerContent {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-.pop { 
-  margin:0; 
-  color:$primaryBlue; 
+.pop {
+  margin: 0;
+  color: $primaryBlue;
   @include bigBodyText;
-} 
-
-.secondaryText { 
-  margin:0; 
-  color:$darkGrey;
-  @include bodyText; 
-} 
-
-.successText { 
-  color:$goodGreen;
-  @include bodyText; 
 }
 
-.errorText { 
-  color:$dangerRed;
-  @include bodyText; 
+.secondaryText {
+  margin: 0;
+  color: $darkGrey;
+  @include bodyText;
 }
 
-.actions { 
-  margin-top:8px; 
-  display:flex; 
-  justify-content:center; 
+.successText {
+  color: $goodGreen;
+  @include bodyText;
 }
 
-.fileInput { 
-  display:none; 
+.errorText {
+  color: $dangerRed;
+  @include bodyText;
 }
 
-.uploadBox.dragging { 
-  background: rgba($primaryBlue, 0.1); 
-  }
+.actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
 
-  .uploadBox.dragging {
+.fileInput {
+  display: none;
+}
+
+.uploadBox.dragging {
+  background: rgba($primaryBlue, 0.1);
+}
+
+.uploadBox.dragging {
   border-color: rgba($primaryBlue, 8%);
   background: rgba($primaryBlue, 0.2);
 }
 
-/* når boksen er i error-tilstand men brugeren trækker */
 .uploadBox.error.dragging {
-  border-color: $dangerRed; 
-  background: rgba($dangerRed, 0.2); 
+  border-color: $dangerRed;
+  background: rgba($dangerRed, 0.2);
 }
 
-/* når boksen er i success-tilstand men brugeren trækker */
 .uploadBox.success.dragging {
   border-color: $goodGreen;
-  background: rgba($goodGreen, 0.2); 
+  background: rgba($goodGreen, 0.2);
 }
-
-
 </style>

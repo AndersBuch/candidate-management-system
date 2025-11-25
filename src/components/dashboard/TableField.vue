@@ -2,7 +2,9 @@
 import Button from '@/components/atoms/Button.vue'
 import StatusDropdown from '@/components/dashboard/StatusDropdown.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-import { computed, ref } from 'vue'
+import EditModal from '@/components/dashboard/EditModal.vue'
+
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   index: Number,
@@ -11,14 +13,22 @@ const props = defineProps({
   email: String,
   status: String,
   linkedinUrl: String,
-  isActive: Boolean   // <-- prop fra parent
+  isActive: Boolean
 })
 
 const emit = defineEmits(["statusClick", "toggle", "rowClick"])
 
+const localStatus = ref(props.status)
 
-function handleClick() {
-  emit('rowClick')  // sender besked til parent om, at denne række blev klikket
+watch(localStatus, (newVal) => {
+  emit('statusClick', newVal)
+})
+
+const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
+
+function handleClick(event) {
+  if (event.target.closest('.colStatus')) return
+  emit('rowClick', props.index)
 }
 
 function openLinkedin() {
@@ -36,8 +46,6 @@ function getStatusLabel(status) {
     default: return status || 'Ukendt'
   }
 }
-
-const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 </script>
 
 <template>
@@ -52,24 +60,17 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
     <div class="col colPhone">{{ phone }}</div>
     <div class="col colEmail">{{ email }}</div>
 
-<div class="colStatus">
-<StatusDropdown
-  :model-value="status"
-  :is-open="isActive"
-  @toggle="emit('toggle')"
-  @update:modelValue="emit('statusClick', $event)"
-/>
-
-</div>
-
-
+    <div class="colStatus">
+      <StatusDropdown v-model="localStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop />
+    </div>
 
     <div class="col colActions">
       <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
         role="button" tabindex="0" aria-label="LinkedIn" @click.stop="openLinkedin" />
 
-      <BasicIconAndLogo :name="isActive ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn edit" role="button"
-        tabindex="0" :aria-label="isActive ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
+      <div class="notActions">
+        <EditModal />
+      </div>
     </div>
   </div>
 </template>
@@ -83,11 +84,12 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
   padding: 18px 20px;
   border-radius: 5px;
   cursor: pointer;
-  position: relative;     
+  position: relative;
+  color: $black;
 }
 
 .colStatus {
-  position: relative; 
+  position: relative;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -140,6 +142,12 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 .colActions {
   justify-content: flex-end;
   gap: 12px;
+}
+
+.notActions {
+  justify-content: flex-end;
+  gap: 12px;
+  z-index: 999;
 }
 
 .iconBtn {

@@ -25,17 +25,12 @@ const sectionHeight = computed(() => {
 </script>
 
 <template>
-  <section
-    class="heroSection"
-    :style="{
-      backgroundImage: `url(${filePath})`,
-      height: sectionHeight
-    }"
-  >
-    <!-- Overlay til login hvis ønsket -->
+  <section class="heroSection" :style="{
+    backgroundImage: `url(${filePath})`,
+    height: sectionHeight
+  }">
     <div v-if="props.type === 'login'"></div>
 
-    <!-- Slot til login-card -->
     <slot />
   </section>
 </template>
@@ -51,5 +46,4 @@ const sectionHeight = computed(() => {
   justify-content: center;
   position: relative;
 }
-
 </style>

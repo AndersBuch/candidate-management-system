@@ -1,16 +1,32 @@
 <script setup>
-  import { storeToRefs } from 'pinia'
-  import { useCompanyStore } from '@/stores/useCompanyStore'
-  const companyStore = useCompanyStore()
-  const { activeCompany, activePosition } = storeToRefs(companyStore)
+import SearchBar from '@/components/dashboard/SearchBar.vue'
+import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
+
+import { storeToRefs } from 'pinia'
+import { useCompanyStore } from '@/stores/useCompanyStore'
+
+const companyStore = useCompanyStore()
+
+const { activeCompany, activePosition } = storeToRefs(companyStore)
 </script>
 
 <template>
-    <div v-if="activeCompany && activePosition" class="dashboardHeader">
-      <h1 class="companyTitle">{{ activeCompany.name }}</h1>
+  <div v-if="activeCompany && activePosition" class="dashboardHeader">
+
+    <SearchBar v-model="searchTerm" placeholder="Søg kandidat..." />
+
+    <h1 class="companyTitle">{{ activeCompany.name }}</h1>
+
+    <div class="titleRow">
       <p class="positionTitle">{{ activePosition.name }}</p>
-      <p class="applicationId">ID:<span class="idSpan">{{ activePosition.applicationId }}</span></p>
+      <AddPersonModal />
     </div>
+
+    <p class="applicationId">
+      ID:<span class="idSpan">{{ activePosition.applicationId }}</span>
+    </p>
+
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -18,6 +34,17 @@
   padding: 20px 28px;
   border-bottom: 2px solid $lightGrey;
   margin-bottom: 10px;
+
+  display: flex;
+  flex-direction: column; 
+  gap: 5px;
+
+  .titleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    width: 100%;
+  }
 
   .companyTitle {
     @include heading3;
@@ -31,8 +58,8 @@
   .applicationId {
     @include boldBodyText;
     color: $black;
-    
   }
+
   .idSpan {
     padding-left: 4px;
     color: $darkGrey;

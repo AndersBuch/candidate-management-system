@@ -1,7 +1,7 @@
-<!-- components/dashboard/CandidateDocuments.vue -->
 <script setup>
-import { ref } from 'vue'
 import Button from '@/components/atoms/Button.vue'
+
+import { ref } from 'vue'
 
 const sections = ref([
   {
@@ -11,7 +11,7 @@ const sections = ref([
       {
         id: 'cv-1',
         name: 'MadsmikkeldsenCV.pdf',
-        url: '/dummy/MadsmikkeldsenCV.pdf', 
+        url: '/dummy/MadsmikkeldsenCV.pdf',
       },
     ],
   },
@@ -52,28 +52,16 @@ const sections = ref([
 
 <template>
   <div class="documents">
-    <div
-      v-for="section in sections"
-      :key="section.id"
-      class="documents__section"
-    >
-      <h3 class="documents__title">{{ section.title }}</h3>
+    <div v-for="section in sections" :key="section.id" class="documentsSection">
+      <h3 class="documentsTitle">{{ section.title }}</h3>
 
-      <ul class="documents__list">
-        <li
-          v-for="file in section.files"
-          :key="file.id"
-          class="documents__item"
-        >
-          <a
-            class="documents__file-link"
-            :href="file.url"
-            download
-          >
+      <ul class="documentsList">
+        <li v-for="file in section.files" :key="file.id" class="documentsItem">
+          <a class="documentsFileLink" :href="file.url" download>
             {{ file.name }}
           </a>
 
-          <Button type="smallDashboard" label="Download" aria-label="Download" />
+          <Button type="smallDashboard" label="Download" aria-label="Download dokumenter" />
         </li>
       </ul>
     </div>
@@ -83,26 +71,24 @@ const sections = ref([
 <style scoped lang="scss">
 .documents {
   margin-top: 24px;
-
 }
 
-.documents__section + .documents__section {
+.documentsSection {
   margin-top: 24px;
 }
 
-.documents__title {
+.documentsTitle {
   @include boldBodyText;
-  margin-bottom: 4px;
 }
 
 /* Liste med filer */
-.documents__list {
+.documentsList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.documents__item {
+.documentsItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -111,11 +97,10 @@ const sections = ref([
 }
 
 /* Filnavn */
-.documents__file-link {
+.documentsFileLink {
   color: $goodGreen;
   text-decoration: underline;
   overflow-x: hidden;
   @include bodyText;
 }
-
 </style>
