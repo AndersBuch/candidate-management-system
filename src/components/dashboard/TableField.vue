@@ -80,6 +80,7 @@ const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
   border-radius: 5px;
   cursor: pointer;
   position: relative;
+  color: $black;
 }
 
 .colStatus {
