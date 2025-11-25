@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$pdo = require __DIR__ . '/../config/database.php';
+$pdo = require __DIR__ . '/config/database.php';
 
 $status = ['status' => 'api ok', 'db' => 'ok'];
 
