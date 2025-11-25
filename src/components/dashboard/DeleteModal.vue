@@ -44,20 +44,21 @@ function confirmDelete() {
 
 <template>
     <BasicIconAndLogo name="Thash" :iconSize="true" @click.stop="thashModal" class="iconBtn" />
+    <transition name="fade">
+        <Modal v-if="showModal" @close="closeModal" height="260px" class="deleteCandidateModal">
 
-    <Modal v-if="showModal" @close="closeModal" height="260px" class="deleteCandidateModal">
+            <div class="kandidateModal">
+                <BasicIconAndLogo name="Thash" :iconSize="true" />
+                <p>Du er igang med at slette en kandidate</p>
+                <p>Vil du slette denne kandidate?</p>
+            </div>
+            <div class="buttonModal">
+                <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
+                <Button type="smallRedButton" label="Ja" aria-label="Sletter Kandidate" @click="confirmDelete" />
+            </div>
 
-        <div class="kandidateModal">
-            <BasicIconAndLogo name="Thash" :iconSize="true" />
-            <p>Du er igang med at slette en kandidate</p>
-            <p>Vil du slette denne kandidate?</p>
-        </div>
-        <div class="buttonModal">
-            <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
-            <Button type="smallRedButton" label="Ja" aria-label="Sletter Kandidate" @click="confirmDelete" />
-        </div>
-
-    </Modal>
+        </Modal>
+    </transition>
 
     <div class="toastWrapper">
         <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" />
@@ -117,5 +118,22 @@ function confirmDelete() {
     align-items: center;
     gap: 12px;
     margin-top: 20px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
+    transform: translateY(0);
 }
 </style>
