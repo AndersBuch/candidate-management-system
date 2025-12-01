@@ -12,6 +12,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $pdo = require __DIR__ . '/config/database.php';
 
+spl_autoload_register(function ($class) {
+    $baseDir = __DIR__;
+    $paths = [
+        $baseDir . '/models/' . $class . '.php',
+        $baseDir . '/controllers/' . $class . '.php',
+    ];
+
+    foreach ($paths as $file) {
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
+});
+
 $uri  = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = preg_replace('#^/api#', '', $uri);
 
@@ -27,7 +42,8 @@ switch ($path) {
             echo json_encode(['error' => 'Method not allowed']);
             break;
         }
-        listCompaniesWithJobs($pdo);
+        $controller = new CompanyController($pdo);
+        $controller->index();
         break;
 
     default:
@@ -49,47 +65,4 @@ function health(PDO $pdo): void
     }
 
     echo json_encode($status);
-}
-
-function listCompaniesWithJobs(PDO $pdo): void
-{
-    $sql = "
-        SELECT 
-            c.id   AS company_id,
-            c.name AS company_name,
-            j.id   AS job_id,
-            j.title,
-            j.public_id
-        FROM Company c
-        LEFT JOIN Job j ON j.company_id = c.id
-        ORDER BY c.name, j.title
-    ";
-
-    $stmt = $pdo->query($sql);
-    $rows = $stmt->fetchAll();
-
-    $companies = [];
-
-    foreach ($rows as $row) {
-        $companyId = (int) $row['company_id'];
-
-        if (!isset($companies[$companyId])) {
-            $companies[$companyId] = [
-                'id'        => $companyId,
-                'name'      => $row['company_name'],
-                'positions' => [],
-            ];
-        }
-
-        if (!empty($row['job_id'])) {
-            $companies[$companyId]['positions'][] = [
-                'id'            => (int) $row['job_id'],
-                'name'          => $row['title'],
-                // public_id i databasen = applicationId i frontend
-                'applicationId' => $row['public_id'],
-            ];
-        }
-    }
-
-    echo json_encode(array_values($companies));
 }
