@@ -1,6 +1,6 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
@@ -14,6 +14,10 @@ const selectCompany = (id) => {
 const selectPosition = (companyId, positionId) => {
   companyStore.selectPosition(companyId, positionId)
 }
+
+onMounted(() => {
+  companyStore.fetchCompanies()
+})
 </script>
 
 <template>
