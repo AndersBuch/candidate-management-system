@@ -2,8 +2,12 @@
 
 class Company
 {
-    public function __construct(private PDO $pdo)
+    /** @var PDO */
+    private $pdo;
+
+    public function __construct(PDO $pdo)
     {
+        $this->pdo = $pdo;
     }
 
     public function allWithJobs(): array
@@ -40,7 +44,7 @@ class Company
                 $companies[$companyId]['positions'][] = [
                     'id'            => (int) $row['job_id'],
                     'name'          => $row['title'],
-                    'applicationId' => $row['public_id'], // public_id i DB
+                    'applicationId' => $row['public_id'], // public_id i DB = applicationId i frontend
                 ];
             }
         }

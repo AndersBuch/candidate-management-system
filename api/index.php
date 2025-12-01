@@ -52,13 +52,13 @@ switch ($path) {
         break;
 }
 
-function health(PDO $pdo): void
+function health($pdo)
 {
     $status = ['status' => 'api ok', 'db' => 'ok'];
 
     try {
         $pdo->query('SELECT 1');
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
         http_response_code(500);
         $status['db'] = 'error';
         $status['error'] = 'DB connection failed';
