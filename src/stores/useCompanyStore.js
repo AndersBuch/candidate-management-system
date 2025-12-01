@@ -2,44 +2,9 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useCompanyStore = defineStore('company', () => {
-
-const companies = ref([
-  {
-    id: 1,
-    name: 'Insatech A/S',
-    positions: [
-      {
-        id: '1-1',
-        name: 'Maskinmester',
-        applicationId: '32&dnAj'
-      },
-      {
-        id: '1-2',
-        name: 'Elektriker',
-        applicationId: '993KD83'
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Regal A/S',
-    positions: [
-      {
-        id: '2-1',
-        name: 'Svejser',
-        applicationId: 'AB22DJ3'
-      },
-      {
-        id: '2-2',
-        name: 'Projektleder',
-        applicationId: '7ss8DJD'
-      },
-    ],
-  },
-])
-
-  const activeCompanyId = ref(1)
-  const activePositionId = ref('1-1')
+  const companies = ref([])
+  const activeCompanyId = ref(null)
+  const activePositionId = ref(null)
 
   const activeCompany = computed(() =>
     companies.value.find(c => c.id === activeCompanyId.value) || null
@@ -62,6 +27,27 @@ const companies = ref([
     activePositionId.value = positionId
   }
 
+  async function fetchCompanies() {
+    try {
+      const res = await fetch('/api/companies')
+      if (!res.ok) {
+        throw new Error('Kunne ikke hente firmaer')
+      }
+      const data = await res.json()
+      companies.value = data
+
+      if (data.length) {
+        activeCompanyId.value = data[0].id
+        activePositionId.value = data[0].positions[0]?.id ?? null
+      } else {
+        activeCompanyId.value = null
+        activePositionId.value = null
+      }
+    } catch (err) {
+      console.error('Fejl ved hentning af firmaer:', err)
+    }
+  }
+
   return {
     companies,
     activeCompanyId,
@@ -70,5 +56,6 @@ const companies = ref([
     activePosition,
     selectCompany,
     selectPosition,
+    fetchCompanies,
   }
 })
