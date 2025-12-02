@@ -27,20 +27,22 @@ onMounted(() => {
       <BasicIconAndLogo name="MainLogo" :large="true" />
     </div>
 
-    <!-- Firmaer og stillinger -->
-    <section class="menuSection">
-
+    <div class="menuSectionInner">
+      <h2 class="menuTitle">Forside</h2>
       <div class="menuSectionInner">
-        <h2 class="menuTitle">Forside</h2>
-        <div class="menuSectionInner">
-          <button class="addCompany">
+        <RouterLink to="/homepage" v-slot="{ isActive }">
+          <button class="addCompany" :class="{ activeMenu: isActive }">
             <BasicIconAndLogo name="Home" :iconSize="true" />
             Forside
           </button>
-        </div>
+        </RouterLink>
       </div>
+    </div>
+    <div class="divider"></div>
 
-      <div class="divider"></div>
+    <!-- Firmaer og stillinger -->
+    <section class="menuSection">
+
       <div class="menuSectionInner">
         <h2 class="menuTitle">Firma</h2>
       </div>
@@ -111,6 +113,17 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.addCompany.activeMenu {
+  color: $primaryBlue; // tekst bliver blå
+  margin-bottom: 20px;
+
+  :deep(path),
+  :deep(circle),
+  :deep(rect) {
+    stroke: $primaryBlue !important; // ikon bliver blå
+  }
+}
+
 .sideMenu {
   width: 350px;
   min-width: 350px;
@@ -151,7 +164,7 @@ onMounted(() => {
   width: 100%;
   height: 2px;
   background-color: $lightGrey;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .activeDivider {
