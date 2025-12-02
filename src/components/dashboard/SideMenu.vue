@@ -29,6 +29,18 @@ onMounted(() => {
 
     <!-- Firmaer og stillinger -->
     <section class="menuSection">
+
+      <div class="menuSectionInner">
+        <h2 class="menuTitle">Forside</h2>
+        <div class="menuSectionInner">
+          <button class="addCompany">
+            <BasicIconAndLogo name="Home" :iconSize="true" />
+            Forside
+          </button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
       <div class="menuSectionInner">
         <h2 class="menuTitle">Firma</h2>
       </div>
@@ -85,6 +97,10 @@ onMounted(() => {
       </div>
       <div class="divider"></div>
       <div class="menuSectionInner">
+        <button class="logoutButton">
+          <BasicIconAndLogo name="User" :iconSize="true" />
+          Din Profil
+        </button>
         <button class="logoutButton">
           <BasicIconAndLogo name="Logout" :iconSize="true" />
           Log ud
