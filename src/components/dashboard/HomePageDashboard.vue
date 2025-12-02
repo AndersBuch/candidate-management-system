@@ -20,12 +20,11 @@ import { ref } from 'vue'
                 <h2>Claus Hansen</h2>
                 <div class="divider"></div>
             </div>
-                      <Wigdet
-    :icon="User"
-    title="Kandiddsadater"
-    subtitle="Antalet af alle kandidater"
-    :count="43"
-  />
+            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="30" />
+            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="0" />
+            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="-30" />
+            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="30"
+                :forceNeutral="true" />
         </section>
 
     </div>

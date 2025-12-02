@@ -1,28 +1,69 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import { computed } from 'vue'
 
-// Props gør komponentet genbrugeligt
 const props = defineProps({
-    icon: { type: Object, required: true },
+    icon: { type: String, required: true },
     title: { type: String, required: true },
     subtitle: { type: String, required: true },
     count: { type: Number, required: true },
+
+    // Mulighed for at overskrive farver
+    positiveColor: { type: String, default: '#34C759' },
+    negativeColor: { type: String, default: '#FF383C' },
+    neutralColor: { type: String, default: '#D5E9FF' },
+
+    // 👇 NY PROP
+    forceNeutral: { type: Boolean, default: false }
+})
+
+// Tekstvisning
+const displayCount = computed(() => {
+    if (props.forceNeutral) {
+        return props.count   // Vis tallet præcis som det er
+    }
+
+    if (props.count > 0) return `+${props.count}`
+    if (props.count < 0) return `-${Math.abs(props.count)}`
+    return props.count
+})
+
+// Baggrundsfarve
+const countColor = computed(() => {
+    if (props.forceNeutral) {
+        return props.neutralColor
+    }
+
+    if (props.count > 0) return props.positiveColor
+    if (props.count < 0) return props.negativeColor
+    return props.neutralColor
+})
+
+// 👇 TEKSTFARVE
+const countTextColor = computed(() => {
+    if (props.forceNeutral) return '#333' // sort tekst i neutral mode
+
+    if (props.count > 0) return '#fff'   // hvid tekst i grøn
+    if (props.count < 0) return '#fff'   // hvid tekst i rød
+
+    return '#333' // sort tekst i neutral
 })
 </script>
 
 <template>
     <div class="cardWrapper">
         <div class="icon">
-            <BasicIconAndLogo name="UserWhite" :large="bigIconSize" />
+            <BasicIconAndLogo name="UserWhite" :bigIconSize="true" />
         </div>
 
         <h3 class="title">{{ title }}</h3>
         <p class="subtitle">{{ subtitle }}</p>
 
-        <div class="count">{{ count }}</div>
+        <div class="count" :style="{ backgroundColor: countColor, color: countTextColor }">
+            {{ displayCount }}
+        </div>
     </div>
 </template>
-
 
 <style scoped lang="scss">
 .cardWrapper {
@@ -56,13 +97,11 @@ const props = defineProps({
 
     .count {
         margin-top: 5px;
-        background: $sekundareBlue;
-        display: inline-block;
         padding: 6px 14px;
-        border-radius: 50px;
-        font-size: 18px;
+        display: inline-block;
+        border-radius: 15px;
         @include boldBodyText;
+        transition: background 0.2s;
     }
-
 }
 </style>
