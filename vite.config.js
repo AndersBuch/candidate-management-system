@@ -15,16 +15,28 @@ export default defineConfig({
     }
   },
 
-css: {
-  preprocessorOptions: {
-    scss: {
-      additionalData: `
+  // ⬇⬇⬇ DETTE ER NYT ⬇⬇⬇
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8085', // din PHP API
+        changeOrigin: true,
+        // secure: false, // kun nødvendigt ved https-self-signed, så vi lader den være
+      }
+    }
+  },
+  // ⬆⬆⬆ DETTE ER NYT ⬆⬆⬆
+
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
         @use "@/assets/style/globalVariables.scss" as *;
         @use "@/assets/style/main.scss";
       `
+      }
     }
-  }
-},
-base: '/app/'
+  },
 
+  base: '/app/'
 })
