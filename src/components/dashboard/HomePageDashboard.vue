@@ -2,6 +2,8 @@
 import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import Wigdet from '@/components/dashboard/Wigdet.vue'
+import WigdetForm from '@/components/dashboard/WigdetForm.vue'
+import WigdetShortcut from '@/components/dashboard/WigdetShortcut.vue'
 
 
 import { ref } from 'vue'
@@ -14,17 +16,16 @@ import { ref } from 'vue'
         <SideMenu />
 
         <section class="dashboardContentWrapper">
-            <div class="dashboardContent">
+            <div class="dashboardHeaders">
                 <DashboardHeader />
                 <h1>Velkommen tilbage</h1>
                 <h2>Claus Hansen</h2>
                 <div class="divider"></div>
             </div>
-            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="30" />
-            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="0" />
-            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="-30" />
-            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="30"
-                :forceNeutral="true" />
+            <div class="homepageContainer">
+                <WigdetForm />
+                <WigdetShortcut />
+            </div>
         </section>
 
     </div>
@@ -39,7 +40,7 @@ import { ref } from 'vue'
     flex: 1;
 }
 
-.dashboardContent {
+.dashboardHeaders {
     text-align: center;
 
     h1 {
@@ -58,5 +59,9 @@ import { ref } from 'vue'
         background-color: $lightGrey;
         margin-bottom: 10px;
     }
+}
+
+.homepageContainer {
+    padding: 40px;
 }
 </style>

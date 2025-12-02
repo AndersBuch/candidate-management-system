@@ -1,21 +1,23 @@
 <script setup>
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import Button from '@/components/atoms/Button.vue'
+
 import { computed } from 'vue'
 
 const props = defineProps({
     icon: { type: String, required: true },
     title: { type: String, required: true },
     subtitle: { type: String, required: true },
-    count: { type: Number, required: true },
-
-    // Mulighed for at overskrive farver
+    count: { type: Number, default: 0 },          // ikke alle widgets har count
+    showButton: { type: Boolean, default: false }, // vis knap i stedet for count
+    buttonLabel: { type: String, default: 'Annuller' }, // knap-tekst
+    buttonClick: { type: Function },              // funktion når knap klikkes
     positiveColor: { type: String, default: '#34C759' },
     negativeColor: { type: String, default: '#FF383C' },
     neutralColor: { type: String, default: '#D5E9FF' },
-
-    // 👇 NY PROP
     forceNeutral: { type: Boolean, default: false }
 })
+
 
 // Tekstvisning
 const displayCount = computed(() => {
@@ -53,16 +55,23 @@ const countTextColor = computed(() => {
 <template>
     <div class="cardWrapper">
         <div class="icon">
-            <BasicIconAndLogo name="UserWhite" :bigIconSize="true" />
+            <BasicIconAndLogo :name="icon" :bigIconSize="true" />
         </div>
 
         <h3 class="title">{{ title }}</h3>
         <p class="subtitle">{{ subtitle }}</p>
 
-        <div class="count" :style="{ backgroundColor: countColor, color: countTextColor }">
-            {{ displayCount }}
-        </div>
+    <!-- v-if på RouterLink -->
+    <RouterLink v-if="showButton" to="/dashboardsite">
+      <Button type="smallDashboard" :label="buttonLabel" :aria-label="buttonLabel"
+        @click="buttonClick" />
+    </RouterLink>
+
+    <!-- Ellers vis count -->
+    <div v-else class="count" :style="{ backgroundColor: countColor, color: countTextColor }">
+      {{ displayCount }}
     </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -102,6 +111,10 @@ const countTextColor = computed(() => {
         border-radius: 15px;
         @include boldBodyText;
         transition: background 0.2s;
+    }
+
+    Button {
+        margin: 5px auto 0 auto; // centerer knappen horisontalt
     }
 }
 </style>
