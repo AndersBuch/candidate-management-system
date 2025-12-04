@@ -31,6 +31,12 @@ function getLabelColor(value) {
   }
 }
 
+
+function getLabelFromValue(value) {
+  const found = options.find(o => o.value === value)
+  return found ? found.label : value
+}
+
 function selectOption(opt) {
   emit("update:modelValue", opt.value)
   isOpen.value = false
@@ -57,7 +63,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="dropdownWrapper" ref="dropdownRef">
     <!-- STATUS BUTTON -->
-    <Button :label="modelValue" :type="modelValue.toLowerCase()" aria-label="Status knap" @click="isOpen = !isOpen" />
+    <Button :label="getLabelFromValue(modelValue)" :type="modelValue.toLowerCase()" aria-label="Status knap" @click="isOpen = !isOpen" />
 
     <!-- DROPDOWN MENU MED TRANSITION -->
     <transition name="slide">

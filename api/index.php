@@ -46,7 +46,21 @@ switch ($path) {
         $controller->index();
         break;
 
+    // NYT ENDPOINT: /api/jobs/{jobId}/candidates
     default:
+        if (preg_match('#^/jobs/(\d+)/candidates$#', $path, $m)) {
+            if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+                http_response_code(405);
+                echo json_encode(['error' => 'Method not allowed']);
+                break;
+            }
+
+            $jobId = (int) $m[1];
+            $controller = new JobController($pdo);
+            $controller->candidates($jobId);
+            break;
+        }
+
         http_response_code(404);
         echo json_encode(['error' => 'Not found']);
         break;

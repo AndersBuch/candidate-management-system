@@ -1,19 +1,18 @@
 <script setup>
+import { ref, computed } from 'vue'
 import TableField from '@/components/dashboard/TableField.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-import ToastDashboard from '@/components/dashboard/ToastDashboard.vue'
-import EditModal from '@/components/dashboard/EditModal.vue'
-
-import { ref } from 'vue'
+import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const emit = defineEmits(['openCandidate'])
 
-const rows = ref([
-  { name: 'Hans Hansen Ole', phone: '22283910', email: 'kontaktmail@gmail.com', status: 'Accepted', linkedin: 'https://...' },
-  { name: 'Agnes Kofoed', phone: '55724901', email: 'promailhe@hotmail.com', status: 'Pending', linkedin: '' },
-  { name: 'Mette Jensen', phone: '40392211', email: 'mette.jensen@gmail.com', status: 'Rejected', linkedin: '' },
-  { name: 'Jonas N.', phone: '22335544', email: 'jonas@firmamail.dk', status: 'Contact', linkedin: '' }
-])
+const companyStore = useCompanyStore()
+
+// Rækker = alle kandidater til den aktive stilling
+const rows = computed(() => companyStore.activeCandidates)
+
+
+
 
 const activeIndex = ref(null)
 
@@ -25,19 +24,21 @@ function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
 
-// ændret: sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
+// sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
 function setActiveRow(index) {
   activeIndex.value = activeIndex.value === index ? null : index
-  emit('openCandidate', activeIndex.value)  // sender til DashboardSite
+  emit('openCandidate', activeIndex.value)
 }
 
-function getStatusLabel(status) {
-  switch (status?.toLowerCase()) {
-    case 'accepted': return 'Accepteret'
-    case 'pending': return 'Afventer'
-    case 'contact': return 'Kontakt'
-    case 'rejected': return 'Afvist'
-    default: return status || 'Ukendt'
+// 👇 NY: map DB-status → 'Accepted' | 'Pending' | 'Contact' | 'Rejected'
+function mapStatusValue(status) {
+  if (!status) return 'Pending'
+  switch (status.toLowerCase()) {
+    case 'accepteret': return 'Accepted'
+    case 'afventer':   return 'Pending'
+    case 'kontaktet':  return 'Contact'
+    case 'afvist':     return 'Rejected'
+    default:           return 'Pending'
   }
 }
 
@@ -49,7 +50,7 @@ function showToast() {
     id,
     title: 'Kandidat tilføjet',
     subtitle: 'Mads Mikkels Ole',
-    variant: 'success', // rettet her
+    variant: 'success',
     duration: 3000,
     showUndo: true
   })
@@ -60,7 +61,7 @@ function removeToast(id) {
 }
 
 function handleUndo(id) {
-  console.log("Undo for:", id)
+  console.log('Undo for:', id)
 }
 
 const showExtendedInfo = ref(false)
@@ -85,9 +86,20 @@ const showExtendedInfo = ref(false)
     </div>
   </div>
 
-  <TableField v-for="(r, i) in rows" :key="i" :index="i" :name="r.name" :phone="r.phone" :email="r.email"
-    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow"
-    @statusClick="onStatusClick(r)" @edit="onEdit(r)" />
+  <TableField
+    v-for="(r, i) in rows"
+    :key="r.id ?? i"
+    :index="i"
+    :name="r.name"
+    :phone="r.phone"
+    :email="r.email"
+    :status="mapStatusValue(r.status)"
+    :linkedin-url="r.linkedin"
+    :is-active="activeIndex === i"
+    @rowClick="setActiveRow"
+    @statusClick="() => onStatusClick(r)"
+    @edit="() => onEdit(r)"
+  />
 </template>
 
 <style lang="scss">
@@ -101,7 +113,7 @@ const showExtendedInfo = ref(false)
 .headerItem {
   display: flex;
   align-items: center;
-  gap: 8px; // afstand mellem p og ikon
+  gap: 8px;
   cursor: pointer;
 
   p {
