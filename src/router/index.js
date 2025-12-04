@@ -30,6 +30,11 @@ const routes = [
   path: '/:pathMatch(.*)*',
   name: 'NotFound',
   component: () => import('../components/pages/NotFound.vue')
+},
+{
+  path: '/homepage',
+  name: 'HomePage',
+  component: () => import('../components/dashboard/HomePageDashboard.vue')
 }
 ]
 
