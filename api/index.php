@@ -13,12 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $pdo = require __DIR__ . '/config/database.php';
 
 spl_autoload_register(function ($class) {
-    $baseDir = __DIR__;
     $paths = [
-        $baseDir . '/models/' . $class . '.php',
-        $baseDir . '/controllers/' . $class . '.php',
+        __DIR__ . '/models/' . $class . '.php',
+        __DIR__ . '/controllers/' . $class . '.php',
     ];
-
     foreach ($paths as $file) {
         if (file_exists($file)) {
             require_once $file;
@@ -46,6 +44,16 @@ switch ($path) {
         $controller->index();
         break;
 
+    case '/login':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
+        }
+        $controller = new AuthController($pdo);
+        $controller->login();
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Not found']);
@@ -55,7 +63,6 @@ switch ($path) {
 function health($pdo)
 {
     $status = ['status' => 'api ok', 'db' => 'ok'];
-
     try {
         $pdo->query('SELECT 1');
     } catch (Exception $e) {
@@ -63,6 +70,5 @@ function health($pdo)
         $status['db'] = 'error';
         $status['error'] = 'DB connection failed';
     }
-
     echo json_encode($status);
 }
