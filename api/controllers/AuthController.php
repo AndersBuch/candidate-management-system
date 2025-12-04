@@ -1,5 +1,4 @@
 <?php
-
 class AuthController {
     private $pdo;
 
@@ -18,22 +17,22 @@ class AuthController {
 
         $stmt = $this->pdo->prepare("SELECT * FROM User WHERE email = ?");
         $stmt->execute([$data['email']]);
-$user = $stmt->fetch();
-if (!$user) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Bruger findes ikke', 'debug' => $data['email']]);
-    return;
-}
+        $user = $stmt->fetch();
 
-// Password-verifikation
-if (!password_verify($data['password'], $user['password'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Ugyldigt password']);
-    return;
-}
+        if (!$user) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Bruger findes ikke', 'debug' => $data['email']]);
+            return;
+        }
 
+        // Direkte sammenligning uden hash
+        if ($data['password'] !== $user['password']) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Ugyldigt password']);
+            return;
+        }
 
-        // Vi kan lave JWT-token (anbefalet) eller PHP-session
+        // Lav JWT-token
         $payload = [
             'id' => $user['id'],
             'email' => $user['email'],
@@ -51,7 +50,7 @@ if (!password_verify($data['password'], $user['password'])) {
     private function generateJWT($payload) {
         $header = base64_encode(json_encode(['alg'=>'HS256','typ'=>'JWT']));
         $payload = base64_encode(json_encode($payload));
-        $secret = 'DIN_SECRET_KEY'; // gem i config
+        $secret = 'DIN_SECRET_KEY';
         $signature = hash_hmac('sha256', "$header.$payload", $secret, true);
         return "$header.$payload." . base64_encode($signature);
     }
