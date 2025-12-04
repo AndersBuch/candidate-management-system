@@ -60,5 +60,10 @@ svg {
     width: 24px;
     height: 24px;
   }
+
+  &.bigIconSize {
+    width: 27px;
+    height: 27px;
+  }
 }
 </style>
