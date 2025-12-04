@@ -4,6 +4,21 @@ import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function logout() {
+  // slet begge steder
+  localStorage.removeItem('token')
+  localStorage.removeItem('loggedUser')
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('loggedUser')
+
+  router.push('/login')
+}
+
+
 const companyStore = useCompanyStore()
 const { companies, activeCompanyId, activePositionId } = storeToRefs(companyStore)
 
@@ -103,10 +118,11 @@ onMounted(() => {
           <BasicIconAndLogo name="User" :iconSize="true" />
           Din Profil
         </button>
-        <button class="logoutButton">
-          <BasicIconAndLogo name="Logout" :iconSize="true" />
-          Log ud
-        </button>
+<button class="logoutButton" @click="logout">
+  <BasicIconAndLogo name="Logout" :iconSize="true" />
+  Log ud
+</button>
+
       </div>
     </section>
   </aside>

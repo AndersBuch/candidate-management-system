@@ -40,9 +40,19 @@ async function handleLogin() {
             return;
         }
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('loggedUser', JSON.stringify(data.user));
-        router.push({ name: 'DashboardSite' });
+// GEM TOKEN – afhængigt af om "Husk mig" er slået til
+if (rememberme.value) {
+    // betyder: brugeren vil huskes efter browser-luk
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('loggedUser', JSON.stringify(data.user));
+} else {
+    // betyder: logget ud så snart browseren lukkes
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('loggedUser', JSON.stringify(data.user));
+}
+
+router.push({ name: 'HomePage' });
+
     } catch (err) {
         console.error('Fetch fejl:', err);
         error.value = 'Noget gik galt.';
