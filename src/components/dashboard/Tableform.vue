@@ -8,12 +8,11 @@ import { ref } from 'vue'
 
 const emit = defineEmits(['openCandidate'])
 
-const rows = ref([
-  { name: 'Hans Hansen Ole', phone: '22283910', email: 'kontaktmail@gmail.com', status: 'Accepted', linkedin: 'https://...' },
-  { name: 'Agnes Kofoed', phone: '55724901', email: 'promailhe@hotmail.com', status: 'Pending', linkedin: '' },
-  { name: 'Mette Jensen', phone: '40392211', email: 'mette.jensen@gmail.com', status: 'Rejected', linkedin: '' },
-  { name: 'Jonas N.', phone: '22335544', email: 'jonas@firmamail.dk', status: 'Contact', linkedin: '' }
-])
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const store = useCandidateStore()
+const rows = store.candidates
+
 
 const activeIndex = ref(null)
 

@@ -25,8 +25,19 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Debug: log incoming request (kan fjernes efter fejlsøgning)
+error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
+error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+
 $uri  = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = preg_replace('#^/api#', '', $uri);
+$path = preg_replace('#^/api#', '', $uri); // dette kan efterlade leading slash
+
+// Debug: skriv i response body så klient kan se
+// OBS: dette er kun midlertidigt for fejlfinding
+if (isset($_GET['__debug'])) {
+    echo json_encode(['debug_uri' => $uri, 'debug_path' => $path, 'method' => $_SERVER['REQUEST_METHOD']]);
+    exit;
+}
 
 switch ($path) {
     case '':
@@ -54,9 +65,22 @@ switch ($path) {
         $controller->login();
         break;
 
+    case '/candidates':
+        $controller = new CandidateController($pdo);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $controller->index();
+        } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->store();
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+        }
+        break;
+
     default:
         http_response_code(404);
-        echo json_encode(['error' => 'Not found']);
+        echo json_encode(['error' => 'Not found', 'requested' => $path]);
         break;
 }
 
@@ -68,7 +92,7 @@ function health($pdo)
     } catch (Exception $e) {
         http_response_code(500);
         $status['db'] = 'error';
-        $status['error'] = 'DB connection failed';
+        $status['error'] = 'DB connection failed: ' . $e->getMessage();
     }
     echo json_encode($status);
 }

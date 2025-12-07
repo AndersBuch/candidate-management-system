@@ -16,15 +16,16 @@ export default defineConfig({
   },
 
   // ⬇⬇⬇ DETTE ER NYT ⬇⬇⬇
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8085', // din PHP API
-        changeOrigin: true,
-        // secure: false, // kun nødvendigt ved https-self-signed, så vi lader den være
-      }
+server: {
+  proxy: {
+    '/api': {
+      target: 'https://buchdesigns.dk',
+      changeOrigin: true,
+      secure: false
     }
-  },
+  }
+},
+
   // ⬆⬆⬆ DETTE ER NYT ⬆⬆⬆
 
   css: {

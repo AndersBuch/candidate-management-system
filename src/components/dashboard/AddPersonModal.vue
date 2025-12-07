@@ -8,6 +8,9 @@ import UploadButton from '@/components/dashboard/UploadButton.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
 
 import { ref, reactive, computed } from 'vue'
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const candidateStore = useCandidateStore()
 
 const showModal = ref(false)
 
@@ -99,10 +102,29 @@ function removeToast(id) {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }
 
-function confirmAdd() {
+async function confirmAdd() {
+
+  const payload = {
+    first_name: formData.name,
+    last_name: formData.lastname,
+    email: formData.email,
+    phone_number: formData.phone,
+    address: formData.address,
+    zip_code: formData.postal,
+    city: formData.city,
+    gender: "Andet",
+    age: formData.age,
+    linkedin_url: formData.linkedin,
+    current_position: formData.company,
+    note: formData.message
+  }
+
+  await candidateStore.addCandidate(payload)
+
   closeModal()
   showToast()
 }
+
 
 </script>
 
