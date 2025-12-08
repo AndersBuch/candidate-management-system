@@ -48,14 +48,30 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  return {
-    companies,
-    activeCompanyId,
-    activePositionId,
-    activeCompany,
-    activePosition,
-    selectCompany,
-    selectPosition,
-    fetchCompanies,
-  }
+  async function addCompany(payload) {
+  const res = await fetch('/api/companies', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) throw new Error('Kunne ikke tilføje firma');
+
+  // Opdater lokale companies
+  await fetchCompanies();
+}
+
+
+return {
+  companies,
+  activeCompanyId,
+  activePositionId,
+  activeCompany,
+  activePosition,
+  selectCompany,
+  selectPosition,
+  fetchCompanies,
+  addCompany // <--- tilføjet her
+}
+
 })

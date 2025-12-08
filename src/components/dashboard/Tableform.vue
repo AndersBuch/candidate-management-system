@@ -4,17 +4,29 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import ToastDashboard from '@/components/dashboard/ToastDashboard.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const emit = defineEmits(['openCandidate'])
 
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
 const store = useCandidateStore()
-const rows = store.candidates
-
+const rows = computed(() => {
+  return store.candidates.map(c => ({
+    id: c.id,
+    name: c.first_name + " " + c.last_name,
+    phone: c.phone_number,
+    email: c.email,
+    status: c.status,
+    linkedin: c.linkedin_url
+  }))
+})
 
 const activeIndex = ref(null)
+
+onMounted(() => {
+  store.fetchCandidates()
+})
 
 function onEdit(row) {
   console.log('📝 edit:', row.name)

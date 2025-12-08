@@ -110,6 +110,7 @@ async function confirmAdd() {
     email: formData.email,
     phone_number: formData.phone,
     address: formData.address,
+    status: formData.status,
     zip_code: formData.postal,
     city: formData.city,
     gender: "Andet",

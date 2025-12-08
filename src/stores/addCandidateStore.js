@@ -60,7 +60,7 @@ export const useCandidateStore = defineStore('candidate', () => {
         name: payload.first_name + " " + payload.last_name,
         phone: payload.phone_number,
         email: payload.email,
-        status: "Contact",
+        status: payload.status,
         linkedin: payload.linkedin_url
       })
 
