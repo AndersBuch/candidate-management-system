@@ -4,37 +4,28 @@ import { ref } from 'vue'
 export const useCandidateStore = defineStore('candidate', () => {
   const candidates = ref([])
 
-  async function fetchCandidates() {
-    try {
-      // brug fuld origin i dev hvis base-path er anderledes:
-      const base = (import.meta.env.VITE_API_BASE_URL) ? import.meta.env.VITE_API_BASE_URL : ''
-      const url = base + '/api/candidates'
-      console.log('Fetching candidates from', url)
-      const res = await fetch(url, { credentials: 'include' })
+async function fetchCandidates(positionName = null) {
+  try {
+    const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
+    let url = base + '/api/candidates'
 
-      // debug: hvis ikke OK, log body som tekst
-      if (!res.ok) {
-        const text = await res.text()
-        console.error('Fetch candidates failed:', res.status, res.statusText, text)
-        throw new Error('Fetch failed: ' + res.status)
-      }
+    const params = []
+    if (positionName) params.push(`positionId=${encodeURIComponent(positionName)}`)
 
-      const contentType = res.headers.get('content-type') || ''
-      if (contentType.indexOf('application/json') === -1) {
-        const text = await res.text()
-        console.error('Expected JSON but got:', text)
-        throw new Error('Server did not return JSON')
-      }
+    if (params.length) url += '?' + params.join('&')
 
-      const data = await res.json()
-      candidates.value = data
-      console.log('Candidates loaded:', data.length)
-    } catch (err) {
-      console.error('fetchCandidates error:', err)
-      // valgfrit: sæt candidates.value = [] eller vis toast
-      candidates.value = []
-    }
+    console.log("Fetching filtered candidates from:", url)
+
+    const res = await fetch(url)
+    const bodyText = await res.text()
+    candidates.value = JSON.parse(bodyText)
+  } catch (err) {
+    console.error("fetchCandidates error:", err)
+    candidates.value = []
   }
+}
+
+
 
   async function addCandidate(payload) {
     try {

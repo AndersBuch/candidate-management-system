@@ -9,19 +9,24 @@ class CandidateController {
     
 public function index() {
     header('Content-Type: application/json; charset=utf-8');
-    try {
-        $stmt = $this->pdo->query("SELECT id, first_name, last_name, phone_number, email, status, linkedin_url FROM candidate");
-        $candidates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        echo json_encode($candidates);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode([
-            "error" => "Could not fetch candidates",
-            "message" => $e->getMessage()
-        ]);
+    $position = $_GET['positionId'] ?? null; // vi sender tekst som positionId
+
+    $sql = "SELECT * FROM candidate";
+    $params = [];
+
+    if ($position) {
+        $sql .= " WHERE current_position = ?";
+        $params[] = $position; // fx "Maskinmester"
     }
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
+
+
     // POST /candidates
     public function store() {
         $data = json_decode(file_get_contents("php://input"), true);
