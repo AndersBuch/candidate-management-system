@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json; charset=utf-8');
+
 class CompanyController
 {
     private PDO $pdo;
@@ -10,7 +12,7 @@ class CompanyController
 
     public function index()
     {
-        $user = $this->authenticate(); // kun hvis du vil sikre login
+         // $user = $this->authenticate(); // kun hvis du vil sikre login
         $companyModel = new Company($this->pdo);
         $companies = $companyModel->allWithJobs();
         echo json_encode($companies);
@@ -59,8 +61,17 @@ class CompanyController
         exit;
     }
 
+
     return $user;
 }
+private function base64url_encode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+private function base64url_decode($data) {
+    return base64_decode(strtr($data, '-_', '+/'));
+}
+
 
 
 }

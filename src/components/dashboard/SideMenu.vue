@@ -78,17 +78,17 @@ onMounted(() => {
           <div v-if="company.id === activeCompanyId" class="activeDivider"></div>
 
           <!-- Stillinger -->
-          <div v-if="company.id === activeCompanyId" class="menuSectionInner">
-            <ul class="positionList">
-              <li v-for="position in company.positions" :key="position.id" class="positionItem">
-                <button class="positionButton" :class="{ isActivePosition: position.id === activePositionId }"
-                  @click="selectPosition(company.id, position.id)">
-                  <BasicIconAndLogo name="Users" :iconSize="true" />
-                  <span class="positionText">{{ position.name }}</span>
-                </button>
-              </li>
-            </ul>
-          </div>
+<div class="menuSectionInner">
+  <ul class="positionList">
+    <li v-for="position in company.positions" :key="position.id" class="positionItem">
+      <button class="positionButton" :class="{ isActivePosition: position.id === activePositionId }"
+        @click="selectPosition(company.id, position.id)">
+        <BasicIconAndLogo name="Users" :iconSize="true" />
+        <span class="positionText">{{ position.name }}</span>
+      </button>
+    </li>
+  </ul>
+</div>
         </li>
       </ul>
     </section>
@@ -118,11 +118,10 @@ onMounted(() => {
           <BasicIconAndLogo name="User" :iconSize="true" />
           Din Profil
         </button>
-<button class="logoutButton" @click="logout">
-  <BasicIconAndLogo name="Logout" :iconSize="true" />
-  Log ud
-</button>
-
+        <button class="logoutButton" @click="logout">
+          <BasicIconAndLogo name="Logout" :iconSize="true" />
+          Log ud
+        </button>
       </div>
     </section>
   </aside>

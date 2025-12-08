@@ -1,10 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
+
 export const useCompanyStore = defineStore('company', () => {
   const companies = ref([])
   const activeCompanyId = ref(null)
   const activePositionId = ref(null)
+  
 
   const activeCompany = computed(() =>
     companies.value.find(c => c.id === activeCompanyId.value) || null
@@ -29,11 +31,16 @@ export const useCompanyStore = defineStore('company', () => {
 
   async function fetchCompanies() {
     try {
-      const res = await fetch('/api/companies')
+      // Brug lokal PHP backend direkte under udvikling for at undgå Vite-proxy til remote
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const res = await fetch('http://localhost:8085/api/companies', { headers })
       if (!res.ok) {
         throw new Error('Kunne ikke hente firmaer')
       }
       const data = await res.json()
+      // DEBUG: vis API-respons i browserkonsollen så du kan se hvad backend returnerer
+      console.log('companies from API', data)
       companies.value = data
 
       if (data.length) {
@@ -49,9 +56,10 @@ export const useCompanyStore = defineStore('company', () => {
   }
 
   async function addCompany(payload) {
-  const res = await fetch('/api/companies', {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  const res = await fetch('http://localhost:8085/api/companies', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { 'Authorization': `Bearer ${token}` } : {}),
     body: JSON.stringify(payload)
   });
 
