@@ -98,6 +98,33 @@ switch ($path) {
         }
         break;
 
+        case '/candidates/count':
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+    $controller = new CandidateController($pdo);
+    $controller->count();
+    break;
+
+case '/candidates/recent':
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+
+    // Hent antal dage fra query parameter, standard til 30
+    $days = isset($_GET['days']) ? (int)$_GET['days'] : 30;
+
+    $controller = new CandidateController($pdo);
+    $controller->countRecent($days); // sender $days med til controlleren
+    break;
+
+
+
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Not found', 'requested' => $path]);

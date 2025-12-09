@@ -2,13 +2,10 @@
 import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
 import SearchBar from '@/components/dashboard/SearchBar.vue'
 import SideMenu from '@/components/dashboard/SideMenu.vue'
-import Wigdet from '@/components/dashboard/Wigdet.vue'
 import WigdetForm from '@/components/dashboard/WigdetForm.vue'
 import WigdetShortcut from '@/components/dashboard/WigdetShortcut.vue'
 
-
 import { ref } from 'vue'
-
 
 </script>
 
@@ -64,6 +61,9 @@ import { ref } from 'vue'
 }
 
 .homepageContainer {
-    padding: 40px;
-}
+  display: flex;
+  flex-direction: column; /* Hvis du vil have dem stacked lodret */
+  justify-content: center; /* Vertikal centering */
+  align-items: center;     /* Horisontal centering */
+  }    
 </style>

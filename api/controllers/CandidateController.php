@@ -86,5 +86,25 @@ public function index() {
     }
 }
 
+    // Hent antal kandidater
+    public function count() {
+        $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM candidate");
+        $result = $stmt->fetch();
+        echo json_encode(['count' => (int)$result['total']]);
+    }
+
+    // Hent antal kandidater oprettet i sidste måned
+public function countRecent($days = 30) {
+    $stmt = $this->pdo->prepare("
+        SELECT COUNT(*) as total 
+        FROM candidate 
+        WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
+    ");
+    $stmt->execute([':days' => $days]);
+    $result = $stmt->fetch();
+    echo json_encode(['count' => (int)$result['total']]);
+}
+
+
 
 }
