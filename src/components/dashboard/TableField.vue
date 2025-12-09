@@ -24,6 +24,13 @@ watch(localStatus, (newVal) => {
   emit('statusClick', newVal)
 })
 
+watch(
+  () => props.status,
+  (newVal) => {
+    localStatus.value = newVal
+  }
+)
+
 const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 
 function handleClick(event) {
@@ -46,6 +53,17 @@ function getStatusLabel(status) {
     default: return status || 'Ukendt'
   }
 }
+
+const normalizedStatus = computed(() => {
+  switch ((localStatus.value || "").toLowerCase()) {
+    case "accepteret": return "Accepted"
+    case "afventer": return "Pending"
+    case "kontakt": return "Contact"
+    case "afvist": return "Rejected"
+    default: return localStatus.value
+  }
+})
+
 </script>
 
 <template>
@@ -61,7 +79,8 @@ function getStatusLabel(status) {
     <div class="col colEmail">{{ email }}</div>
 
     <div class="colStatus">
-      <StatusDropdown v-model="localStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop />
+      <StatusDropdown v-model="normalizedStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop />
+      
     </div>
 
     <div class="col colActions">

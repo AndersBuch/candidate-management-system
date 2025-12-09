@@ -39,6 +39,7 @@ watch(
   { immediate: true }
 )
 
+
 // 👉 Lokal state
 const activeIndex = ref(null)
 const toasts = ref([])
@@ -60,16 +61,6 @@ function setActiveRow(index) {
   emit('openCandidate', activeIndex.value)
 }
 
-function getStatusLabel(status) {
-  if (!status) return 'Pending'
-  switch (status.toLowerCase()) {
-    case 'accepteret': return 'Accepted'
-    case 'afventer':   return 'Pending'
-    case 'kontaktet':  return 'Contact'
-    case 'afvist':     return 'Rejected'
-    default:           return 'Pending'
-  }
-}
 
 function showToast() {
   const id = Date.now()
