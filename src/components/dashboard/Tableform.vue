@@ -61,12 +61,13 @@ function setActiveRow(index) {
 }
 
 function getStatusLabel(status) {
-  switch (status?.toLowerCase()) {
-    case 'accepted': return 'Accepteret'
-    case 'pending': return 'Afventer'
-    case 'contact': return 'Kontakt'
-    case 'rejected': return 'Afvist'
-    default: return status || 'Ukendt'
+  if (!status) return 'Pending'
+  switch (status.toLowerCase()) {
+    case 'accepteret': return 'Accepted'
+    case 'afventer':   return 'Pending'
+    case 'kontaktet':  return 'Contact'
+    case 'afvist':     return 'Rejected'
+    default:           return 'Pending'
   }
 }
 

@@ -1,40 +1,53 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useCompanyStore } from '@/stores/useCompanyStore'
 
 export const useCandidateStore = defineStore('candidate', () => {
   const candidates = ref([])
+  const companyStore = useCompanyStore() // ← HENT STORE
 
-async function fetchCandidates(positionName = null) {
-  try {
-    const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
-    let url = base + '/api/candidates'
+  async function fetchCandidates(positionName = null) {
+    try {
+      const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
+      let url = base + '/api/candidates'
 
-    const params = []
-    if (positionName) params.push(`positionId=${encodeURIComponent(positionName)}`)
+      const params = []
+      if (positionName) params.push(`positionId=${encodeURIComponent(positionName)}`)
 
-    if (params.length) url += '?' + params.join('&')
+      if (params.length) url += '?' + params.join('&')
 
-    console.log("Fetching filtered candidates from:", url)
+      console.log("Fetching filtered candidates from:", url)
 
-    const res = await fetch(url)
-    const bodyText = await res.text()
-    candidates.value = JSON.parse(bodyText)
-  } catch (err) {
-    console.error("fetchCandidates error:", err)
-    candidates.value = []
+      const res = await fetch(url)
+      const bodyText = await res.text()
+      candidates.value = JSON.parse(bodyText)
+    } catch (err) {
+      console.error("fetchCandidates error:", err)
+      candidates.value = []
+    }
   }
-}
-
-
 
   async function addCandidate(payload) {
     try {
-      const base = (import.meta.env.VITE_API_BASE_URL) ? import.meta.env.VITE_API_BASE_URL : ''
+      const positionName = companyStore.activePosition?.name || ""
+
+      const body = {
+        ...payload,
+        current_position: positionName
+      }
+
+      // 🔥 Debug logs — nu virker de
+      console.log("ACTIVE POSITION:", companyStore.activePosition)
+      console.log("POSITION NAME SENT:", positionName)
+      console.log("FULL BODY:", body)
+
+      const base = import.meta.env.VITE_API_BASE_URL || ''
       const url = base + '/api/candidates'
+
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(body),
         credentials: 'include'
       })
 
