@@ -103,9 +103,23 @@ function handleUndo(id) {
     </div>
   </div>
 
-  <TableField v-for="(r, i) in rows" :key="i" :index="i" :name="r.name" :phone="r.phone" :email="r.email"
-    :status="r.status" :linkedin-url="r.linkedin" :is-active="activeIndex === i" @rowClick="setActiveRow"
-    @statusClick="onStatusClick(r)" @edit="onEdit(r)" />
+<TableField
+  v-for="(r, i) in rows"
+  :key="r.id"
+  :id="r.id"
+  :index="i"
+  :name="r.name"
+  :phone="r.phone"
+  :email="r.email"
+  :status="r.status"
+  :linkedin-url="r.linkedin"
+  :is-active="activeIndex === i"
+  @rowClick="setActiveRow"
+  @statusClick="onStatusClick(r)"
+  @edit="onEdit(r)"
+/>
+
+
 </template>
 
 <style lang="scss">

@@ -56,4 +56,35 @@ public function index() {
         }
     }
 
+ public function updateStatus($id) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!isset($data['status'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Status is required']);
+        return;
+    }
+
+    try {
+        $sql = "UPDATE candidate SET status = :status WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':status' => $data['status'],
+            ':id' => $id
+        ]);
+
+        echo json_encode([
+            'success' => true,
+            'id' => $id,
+            'status' => $data['status']
+        ]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Could not update status', 'message' => $e->getMessage()]);
+    }
+}
+
+
 }

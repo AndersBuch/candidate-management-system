@@ -6,7 +6,11 @@ import EditModal from '@/components/dashboard/EditModal.vue'
 
 import { ref, watch, computed } from 'vue'
 
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+
 const props = defineProps({
+  id: Number,
   index: Number,
   name: String,
   phone: String,
@@ -17,6 +21,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["statusClick", "toggle", "rowClick"])
+const store = useCandidateStore()
 
 const localStatus = ref(props.status)
 
@@ -30,6 +35,13 @@ watch(
     localStatus.value = newVal
   }
 )
+
+async function onStatusClick(newStatus) {
+  if (!props.id) return
+  const success = await store.updateStatus(props.id, newStatus)
+  if (success) localStatus.value = newStatus
+  else alert("Kunne ikke opdatere status på serveren")
+}
 
 const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
 
@@ -54,15 +66,21 @@ function getStatusLabel(status) {
   }
 }
 
-const normalizedStatus = computed(() => {
-  switch ((localStatus.value || "").toLowerCase()) {
-    case "accepteret": return "Accepted"
-    case "afventer": return "Pending"
-    case "kontakt": return "Contact"
-    case "afvist": return "Rejected"
-    default: return localStatus.value
+const normalizedStatus = computed({
+  get() {
+    switch ((localStatus.value || "").toLowerCase()) {
+      case "accepteret": return "Accepted"
+      case "afventer": return "Pending"
+      case "kontakt": return "Contact"
+      case "afvist": return "Rejected"
+      default: return localStatus.value
+    }
+  },
+  set(value) {
+    localStatus.value = value
   }
 })
+
 
 </script>
 
@@ -79,8 +97,9 @@ const normalizedStatus = computed(() => {
     <div class="col colEmail">{{ email }}</div>
 
     <div class="colStatus">
-      <StatusDropdown v-model="normalizedStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop />
-      
+      <StatusDropdown v-model="normalizedStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop
+        @update:modelValue="onStatusClick" />
+
     </div>
 
     <div class="col colActions">

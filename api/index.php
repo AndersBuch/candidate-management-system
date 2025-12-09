@@ -7,7 +7,13 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, OPTIONS");
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
@@ -29,12 +35,22 @@ spl_autoload_register(function ($class) {
     }
 });
 
+$method = $_SERVER['REQUEST_METHOD'];
+$uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$path   = preg_replace('#^/api#', '', $uri); // fjerner /api prefix
+
+// PATCH /candidates/:id/status
+if ($method === 'PATCH' && preg_match('#^/candidates/(\d+)/status$#', $path, $matches)) {
+    $controller = new CandidateController($pdo);
+    $controller->updateStatus($matches[1]);
+    exit;
+}
+
 // Debug: log incoming request (kan fjernes efter fejlsøgning)
 error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
 error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
 
-$uri  = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = preg_replace('#^/api#', '', $uri); // dette kan efterlade leading slash
+
 
 // Debug: skriv i response body så klient kan se
 // OBS: dette er kun midlertidigt for fejlfinding
@@ -100,3 +116,5 @@ function health($pdo)
     }
     echo json_encode($status);
 }
+
+

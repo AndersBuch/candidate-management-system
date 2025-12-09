@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
+
 export const useCandidateStore = defineStore('candidate', () => {
   const candidates = ref([])
   const companyStore = useCompanyStore() // ← HENT STORE
@@ -75,5 +76,33 @@ export const useCandidateStore = defineStore('candidate', () => {
     }
   }
 
-  return { candidates, fetchCandidates, addCandidate }
+async function updateStatus(id, newStatus) {
+  try {
+    const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
+    const url = `${base}/api/candidates/${id}/status`
+
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+      credentials: 'include'
+    })
+
+    if (!res.ok) throw new Error("Status update failed")
+
+    // OPDATER FRONTEND
+    const c = candidates.value.find(c => c.id === id)
+    if (c) c.status = newStatus
+
+    return true
+  } catch (err) {
+    console.error("updateStatus error:", err)
+    return false
+  }
+}
+
+
+  return { candidates, fetchCandidates, addCandidate, updateStatus }
 })
+
+
