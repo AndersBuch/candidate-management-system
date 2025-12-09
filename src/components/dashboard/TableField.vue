@@ -56,16 +56,6 @@ function openLinkedin() {
 
 function onEdit() { emit('edit') }
 
-function getStatusLabel(status) {
-  switch (status?.toLowerCase()) {
-    case 'accepted': return 'Accepteret'
-    case 'pending': return 'Afventer'
-    case 'contact': return 'Kontakt'
-    case 'rejected': return 'Afvist'
-    default: return status || 'Ukendt'
-  }
-}
-
 const normalizedStatus = computed({
   get() {
     switch ((localStatus.value || "").toLowerCase()) {

@@ -18,7 +18,7 @@ function logout() {
   router.push('/login')
 }
 
-
+ 
 const companyStore = useCompanyStore()
 const { companies, activeCompanyId, activePositionId } = storeToRefs(companyStore)
 
@@ -42,56 +42,60 @@ onMounted(() => {
       <BasicIconAndLogo name="MainLogo" :large="true" />
     </div>
 
-    <div class="menuSectionInner">
-      <h2 class="menuTitle">Forside</h2>
-      <div class="menuSectionInner">
-        <RouterLink to="/homepage" v-slot="{ isActive }">
-          <button class="addCompany" :class="{ activeMenu: isActive }">
-            <BasicIconAndLogo name="Home" :iconSize="true" />
-            Forside
-          </button>
-        </RouterLink>
-      </div>
-    </div>
+<div class="menuSectionInner">
+  <h2 class="menuTitle">Forside</h2>
+  <div class="menuSectionInner">
+    <RouterLink to="/homepage" v-slot="{ isActive }">
+      <button class="homepageButton" :class="{ homepageActive: isActive }">
+        <BasicIconAndLogo name="Home" :iconSize="true" />
+        Forside
+      </button>
+    </RouterLink>
+  </div>
+</div>
+
     <div class="divider"></div>
 
     <!-- Firmaer og stillinger -->
-    <section class="menuSection">
+ <section class="menuSection">
+  <div class="menuSectionInner">
+    <h2 class="menuTitle">Firma</h2>
+  </div>
 
+  <div class="divider"></div>
+
+  <ul class="companyList">
+    <li v-for="company in companies" :key="company.id" class="companyItem"
+        :class="{ activeCompanySection: company.id === activeCompanyId && !isHomepage }">
       <div class="menuSectionInner">
-        <h2 class="menuTitle">Firma</h2>
+        <RouterLink to="dashboardsite">
+          <button class="companyButton" @click="selectCompany(company.id)">
+            <BasicIconAndLogo name="Box" :iconSize="true" />
+            <span class="companyName">{{ company.name }}</span>
+          </button>
+        </RouterLink>
       </div>
 
-      <div class="divider"></div>
+      <!-- FULL-WIDTH divider -->
+      <div v-if="company.id === activeCompanyId && !isHomepage" class="activeDivider"></div>
 
-      <ul class="companyList">
-        <li v-for="company in companies" :key="company.id" class="companyItem"
-          :class="{ activeCompanySection: company.id === activeCompanyId }">
-          <div class="menuSectionInner">
-            <button class="companyButton" @click="selectCompany(company.id)">
-              <BasicIconAndLogo name="Box" :iconSize="true" />
-              <span class="companyName">{{ company.name }}</span>
+      <!-- Stillinger -->
+      <div class="menuSectionInner">
+        <ul class="positionList">
+          <li v-for="position in company.positions" :key="position.id" class="positionItem">
+            <button class="positionButton"
+                    :class="{ isActivePosition: position.id === activePositionId && !isHomepage }"
+                    @click="selectPosition(company.id, position.id)">
+              <BasicIconAndLogo name="Users" :iconSize="true" />
+              <span class="positionText">{{ position.name }}</span>
             </button>
-          </div>
-
-          <!-- FULL-WIDTH divider -->
-          <div v-if="company.id === activeCompanyId" class="activeDivider"></div>
-
-          <!-- Stillinger -->
-<div class="menuSectionInner">
-  <ul class="positionList">
-    <li v-for="position in company.positions" :key="position.id" class="positionItem">
-      <button class="positionButton" :class="{ isActivePosition: position.id === activePositionId }"
-        @click="selectPosition(company.id, position.id)">
-        <BasicIconAndLogo name="Users" :iconSize="true" />
-        <span class="positionText">{{ position.name }}</span>
-      </button>
+          </li>
+        </ul>
+      </div>
     </li>
   </ul>
-</div>
-        </li>
-      </ul>
-    </section>
+</section>
+
 
     <!-- Tilføje firma -->
     <section class="menuSection">
@@ -128,6 +132,33 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+
+  .homepageButton {
+  border: none;
+  padding: 6px 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  @include bodyText;
+  color: $black;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.homepageActive {
+  color: $primaryBlue;
+  margin-bottom: 20px;
+
+  :deep(path),
+  :deep(circle),
+  :deep(rect) {
+    stroke: $primaryBlue !important;
+  }
+}
+
 .addCompany.activeMenu {
   color: $primaryBlue; // tekst bliver blå
   margin-bottom: 20px;

@@ -1,5 +1,6 @@
 <script setup>
 import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
+import SearchBar from '@/components/dashboard/SearchBar.vue'
 import SideMenu from '@/components/dashboard/SideMenu.vue'
 import Wigdet from '@/components/dashboard/Wigdet.vue'
 import WigdetForm from '@/components/dashboard/WigdetForm.vue'
@@ -17,7 +18,7 @@ import { ref } from 'vue'
 
         <section class="dashboardContentWrapper">
             <div class="dashboardHeaders">
-                <DashboardHeader />
+                <SearchBar v-model="searchTerm" placeholder="Søg kandidat..." />
                 <h1>Velkommen tilbage</h1>
                 <h2>Claus Hansen</h2>
                 <div class="divider"></div>
@@ -42,6 +43,7 @@ import { ref } from 'vue'
 
 .dashboardHeaders {
     text-align: center;
+    padding: 20px 28px;
 
     h1 {
         @include heading1;
