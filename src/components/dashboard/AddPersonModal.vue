@@ -107,7 +107,6 @@ function removeToast(id) {
 }
 
 async function confirmAdd() {
-
   const payload = {
     first_name: formData.name,
     last_name: formData.lastname,
@@ -126,8 +125,41 @@ async function confirmAdd() {
 
   await candidateStore.addCandidate(payload)
 
+  resetForm()   // <--- WOO, NU VIRKER DET 🎉
   closeModal()
   showToast()
+}
+
+
+const resetForm = () => {
+  Object.assign(formData, {
+    name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postal: '',
+    gender: '',
+    message: '',
+    linkedin: '',
+    age: '',
+    company: '',
+    status: 'Kontakt',
+
+    touched: {
+      name: false,
+      lastname: false,
+      email: false,
+      phone: false,
+      address: false,
+      city: false,
+      postal: false,
+      linkedin: false,
+      message: false,
+      status: false
+    }
+  })
 }
 
 
