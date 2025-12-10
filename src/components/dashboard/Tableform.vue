@@ -33,8 +33,8 @@ const rows = computed(() => {
 watch(
   () => companyStore.activePosition,
   (newPosition) => {
-    const positionName = newPosition?.name || null
-    store.fetchCandidates(positionName)
+    const jobId = newPosition?.id || null    // 👈 brug id i stedet for name
+    store.fetchCandidates(jobId)             // 👈 send jobId videre til store
   },
   { immediate: true }
 )
