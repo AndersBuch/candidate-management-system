@@ -12,6 +12,8 @@ import { useCandidateStore } from '@/stores/addCandidateStore'
 
 const candidateStore = useCandidateStore()
 
+const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
+
 const showModal = ref(false)
 
 const openModal = () => {
@@ -34,7 +36,7 @@ const formData = reactive({
   linkedin: '',
   age: '',
   company: '',
-  status: '',
+  status: 'Kontakt',
 
   touched: {
     name: false,
