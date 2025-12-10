@@ -10,6 +10,7 @@ import Toast from '@/components/dashboard/ToastDashboard.vue'
 import { ref, reactive, computed } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
+
 const candidateStore = useCandidateStore()
 
 const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
@@ -32,6 +33,7 @@ const formData = reactive({
   address: '',
   city: '',
   postal: '',
+  gender: '',
   message: '',
   linkedin: '',
   age: '',
@@ -173,7 +175,7 @@ async function confirmAdd() {
         placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)" v-model="formData.linkedin"
         :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
-      <FormLabel />
+      <FormLabel v-model="formData.gender" />
 
       <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
         @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
