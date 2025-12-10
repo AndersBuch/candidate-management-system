@@ -1,12 +1,20 @@
+// src/stores/useCompanyStore.js
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-
 export const useCompanyStore = defineStore('company', () => {
+  // Liste over firmaer med stillinger (fra /api/companies)
   const companies = ref([])
+
+  // Aktive valg
   const activeCompanyId = ref(null)
   const activePositionId = ref(null)
-  
+
+  // Kandidater per stilling/job-id
+  // struktur: { [jobId]: [ { ...kandidatdata... } ] }
+  const candidatesByPositionId = ref({})
+
+  // === COMPUTED ===
 
   const activeCompany = computed(() =>
     companies.value.find(c => c.id === activeCompanyId.value) || null
@@ -18,34 +26,58 @@ export const useCompanyStore = defineStore('company', () => {
     return company.positions.find(p => p.id === activePositionId.value) || null
   })
 
+  // alle kandidater til den aktuelle stilling
+  const activeCandidates = computed(() => {
+    if (!activePositionId.value) return []
+    return candidatesByPositionId.value[activePositionId.value] || []
+  })
+
+  // === ACTIONS ===
+
   function selectCompany(companyId) {
     activeCompanyId.value = companyId
     const company = companies.value.find(c => c.id === companyId)
-    activePositionId.value = company?.positions[0]?.id || null
+    const firstPositionId = company?.positions[0]?.id || null
+    activePositionId.value = firstPositionId
+
+    if (firstPositionId) {
+      fetchCandidatesForPosition(firstPositionId)
+    }
   }
 
   function selectPosition(companyId, positionId) {
     activeCompanyId.value = companyId
     activePositionId.value = positionId
+
+    if (positionId) {
+      fetchCandidatesForPosition(positionId)
+    }
   }
 
   async function fetchCompanies() {
     try {
-      // Brug lokal PHP backend direkte under udvikling for at undgå Vite-proxy til remote
       const token = localStorage.getItem('token') || sessionStorage.getItem('token')
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {}
+
+      // du brugte tidligere hardcoded http://localhost:8085
       const res = await fetch('http://localhost:8085/api/companies', { headers })
+
       if (!res.ok) {
         throw new Error('Kunne ikke hente firmaer')
       }
+
       const data = await res.json()
-      // DEBUG: vis API-respons i browserkonsollen så du kan se hvad backend returnerer
       console.log('companies from API', data)
       companies.value = data
 
       if (data.length) {
         activeCompanyId.value = data[0].id
-        activePositionId.value = data[0].positions[0]?.id ?? null
+        const firstPositionId = data[0].positions[0]?.id ?? null
+        activePositionId.value = firstPositionId
+
+        if (firstPositionId) {
+          fetchCandidatesForPosition(firstPositionId)
+        }
       } else {
         activeCompanyId.value = null
         activePositionId.value = null
@@ -55,31 +87,57 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
+  async function fetchCandidatesForPosition(positionId) {
+    if (!positionId) return
+
+    try {
+      const res = await fetch(`http://localhost:8085/api/jobs/${positionId}/candidates`)
+
+      if (!res.ok) {
+        throw new Error('Kunne ikke hente kandidater')
+      }
+
+      const data = await res.json()
+
+      candidatesByPositionId.value = {
+        ...candidatesByPositionId.value,
+        [positionId]: data
+      }
+    } catch (err) {
+      console.error('Fejl ved hentning af kandidater:', err)
+    }
+  }
+
   async function addCompany(payload) {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  const res = await fetch('http://localhost:8085/api/companies', {
-    method: 'POST',
-    headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { 'Authorization': `Bearer ${token}` } : {}),
-    body: JSON.stringify(payload)
-  });
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+    const headers = Object.assign(
+      { 'Content-Type': 'application/json' },
+      token ? { 'Authorization': `Bearer ${token}` } : {}
+    )
 
-  if (!res.ok) throw new Error('Kunne ikke tilføje firma');
+    const res = await fetch('http://localhost:8085/api/companies', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload)
+    })
 
-  // Opdater lokale companies
-  await fetchCompanies();
-}
+    if (!res.ok) throw new Error('Kunne ikke tilføje firma')
 
+    await fetchCompanies()
+  }
 
-return {
-  companies,
-  activeCompanyId,
-  activePositionId,
-  activeCompany,
-  activePosition,
-  selectCompany,
-  selectPosition,
-  fetchCompanies,
-  addCompany // <--- tilføjet her
-}
-
+  return {
+    companies,
+    activeCompanyId,
+    activePositionId,
+    candidatesByPositionId,
+    activeCompany,
+    activePosition,
+    activeCandidates,
+    selectCompany,
+    selectPosition,
+    fetchCompanies,
+    fetchCandidatesForPosition,
+    addCompany
+  }
 })

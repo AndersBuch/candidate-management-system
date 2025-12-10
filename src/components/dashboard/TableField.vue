@@ -1,13 +1,10 @@
 <script setup>
-import Button from '@/components/atoms/Button.vue'
 import StatusDropdown from '@/components/dashboard/StatusDropdown.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 
 import { ref, watch, computed } from 'vue'
-
 import { useCandidateStore } from '@/stores/addCandidateStore'
-
 
 const props = defineProps({
   id: Number,
@@ -20,10 +17,10 @@ const props = defineProps({
   isActive: Boolean
 })
 
-const emit = defineEmits(["statusClick", "toggle", "rowClick"])
+const emit = defineEmits(['statusClick', 'toggle', 'rowClick'])
 const store = useCandidateStore()
 
-const localStatus = ref(props.status)
+const localStatus = ref(props.status || 'Afventer')
 
 watch(localStatus, (newVal) => {
   emit('statusClick', newVal)
@@ -40,10 +37,12 @@ async function onStatusClick(newStatus) {
   if (!props.id) return
   const success = await store.updateStatus(props.id, newStatus)
   if (success) localStatus.value = newStatus
-  else alert("Kunne ikke opdatere status på serveren")
+  else alert('Kunne ikke opdatere status på serveren')
 }
 
-const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
+const rowClass = computed(() =>
+  props.index % 2 === 0 ? 'rowEven' : 'rowOdd'
+)
 
 function handleClick(event) {
   if (event.target.closest('.colStatus')) return
@@ -54,31 +53,33 @@ function openLinkedin() {
   if (props.linkedinUrl) window.open(props.linkedinUrl, '_blank')
 }
 
-function onEdit() { emit('edit') }
+function onEdit() {
+  emit('edit')
+}
 
 const normalizedStatus = computed({
   get() {
-    switch ((localStatus.value || "").toLowerCase()) {
-      case "accepteret": return "Accepted"
-      case "afventer": return "Pending"
-      case "kontakt": return "Contact"
-      case "afvist": return "Rejected"
-      default: return localStatus.value
-    }
+    // vis status som den er i DB (Kontakt / Afventer / Accepteret / Afvist)
+    return localStatus.value
   },
   set(value) {
     localStatus.value = value
   }
 })
-
-
 </script>
 
 <template>
-  <div class="tableRow" :class="[rowClass, { activeRow: isActive }]" @click="handleClick">
+  <div
+    class="tableRow"
+    :class="[rowClass, { activeRow: isActive }]"
+    @click="handleClick"
+  >
     <div class="col colName">
       <div class="avatar">
-        <BasicIconAndLogo :name="isActive ? 'UserWhite' : 'User'" :iconSize="true" />
+        <BasicIconAndLogo
+          :name="isActive ? 'UserWhite' : 'User'"
+          :iconSize="true"
+        />
       </div>
       <div class="nameText">{{ name }}</div>
     </div>
@@ -87,14 +88,25 @@ const normalizedStatus = computed({
     <div class="col colEmail">{{ email }}</div>
 
     <div class="colStatus">
-      <StatusDropdown v-model="normalizedStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop
-        @update:modelValue="onStatusClick" />
-
+      <StatusDropdown
+        v-model="normalizedStatus"
+        :is-open="isActive"
+        @toggle="emit('rowClick', index)"
+        @click.stop
+        @update:modelValue="onStatusClick"
+      />
     </div>
 
     <div class="col colActions">
-      <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
-        role="button" tabindex="0" aria-label="LinkedIn" @click.stop="openLinkedin" />
+      <BasicIconAndLogo
+        :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'"
+        :iconSize="true"
+        class="iconBtn linkedin"
+        role="button"
+        tabindex="0"
+        aria-label="LinkedIn"
+        @click.stop="openLinkedin"
+      />
 
       <div class="notActions">
         <EditModal />

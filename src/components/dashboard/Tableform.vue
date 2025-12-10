@@ -1,53 +1,18 @@
 <script setup>
+import { ref, computed } from 'vue'
 import TableField from '@/components/dashboard/TableField.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-import ToastDashboard from '@/components/dashboard/ToastDashboard.vue'
-import EditModal from '@/components/dashboard/EditModal.vue'
-
-import { ref, onMounted, computed, watch } from 'vue'
-
-// 👉 IMPORT stores
-import { useCandidateStore } from '@/stores/addCandidateStore'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
-// 👉 INITIALISER stores (skal ligge FØR watch)
-const store = useCandidateStore()
-const companyStore = useCompanyStore()
-
-// 👉 Emit
 const emit = defineEmits(['openCandidate'])
 
-// 👉 Rækker (computed)
-const rows = computed(() => {
-  return store.candidates.map(c => ({
-    id: c.id,
-    name: c.first_name + " " + c.last_name,
-    phone: c.phone_number,
-    email: c.email,
-    status: c.status,
-    linkedin: c.linkedin_url
-  }))
-})
+const companyStore = useCompanyStore()
 
-// 👉 Watch company + position
-watch(
-  () => companyStore.activePosition,
-  (newPosition) => {
-    const jobId = newPosition?.id || null    // 👈 brug id i stedet for name
-    store.fetchCandidates(jobId)             // 👈 send jobId videre til store
-  },
-  { immediate: true }
-)
+// Rækker = alle kandidater til den aktive stilling
+const rows = computed(() => companyStore.activeCandidates)
 
-
-// 👉 Lokal state
 const activeIndex = ref(null)
-const toasts = ref([])
-const showExtendedInfo = ref(false)
 
-// 👉 Lifecycle
-
-// 👉 Handlers
 function onEdit(row) {
   console.log('📝 edit:', row.name)
 }
@@ -56,33 +21,12 @@ function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
 
+// sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
 function setActiveRow(index) {
   activeIndex.value = activeIndex.value === index ? null : index
   emit('openCandidate', activeIndex.value)
 }
-
-
-function showToast() {
-  const id = Date.now()
-  toasts.value.push({
-    id,
-    title: 'Kandidat tilføjet',
-    subtitle: 'Mads Mikkels Ole',
-    variant: 'success',
-    duration: 3000,
-    showUndo: true
-  })
-}
-
-function removeToast(id) {
-  toasts.value = toasts.value.filter(t => t.id !== id)
-}
-
-function handleUndo(id) {
-  console.log("Undo for:", id)
-}
 </script>
-
 
 <template>
   <div class="tableHeader">
@@ -105,8 +49,8 @@ function handleUndo(id) {
 
 <TableField
   v-for="(r, i) in rows"
-  :key="r.id"
-  :id="r.id"
+  :key="r.id ?? i"
+  :id="r.applicationId"
   :index="i"
   :name="r.name"
   :phone="r.phone"
@@ -115,11 +59,9 @@ function handleUndo(id) {
   :linkedin-url="r.linkedin"
   :is-active="activeIndex === i"
   @rowClick="setActiveRow"
-  @statusClick="onStatusClick(r)"
-  @edit="onEdit(r)"
+  @statusClick="() => onStatusClick(r)"
+  @edit="() => onEdit(r)"
 />
-
-
 </template>
 
 <style lang="scss">
@@ -133,7 +75,7 @@ function handleUndo(id) {
 .headerItem {
   display: flex;
   align-items: center;
-  gap: 8px; // afstand mellem p og ikon
+  gap: 8px;
   cursor: pointer;
 
   p {

@@ -113,7 +113,7 @@ async function confirmAdd() {
     status: formData.status,
     zip_code: formData.postal,
     city: formData.city,
-    gender: "Andet",
+    gender: formData.gender,
     age: formData.age,
     linkedin_url: formData.linkedin,
     current_position: formData.company,
