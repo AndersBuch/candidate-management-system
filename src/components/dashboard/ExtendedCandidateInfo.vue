@@ -51,8 +51,15 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
 
     <section class="flexContainer flexContainerCenter">
       <div class="iconContainer">
-        <EditModal @click.native="openEditModal" />
-        <DeleteModal @click.native="openDeleteModal" />
+<div @click="openEditModal">
+  <EditModal />
+</div>
+
+<div @click="openDeleteModal">
+  <DeleteModal />
+</div>
+
+
       </div>
       <img
         class="profilePicture"
