@@ -137,4 +137,31 @@ class CandidateController {
         $result = $stmt->fetch();
         echo json_encode(['count' => (int)$result['total']]);
     }
+
+    // DELETE /api/candidates/{id}
+public function destroy($id) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+        // Start transaction — fordi application og documents også skal slettes
+        $this->pdo->beginTransaction();
+
+        // Slet kandidat → pga. CASCADE slettes application + documents automatisk
+        $stmt = $this->pdo->prepare("DELETE FROM candidate WHERE id = ?");
+        $stmt->execute([$id]);
+
+        $this->pdo->commit();
+
+        echo json_encode(["success" => true, "deleted_id" => $id]);
+
+    } catch (Exception $e) {
+        $this->pdo->rollBack();
+        http_response_code(500);
+        echo json_encode([
+            "error" => "Could not delete candidate",
+            "message" => $e->getMessage()
+        ]);
+    }
+}
+
 }

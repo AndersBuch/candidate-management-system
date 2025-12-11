@@ -27,5 +27,6 @@ export const useCandidateStatsStore = defineStore('candidateStats', () => {
     initialized.value = true
   }
 
+
   return { totalCandidates, recentCandidates, fetchTotalCandidates, fetchRecentCandidates, init }
 })

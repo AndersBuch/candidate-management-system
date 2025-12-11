@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Methods: GET, POST, PATCH, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS");
 
 // Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -113,6 +113,18 @@ switch ($path) {
         $controller = new CandidateController($pdo);
         $controller->countRecent($days);
         break;
+
+        case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
+    $controller = new CandidateController($pdo);
+
+    if ($method === 'DELETE') {
+        $controller->destroy((int)$m[1]);
+    } else {
+        http_response_code(405);
+        echo json_encode(["error" => "Method not allowed"]);
+    }
+    break;
+
 
     default:
         // 👇 NYT: /jobs/{jobId}/candidates

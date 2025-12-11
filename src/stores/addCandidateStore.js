@@ -79,6 +79,32 @@ export const useCandidateStore = defineStore('candidate', () => {
       return false
     }
   }
+  async function deleteCandidate(id) {
+  try {
+    const base = getApiBase()
+    const url = `${base}/api/candidates/${id}`
 
-  return { addCandidate, updateStatus }
+    const res = await fetch(url, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+
+    if (!res.ok) {
+      console.error('Delete failed:', await res.text())
+      throw new Error('Delete failed')
+    }
+
+    const jobId = companyStore.activePosition?.id || null
+    if (jobId) {
+      await companyStore.fetchCandidatesForPosition(jobId)
+    }
+
+    return true
+  } catch (err) {
+    console.error('deleteCandidate error:', err)
+    return false
+  }
+}
+
+  return { addCandidate, updateStatus, deleteCandidate }
 })

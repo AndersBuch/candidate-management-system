@@ -56,8 +56,9 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
 </div>
 
 <div @click="openDeleteModal">
-  <DeleteModal />
+  <DeleteModal :candidateId="candidate.id" />
 </div>
+
 
 
       </div>
@@ -104,16 +105,6 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
       <CandidateDocuments />
     </section>
 
-    <EditModal
-      v-if="showEditModal"
-      :candidate="candidate"
-      @close="closeEditModal"
-    />
-    <DeleteModal
-      v-if="showDeleteModal"
-      :candidateId="candidate.id"
-      @close="closeDeleteModal"
-    />
   </aside>
 </template>
 
