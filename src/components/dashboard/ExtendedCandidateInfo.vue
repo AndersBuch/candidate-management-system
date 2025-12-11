@@ -30,6 +30,15 @@ const props = defineProps({
   }
 })
 
+const showEdit = ref(false)
+const activeCandidate = ref(null)
+
+function handleOpenCandidate(c) {
+  activeCandidate.value = c
+  showEdit.value = true
+}
+
+
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 
@@ -52,7 +61,13 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
     <section class="flexContainer flexContainerCenter">
       <div class="iconContainer">
 <div @click="openEditModal">
-  <EditModal />
+<EditModal 
+    v-if="showEdit" 
+    :candidate="activeCandidate" 
+    @close="showEdit = false"
+    @updated="refreshCandidates"
+/>
+
 </div>
 
 <div @click="openDeleteModal">

@@ -10,44 +10,52 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
-const showModal = ref(false)
+const props = defineProps({
+  candidate: { type: Object, required: true }  // <-- FIX 1
+})
 
+const emit = defineEmits(['close', 'updated'])
 
-const openModal = () => {
-  showModal.value = true
-}
+const candidateStore = useCandidateStore()
 
-const closeModal = () => {
-  showModal.value = false
-}
+// Status options
+const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
 
+// Local copy of the candidate
 const formData = reactive({
-  name: '',
-  lastname: '',
+  first_name: '',
+  last_name: '',
   email: '',
-  phone: '',
+  phone_number: '',
   address: '',
   city: '',
-  postal: '',
-  message: '',
-  linkedin: '',
+  zip_code: '',
+  gender: '',
   age: '',
-  company: '',
-  status: '',
-
-  touched: {
-    name: false,
-    lastname: false,
-    email: false,
-    phone: false,
-    address: false,
-    city: false,
-    postal: false,
-    linkedin: false,
-    message: false,
-    status: false
-  }
+  linkedin_url: '',
+  current_position: '',
+  note: '',
+  status: ''
 })
+
+// Når modal åbner → copy props ind
+watch(
+  () => props.candidate,
+  (c) => {
+    if (!c) return
+    Object.assign(formData, c)
+  },
+  { immediate: true }
+)
+
+const close = () => emit('close')
+
+// Når man gemmer
+const saveChanges = async () => {
+  await candidateStore.updateCandidate(props.candidate.id, formData)
+  emit('updated')
+  close()
+}
 
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {

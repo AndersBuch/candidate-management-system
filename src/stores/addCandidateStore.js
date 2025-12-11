@@ -106,5 +106,32 @@ export const useCandidateStore = defineStore('candidate', () => {
   }
 }
 
-  return { addCandidate, updateStatus, deleteCandidate }
+async function updateCandidate(id, payload) {
+  try {
+    const base = getApiBase()
+    const url = `${base}/api/candidates/${id}`
+
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: 'include'
+    })
+
+    if (!res.ok) throw new Error('Update failed')
+
+    const jobId = companyStore.activePosition?.id || null
+    if (jobId) {
+      await companyStore.fetchCandidatesForPosition(jobId)
+    }
+
+    return true
+  } catch (err) {
+    console.error("updateCandidate error:", err)
+    return false
+  }
+}
+
+
+  return { addCandidate, updateStatus, deleteCandidate, updateCandidate }
 })
