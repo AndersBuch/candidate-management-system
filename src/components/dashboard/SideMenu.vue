@@ -53,10 +53,12 @@ onMounted(() => {
         <li v-for="company in companies" :key="company.id" class="companyItem"
           :class="{ activeCompanySection: company.id === activeCompanyId }">
           <div class="menuSectionInner">
+            <RouterLink to="/dashboardsite" v-slot="{ isActive }">
             <button class="companyButton" @click="selectCompany(company.id)">
               <BasicIconAndLogo name="Box" :iconSize="true" />
               <span class="companyName">{{ company.name }}</span>
             </button>
+            </RouterLink>
           </div>
 
           <!-- FULL-WIDTH divider -->
@@ -116,11 +118,13 @@ onMounted(() => {
 .addCompany.activeMenu {
   color: $primaryBlue; // tekst bliver blå
   margin-bottom: 20px;
+  transition: all 0.3s ease; // <- smooth transition
 
   :deep(path),
   :deep(circle),
   :deep(rect) {
     stroke: $primaryBlue !important; // ikon bliver blå
+    transition: stroke 0.3s ease; // <- smooth for ikonet
   }
 }
 
@@ -191,27 +195,7 @@ onMounted(() => {
 }
 
 .companyButton,
-.positionButton {
-  border: none;
-  padding: 6px 0;
-  background: none;
-  cursor: pointer;
-  text-align: left;
-  @include bodyText;
-  color: $black;
-
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  column-gap: 6px;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.positionButton {
-  padding-left: 16px;
-}
-
+.positionButton,
 .addCompany,
 .logoutButton {
   border: none;
@@ -221,11 +205,17 @@ onMounted(() => {
   text-align: left;
   @include bodyText;
   color: $black;
-
-  display: flex;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  column-gap: 6px;
   align-items: center;
-  gap: 6px;
   width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease; // <- smooth transition til alle knapper
+}
+
+.positionButton {
+  padding-left: 16px;
 }
 
 .companyName,
@@ -234,10 +224,10 @@ onMounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.3s ease; // <- smooth farveskift
 }
 
 .companyItem.activeCompanySection {
-
   .companyButton,
   .positionButton,
   .companyName,
@@ -247,7 +237,6 @@ onMounted(() => {
 }
 
 .companyItem.activeCompanySection {
-
   .companyButton :deep(path),
   .companyButton :deep(circle),
   .companyButton :deep(rect),
@@ -256,6 +245,7 @@ onMounted(() => {
   .positionButton :deep(rect) {
     stroke: $primaryBlue;
     fill: transparent;
+    transition: stroke 0.3s ease; // <- smooth ikon-transition
   }
 }
 
@@ -267,6 +257,7 @@ onMounted(() => {
   height: 24px;
   flex-shrink: 0;
   fill: $whiteColor;
+  transition: fill 0.3s ease; // <- smooth farveskift for ikon
 }
 
 .positionList {

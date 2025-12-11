@@ -8,6 +8,12 @@ import UploadButton from '@/components/dashboard/UploadButton.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
 
 import { ref, reactive, computed } from 'vue'
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+
+const candidateStore = useCandidateStore()
+
+const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
 
 const showModal = ref(false)
 
@@ -27,11 +33,12 @@ const formData = reactive({
   address: '',
   city: '',
   postal: '',
+  gender: '',
   message: '',
   linkedin: '',
   age: '',
   company: '',
-  status: '',
+  status: 'Kontakt',
 
   touched: {
     name: false,
@@ -99,10 +106,62 @@ function removeToast(id) {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }
 
-function confirmAdd() {
+async function confirmAdd() {
+  const payload = {
+    first_name: formData.name,
+    last_name: formData.lastname,
+    email: formData.email,
+    phone_number: formData.phone,
+    address: formData.address,
+    status: formData.status,
+    zip_code: formData.postal,
+    city: formData.city,
+    gender: formData.gender,
+    age: formData.age,
+    linkedin_url: formData.linkedin,
+    current_position: formData.company,
+    note: formData.message
+  }
+
+  await candidateStore.addCandidate(payload)
+
+  resetForm()   // <--- WOO, NU VIRKER DET 🎉
   closeModal()
   showToast()
 }
+
+
+const resetForm = () => {
+  Object.assign(formData, {
+    name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postal: '',
+    gender: '',
+    message: '',
+    linkedin: '',
+    age: '',
+    company: '',
+    status: 'Kontakt',
+
+    touched: {
+      name: false,
+      lastname: false,
+      email: false,
+      phone: false,
+      address: false,
+      city: false,
+      postal: false,
+      linkedin: false,
+      message: false,
+      status: false
+    }
+  })
+}
+
 
 </script>
 
@@ -148,7 +207,7 @@ function confirmAdd() {
         placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)" v-model="formData.linkedin"
         :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
-      <FormLabel />
+      <FormLabel v-model="formData.gender" />
 
       <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
         @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />

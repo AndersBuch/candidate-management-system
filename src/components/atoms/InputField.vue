@@ -28,7 +28,7 @@ function onCheck(e) {
   <div class="inputBoks">
     <label :for="id" class="checkboxLabel">
       <!-- Custom styled checkbox -->
-      <input type="checkbox" :id="id" :checked="isChecked" @change="onCheck($event)" :disabled="disabled" />
+      <input type="checkbox" :id="id" :checked="isChecked" @change="onCheck($event)" :disabled="disabled">
       <span class="labelText" :class="{ checked: isChecked }">
         <slot>{{ label }}</slot>
       </span>

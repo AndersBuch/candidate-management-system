@@ -23,7 +23,7 @@ const props = defineProps({
       postal: '5230',
       city: 'Odense',
       company: '',
-      note: 'Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens fødevaretekno-logi? Har du erfaring med at styre og overvåge produktionsprocesser?',
+      note: 'Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens fødevareteknologi?',
       profilePicture: '/img/TestProfilePicture.jpg',
       linkedin: ''
     })
@@ -33,35 +33,52 @@ const props = defineProps({
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 
-const openEditModal = () => showEditModal.value = true
-const closeEditModal = () => showEditModal.value = false
+const openEditModal = () => (showEditModal.value = true)
+const closeEditModal = () => (showEditModal.value = false)
 
-const openDeleteModal = () => showDeleteModal.value = true
-const closeDeleteModal = () => showDeleteModal.value = false
+const openDeleteModal = () => (showDeleteModal.value = true)
+const closeDeleteModal = () => (showDeleteModal.value = false)
 </script>
 
 <template>
   <aside v-if="props.activeIndex !== null" class="exstendedCandidateContainer">
-
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
-       <h2 class="adminName">Claus Bjerring - Admin</h2>
+      <h2 class="adminName">Claus Bjerring - Admin</h2>
     </section>
 
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerCenter">
       <div class="iconContainer">
-        <EditModal @click.native="openEditModal"/>
-        <DeleteModal @click.native="openDeleteModal"/>
+<div @click="openEditModal">
+  <EditModal />
+</div>
+
+<div @click="openDeleteModal">
+  <DeleteModal />
+</div>
+
+
       </div>
-   <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture">      <h3 class="candidateName">{{ candidate.firstName }} {{ candidate.lastName }}</h3>
-      <BasicIconAndLogo name="LinkinIcon" :iconSize="true" v-if="candidate.linkedin"/>
+      <img
+        class="profilePicture"
+        src="/img/TestProfilePicture.jpg"
+        alt="Candidate profile picture"
+      />
+      <h3 class="candidateName">
+        {{ candidate.firstName }} {{ candidate.lastName }}
+      </h3>
+      <BasicIconAndLogo
+        name="LinkinIcon"
+        :iconSize="true"
+        v-if="candidate.linkedin"
+      />
     </section>
 
     <div class="divider"></div>
 
-    <section class="flexContainer flexContainerLeft ">
+    <section class="flexContainer flexContainerLeft">
       <dl class="infoGrid">
         <DefinitionRow label="Alder" :value="candidate.age" />
         <DefinitionRow label="Køn" :value="candidate.gender" />
@@ -76,10 +93,10 @@ const closeDeleteModal = () => showDeleteModal.value = false
     </section>
 
     <section class="flexContainer flexContainerLeft note">
-      <div class="noteHeader">
+      <header class="noteHeader">
+        <BasicIconAndLogo name="Note" :iconSize="true" />
         <span class="noteLabel">Note</span>
-        <BasicIconAndLogo name="Edit" :iconSize="true" @click="openEditModal" />
-      </div>
+      </header>
       <p class="noteText">{{ candidate.note }}</p>
     </section>
 
@@ -87,12 +104,18 @@ const closeDeleteModal = () => showDeleteModal.value = false
       <CandidateDocuments />
     </section>
 
-    <!-- Modals -->
-    <EditModal v-if="showEditModal" :candidate="candidate" @close="closeEditModal"/>
-    <DeleteModal v-if="showDeleteModal" :candidateId="candidate.id" @close="closeDeleteModal"/>
+    <EditModal
+      v-if="showEditModal"
+      :candidate="candidate"
+      @close="closeEditModal"
+    />
+    <DeleteModal
+      v-if="showDeleteModal"
+      :candidateId="candidate.id"
+      @close="closeDeleteModal"
+    />
   </aside>
 </template>
-
 
 <style scoped lang="scss">
 .exstendedCandidateContainer {

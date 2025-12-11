@@ -3,18 +3,18 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 const props = defineProps({
-  modelValue: { type: String, default: 'Kontaktes' },
-  options: { type: Array, default: () => ['Kontaktes', 'Afventer', 'Acceptet', 'Afvist'] },
+  modelValue: { type: String, default: 'Kontakt' },
+  options: { type: Array, default: () => ['Kontakt', 'Afventer', 'Accepteret', 'Afvist'] },
   id: { type: [String, Number], default: null }
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const open = ref(false)
-const selected = ref(props.modelValue || 'Kontaktes') // <-- default
+const selected = ref(props.modelValue || 'Kontakt') // <-- default
 
 watch(() => props.modelValue, v => {
-  selected.value = v || 'Kontaktes'  // opdater også default ved ændringer
+  selected.value = v || 'Kontakt'  // opdater også default ved ændringer
 })
 
 

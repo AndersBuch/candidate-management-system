@@ -1,12 +1,15 @@
 <script setup>
-import Button from '@/components/atoms/Button.vue'
 import StatusDropdown from '@/components/dashboard/StatusDropdown.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const emit = defineEmits(['statusClick', 'toggle', 'rowClick', 'edit'])
 
 const props = defineProps({
+  id: Number,
   index: Number,
   name: String,
   phone: String,
@@ -16,18 +19,63 @@ const props = defineProps({
   isActive: Boolean
 })
 
-const emit = defineEmits(["statusClick", "toggle", "rowClick"])
+const rowRef = ref(null)
+const extendedRef = ref(null)
 
-const localStatus = ref(props.status)
+function handleClickOutside(event) {
+  const clickedInsideRow = rowRef.value?.contains(event.target) ?? false
+  const clickedInsideExtended = extendedRef.value?.contains(event.target) ?? false
+
+  // hvis klik er i row ELLER i extended -> gør ingenting
+  if (clickedInsideRow || clickedInsideExtended) return
+
+  emit('rowClick', null)
+}
+
+onMounted(async () => {
+  await nextTick()
+  // Ret selector hvis din extended-pane har et andet classnavn
+  extendedRef.value = document.querySelector('.exstendedCandidateContainer') || document.querySelector('.ExtendedCandidateInfo') || null
+
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+const store = useCandidateStore()
+const localStatus = ref(props.status || 'Afventer')
 
 watch(localStatus, (newVal) => {
   emit('statusClick', newVal)
 })
 
-const rowClass = computed(() => (props.index % 2 === 0 ? 'rowEven' : 'rowOdd'))
+watch(
+  () => props.status,
+  (newVal) => {
+    localStatus.value = newVal
+  }
+)
 
+async function onStatusClick(newStatus) {
+  if (!props.id) return
+  const success = await store.updateStatus(props.id, newStatus)
+  if (success) localStatus.value = newStatus
+  else alert('Kunne ikke opdatere status på serveren')
+}
+
+const rowClass = computed(() =>
+  props.index % 2 === 0 ? 'rowEven' : 'rowOdd'
+)
+
+// <-- ÆNDRET: stop propagation her
 function handleClick(event) {
-  if (event.target.closest('.colStatus')) return
+  if (event.target.closest('.colStatus')) {
+    event.stopPropagation()
+    return
+  }
+  event.stopPropagation()
   emit('rowClick', props.index)
 }
 
@@ -35,24 +83,35 @@ function openLinkedin() {
   if (props.linkedinUrl) window.open(props.linkedinUrl, '_blank')
 }
 
-function onEdit() { emit('edit') }
-
-function getStatusLabel(status) {
-  switch (status?.toLowerCase()) {
-    case 'accepted': return 'Accepteret'
-    case 'pending': return 'Afventer'
-    case 'contact': return 'Kontakt'
-    case 'rejected': return 'Afvist'
-    default: return status || 'Ukendt'
-  }
+function onEdit() {
+  emit('edit')
 }
+
+const normalizedStatus = computed({
+  get() {
+    return localStatus.value
+  },
+  set(value) {
+    localStatus.value = value
+  }
+})
 </script>
 
+
+
 <template>
-  <div class="tableRow" :class="[rowClass, { activeRow: isActive }]" @click="handleClick">
+<div
+  class="tableRow"
+  ref="rowRef"
+  :class="[rowClass, { activeRow: isActive }]"
+  @click="handleClick"
+>
     <div class="col colName">
       <div class="avatar">
-        <BasicIconAndLogo :name="isActive ? 'UserWhite' : 'User'" :iconSize="true" />
+        <BasicIconAndLogo
+          :name="isActive ? 'UserWhite' : 'User'"
+          :iconSize="true"
+        />
       </div>
       <div class="nameText">{{ name }}</div>
     </div>
@@ -61,12 +120,25 @@ function getStatusLabel(status) {
     <div class="col colEmail">{{ email }}</div>
 
     <div class="colStatus">
-      <StatusDropdown v-model="localStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop />
+      <StatusDropdown
+        v-model="normalizedStatus"
+        :is-open="isActive"
+        @toggle="emit('rowClick', index)"
+        @click.stop
+        @update:modelValue="onStatusClick"
+      />
     </div>
 
     <div class="col colActions">
-      <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
-        role="button" tabindex="0" aria-label="LinkedIn" @click.stop="openLinkedin" />
+      <BasicIconAndLogo
+        :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'"
+        :iconSize="true"
+        class="iconBtn linkedin"
+        role="button"
+        tabindex="0"
+        aria-label="LinkedIn"
+        @click.stop="openLinkedin"
+      />
 
       <div class="notActions">
         <EditModal />
