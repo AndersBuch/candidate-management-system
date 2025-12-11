@@ -1,42 +1,55 @@
 <script setup>
 import Button from '@/components/atoms/Button.vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-
-const emit = defineEmits(["update:modelValue"])
+const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   modelValue: {
     type: String,
     required: true
-  },
+  }
 })
 
 const isOpen = ref(false)
 
+// ✅ DANSKE værdier – matcher ENUM og det du viser i app’en
 const options = [
-  { label: "Accepteret", value: "Accepted" },
-  { label: "Afventer", value: "Pending" },
-  { label: "Kontakt", value: "Contact" },
-  { label: "Afvist", value: "Rejected" }
+  { label: 'Accepteret', value: 'Accepteret' },
+  { label: 'Afventer',   value: 'Afventer' },
+  { label: 'Kontakt',    value: 'Kontakt' },
+  { label: 'Afvist',     value: 'Afvist' }
 ]
 
+// Farver, stadig styret på value (nu dansk)
 function getLabelColor(value) {
   switch (value) {
-    case 'Accepted': return '#34C759';
-    case 'Pending': return '#FF8D28';
-    case 'Contact': return '#CB30E0';
-    case 'Rejected': return '#FF383C';
-    default: return '#333';
+    case 'Accepteret': return '#34C759'
+    case 'Afventer':   return '#FF8D28'
+    case 'Kontakt':    return '#CB30E0'
+    case 'Afvist':     return '#FF383C'
+    default:           return '#333'
   }
 }
 
+// Hvis Button-komponenten bruger type til styling, kan vi mappe dansk -> css-type
+const buttonType = computed(() => {
+  switch ((props.modelValue || '').toLowerCase()) {
+    case 'accepteret': return 'accepted'
+    case 'afventer':   return 'pending'
+    case 'kontakt':    return 'contact'
+    case 'afvist':     return 'rejected'
+    default:           return 'default'
+  }
+})
+
 function selectOption(opt) {
-  emit("update:modelValue", opt.value)
+  // Vi sender DANSK værdi tilbage til TableField
+  emit('update:modelValue', opt.value)
   isOpen.value = false
 }
 
-// REF til dropdown-wrapper
+// click outside
 const dropdownRef = ref(null)
 
 function handleClickOutside(event) {
@@ -56,20 +69,27 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="dropdownWrapper" ref="dropdownRef">
-    <!-- STATUS BUTTON -->
-    <Button :label="modelValue" :type="modelValue.toLowerCase()" aria-label="Status knap" @click="isOpen = !isOpen" />
+    <Button
+      :label="modelValue"
+      :type="buttonType"
+      aria-label="Status knap"
+      @click="isOpen = !isOpen"
+    />
 
-    <!-- DROPDOWN MENU MED TRANSITION -->
     <transition name="slide">
       <div v-if="isOpen" class="dropdownMenu">
         <p>Status</p>
         <div class="divider"></div>
 
-        <button v-for="o in options" :key="o.label" class="dropdownItem" :style="{ color: getLabelColor(o.value) }"
-          @click="selectOption(o)">
+        <button
+          v-for="o in options"
+          :key="o.label"
+          class="dropdownItem"
+          :style="{ color: getLabelColor(o.value) }"
+          @click="selectOption(o)"
+        >
           {{ o.label }}
         </button>
-
       </div>
     </transition>
   </div>
@@ -96,7 +116,6 @@ onBeforeUnmount(() => {
 .dropdownWrapper {
   position: relative;
   display: inline-block;
-
 }
 
 .dropdownMenu {

@@ -1,18 +1,45 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useCandidateStatsStore } from '@/stores/useCandidateStatsStore.js'
 import Wigdet from '@/components/dashboard/Wigdet.vue'
+
+const candidateStatsStore = useCandidateStatsStore()
+
+onMounted(() => {
+  candidateStatsStore.init()
+})
 </script>
 
+
 <template>
-    <div class="wigdetFrom">
-        <h3>Dine kandidate oprettelser:</h3>
-        <div class="wigdetRow">
-            <Wigdet icon="UserWhite" title="Kandidater" subtitle="Antallet af alle kandidater" :count="432"
-                :forceNeutral="true" />
-            <Wigdet icon="UserWhite" title="Kandidater oprettet" subtitle="Antalet fra den seneste uge" :count="2" />
-            <Wigdet icon="UserWhite" title="Kandidater slettet" subtitle="Antalet fra den seneste uge" :count="-22" />
-        </div>
+  <div class="wigdetFrom">
+    <h3>Dine kandidate oprettelser:</h3>
+    <div class="wigdetRow">
+      <Wigdet 
+        icon="UserWhite" 
+        title="Kandidater" 
+        subtitle="Antallet af alle kandidater" 
+        :count="candidateStatsStore.totalCandidates"
+        :forceNeutral="true" 
+      />
+      <Wigdet 
+        icon="UserWhite" 
+        title="Kandidater oprettet" 
+        subtitle="Antallet fra den seneste måned" 
+        :count="candidateStatsStore.recentCandidates" 
+      />
+      <Wigdet 
+        icon="UserWhite" 
+        title="Kandidater slettet" 
+        subtitle="Antallet fra den seneste uge" 
+        :count="-22" 
+      />
     </div>
+  </div>
 </template>
+
+
+
 
 
 <style scoped lang="scss">

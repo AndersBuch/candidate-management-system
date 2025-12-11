@@ -6,6 +6,8 @@ import Button from '@/components/atoms/Button.vue'
 import Hero from '@/components/atoms/Hero.vue'
 
 import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 
 const rememberme = ref(false)
 
@@ -17,34 +19,46 @@ const form = reactive({
 
 const error = ref(null)
 
-// Dummy brugere
-const users = [
-    { email: 'admin@example.com', password: 'password', name: 'Admin' },
-    { email: 'user@example.com', password: 'secret', name: 'User' },
-]
+async function handleLogin() {
+    try {
+        // Debug: se hvad der bliver sendt til backend
+        console.log('Sender login:', JSON.stringify({ email: form.email, password: form.password }));
 
-function handleLogin() {
-    error.value = null
-    if (!form.email || !form.password) {
-        error.value = 'Indtast email og adgangskode.'
-        return
-    }
+        const res = await fetch('http://localhost:8085/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: form.email, password: form.password }),
+        });
 
-    const found = users.find(
-        (u) => u.email.toLowerCase() === form.email.toLowerCase() && u.password === form.password
-    )
+        const data = await res.json();
 
-    if (!found) {
-        error.value = 'Ugyldige loginoplysninger.'
-        return
-    }
+        // Debug: se hvad backend returnerer
+        console.log('Response fra backend:', res, data);
 
-    // Gem simpel session (til demo)
-    localStorage.setItem('loggedUser', JSON.stringify({ email: found.email, name: found.name }))
+        if (!res.ok) {
+            error.value = data.error;
+            return;
+        }
 
-    // Naviger til dashboard
-    router.push({ name: 'DashboardSite' })
+// GEM TOKEN – afhængigt af om "Husk mig" er slået til
+if (rememberme.value) {
+    // betyder: brugeren vil huskes efter browser-luk
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('loggedUser', JSON.stringify(data.user));
+} else {
+    // betyder: logget ud så snart browseren lukkes
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('loggedUser', JSON.stringify(data.user));
 }
+
+router.push({ name: 'HomePage' });
+
+    } catch (err) {
+        console.error('Fetch fejl:', err);
+        error.value = 'Noget gik galt.';
+    }
+}
+
 </script>
 
 <template>
@@ -75,6 +89,8 @@ function handleLogin() {
 
                     <div class="buttonWrapper">
                         <Button type="default" label="Log ind" aria-label="Log ind" @click="handleLogin" />
+
+
                     </div>
                 </form>
             </div>
