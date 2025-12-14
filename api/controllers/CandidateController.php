@@ -82,38 +82,47 @@ class CandidateController {
 
     // PATCH /api/candidates/{id}/status
     // NB: her tolker vi {id} som APPLICATION-ID (ikke kandidat-id)
-    public function updateStatus($id) {
-        header('Content-Type: application/json; charset=utf-8');
+// PATCH /api/candidates/{id}
+public function update($id) {
+    header('Content-Type: application/json; charset=utf-8');
 
-        $data = json_decode(file_get_contents('php://input'), true);
+    $data = json_decode(file_get_contents("php://input"), true);
 
-        if (!isset($data['status'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Status is required']);
-            return;
-        }
+    $sql = "
+        UPDATE candidate SET
+            first_name = :first_name,
+            last_name = :last_name,
+            email = :email,
+            phone_number = :phone,
+            address = :address,
+            zip_code = :zip,
+            city = :city,
+            age = :age,
+            linkedin_url = :linkedin,
+            current_position = :position,
+            note = :note
+        WHERE id = :id
+    ";
 
-        try {
-            $sql = "UPDATE application SET status = :status WHERE id = :id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([
-                ':status' => $data['status'],
-                ':id'     => $id
-            ]);
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+        ':first_name' => $data['first_name'],
+        ':last_name'  => $data['last_name'],
+        ':email'      => $data['email'],
+        ':phone'      => $data['phone'],
+        ':address'    => $data['address'],
+        ':zip'        => $data['zip_code'],
+        ':city'       => $data['city'],
+        ':age'        => $data['age'],
+        ':linkedin'   => $data['linkedin'],
+        ':position'   => $data['current_position'],
+        ':note'       => $data['note'],
+        ':id'         => $id
+    ]);
 
-            echo json_encode([
-                'success' => true,
-                'id'      => $id,
-                'status'  => $data['status']
-            ]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                'error'   => 'Could not update status',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
+    echo json_encode(['success' => true]);
+}
+
 
     // Hent antal kandidater (alle)
     public function count() {

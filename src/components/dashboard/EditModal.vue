@@ -10,52 +10,104 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
+const emit = defineEmits(['close'])
+
 const props = defineProps({
-  candidate: { type: Object, required: true }  // <-- FIX 1
+  candidate: {
+    type: Object,
+    required: true
+  }
 })
 
-const emit = defineEmits(['close', 'updated'])
+const showModal = ref(false)
 
-const candidateStore = useCandidateStore()
-
-// Status options
-const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
-
-// Local copy of the candidate
 const formData = reactive({
-  first_name: '',
-  last_name: '',
+  name: '',
+  lastname: '',
   email: '',
-  phone_number: '',
+  phone: '',
   address: '',
   city: '',
-  zip_code: '',
-  gender: '',
+  postal: '',
+  message: '',
+  linkedin: '',
   age: '',
-  linkedin_url: '',
-  current_position: '',
-  note: '',
-  status: ''
+  company: '',
+  status: '',
+  gender: '',
+
+  touched: {
+    name: false,
+    lastname: false,
+    email: false,
+    phone: false,
+    address: false,
+    city: false,
+    postal: false,
+    linkedin: false,
+    message: false,
+    status: false,
+    gender: false,
+  }
 })
 
-// Når modal åbner → copy props ind
 watch(
   () => props.candidate,
-  (c) => {
-    if (!c) return
-    Object.assign(formData, c)
+  (candidate) => {
+    if (!candidate) return
+
+    formData.name = candidate.first_name
+    formData.lastname = candidate.last_name
+    formData.email = candidate.email
+    formData.phone = candidate.phone
+    formData.address = candidate.address
+    formData.postal = candidate.zip_code
+    formData.city = candidate.city
+    formData.age = candidate.age
+    formData.linkedin = candidate.linkedin
+    formData.company = candidate.current_position
+    formData.message = candidate.note
+    formData.status = candidate.status
+
+    showModal.value = true
   },
   { immediate: true }
 )
 
-const close = () => emit('close')
 
-// Når man gemmer
-const saveChanges = async () => {
-  await candidateStore.updateCandidate(props.candidate.id, formData)
-  emit('updated')
-  close()
+
+const submitForm = async () => {
+  if (hasErrors.value) return
+
+  await fetch(`http://localhost:8085/api/candidates/${props.candidate.id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      first_name: formData.name,
+      last_name: formData.lastname,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      zip_code: formData.postal,
+      city: formData.city,
+      age: formData.age,
+      linkedin: formData.linkedin,
+      current_position: formData.company,
+      note: formData.message
+    })
+  })
+
+  closeModal()
 }
+const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
+
+
+const closeModal = () => {
+  showModal.value = false
+  emit('close')
+}
+
+
 
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
@@ -80,20 +132,7 @@ const emailErrorMessage = computed(() => {
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
 
-const submitForm = () => {
-  // Marker alle felter som touched, så fejl vises
-  Object.keys(formData.touched).forEach(key => formData.touched[key] = true)
 
-  // Tjek fejl inden submit
-  if (!hasErrors.value) {
-    console.log('Form sendes:', formData)
-    // Her kan du kalde API eller email-funktion
-  } else {
-    console.log('Der er fejl i formularen')
-  }
-}
-
-const onEdit = () => openModal()
 
 function handleRemoved(file) {
   console.log('Filen blev fjernet', file)
@@ -102,8 +141,7 @@ function handleRemoved(file) {
 </script>
 
 <template>
-  <BasicIconAndLogo :name="showModal ? 'EditWhite' : 'Edit'" :iconSize="true" class="iconBtn" role="button" tabindex="0"
-    :aria-label="showModal ? 'Aktiv' : 'Rediger'" @click.stop="onEdit" />
+
   <transition name="fade">
     <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
@@ -127,8 +165,8 @@ function handleRemoved(file) {
           :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
           @blur="formData.touched.postal = true" />
 
-        <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
-          :touched="formData.touched.status" />
+      <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
+        :touched="formData.touched.status" />
 
         <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city"
           :touched="formData.touched.city" @blur="formData.touched.city = true" />
@@ -143,7 +181,7 @@ function handleRemoved(file) {
           v-model="formData.linkedin" :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
 
-        <FormLabel />
+        <FormLabel v-model="formData.gender" />
 
         <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
           @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
@@ -171,7 +209,7 @@ function handleRemoved(file) {
 
       <div class="buttonContainer">
         <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
-        <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" />
+        <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" @click="submitForm" />
       </div>
 
     </Modal>

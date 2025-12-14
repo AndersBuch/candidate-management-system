@@ -125,6 +125,19 @@ switch ($path) {
     }
     break;
 
+    case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
+    $controller = new CandidateController($pdo);
+
+    if ($method === 'PATCH') {
+        $controller->update((int)$m[1]);
+    } elseif ($method === 'DELETE') {
+        $controller->destroy((int)$m[1]);
+    } else {
+        http_response_code(405);
+    }
+    break;
+
+
 
     default:
         // 👇 NYT: /jobs/{jobId}/candidates
