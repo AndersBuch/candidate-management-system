@@ -10,6 +10,11 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const candidateStore = useCandidateStore()
+
+
 const emit = defineEmits(['close'])
 
 const props = defineProps({
@@ -74,37 +79,33 @@ watch(
   { immediate: true }
 )
 
-
-
-const submitForm = async () => {
-  if (hasErrors.value) return
-
-  await fetch(`http://localhost:8085/api/candidates/${props.candidate.id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      first_name: formData.name,
-      last_name: formData.lastname,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address,
-      zip_code: formData.postal,
-      city: formData.city,
-      age: formData.age,
-      linkedin: formData.linkedin,
-      current_position: formData.company,
-      note: formData.message
-    })
-  })
-
-  closeModal()
-}
 const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
 
 
 const closeModal = () => {
   showModal.value = false
   emit('close')
+}
+
+const submitForm = async () => {
+  const success = await candidateStore.updateCandidate(props.candidate.id, {
+    first_name: formData.name,
+    last_name: formData.lastname,
+    email: formData.email,
+    phone: formData.phone,
+    address: formData.address,
+    zip_code: formData.postal,
+    city: formData.city,
+    age: formData.age,
+    linkedin: formData.linkedin,
+    current_position: formData.company,
+    note: formData.message,
+    status: formData.status
+  })
+
+  if (success) {
+    closeModal()
+  }
 }
 
 
@@ -155,7 +156,7 @@ function handleRemoved(file) {
 
         <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
           :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
-          @input="formData.touched.email = true" @blur="formData.touched.email = true" />
+           @blur="formData.touched.email = true" />
 
         <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
           :touched="formData.touched.address" @blur="formData.touched.address = true" />

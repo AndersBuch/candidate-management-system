@@ -112,7 +112,7 @@ async function updateCandidate(id, payload) {
     const url = `${base}/api/candidates/${id}`
 
     const res = await fetch(url, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       credentials: 'include'
