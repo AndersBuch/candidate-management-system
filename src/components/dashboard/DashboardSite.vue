@@ -5,11 +5,14 @@ import Tableform from '@/components/dashboard/Tableform.vue'
 import ExtendedCandidateInfo from '@/components/dashboard/ExtendedCandidateInfo.vue'
 import Fromi from '@/components/atoms/ConfimationForm.vue'
 
+import Toast from '@/components/dashboard/ToastDashboard.vue'
+
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const showExtendedInfo = ref(false)
 const activeIndex = ref(null)
+const toasts = ref([])
 
 // kandidater fra companyStore
 const companyStore = useCompanyStore()
@@ -33,6 +36,7 @@ const extendedCandidate = computed(() => {
 
   return {
     id: row.id,
+    applicationId: row.applicationId,
     firstName,
     lastName,
     age: row.age ?? '',
@@ -70,13 +74,28 @@ function handleClickOutside(event) {
   }
 }
 
+function handleCandidateDeleted() {
+  activeIndex.value = null
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat slettet',
+    subtitle: 'Kandidaten blev fjernet korrekt',
+    variant: 'danger',
+    duration: 3000
+  })
+}
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
 
 onMounted(() => {
-  document.addEventListener('pointerdown', handleClickOutside, true)
+  document.addEventListener('pointerdown', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('pointerdown', handleClickOutside, true)
+  document.removeEventListener('pointerdown', handleClickOutside)
 })
 
 </script>
@@ -98,8 +117,13 @@ onBeforeUnmount(() => {
     v-if="extendedCandidate"
     ref="extendedRef"
     :candidate="extendedCandidate"
+    @candidateDeleted="handleCandidateDeleted"
   />
 </Transition>
+
+<div class="toastWrapper">
+  <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" />
+</div>
 
   </div>
 </template>
@@ -108,6 +132,20 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .dashboardLayout {
   display: flex;
+}
+
+.dashboardContentWrapper {
+  flex: 1;
+}
+
+.toastWrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
 }
 
 .dashboardContentWrapper {

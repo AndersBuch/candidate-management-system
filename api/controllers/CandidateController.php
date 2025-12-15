@@ -120,12 +120,13 @@ public function update($id) {
             first_name = :first_name,
             last_name = :last_name,
             email = :email,
-            phone_number = :phone,
+            phone_number = :phone_number,
             address = :address,
-            zip_code = :zip,
+            zip_code = :zip_code,
             city = :city,
+            gender = :gender,
             age = :age,
-            linkedin_url = :linkedin,
+            linkedin_url = :linkedin_url,
             current_position = :position,
             note = :note
         WHERE id = :id
@@ -133,18 +134,19 @@ public function update($id) {
 
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute([
-        ':first_name' => $data['first_name'],
-        ':last_name'  => $data['last_name'],
-        ':email'      => $data['email'],
-        ':phone'      => $data['phone'],
-        ':address'    => $data['address'],
-        ':zip'        => $data['zip_code'],
-        ':city'       => $data['city'],
-        ':age'        => $data['age'],
-        ':linkedin'   => $data['linkedin'],
-        ':position'   => $data['current_position'],
-        ':note'       => $data['note'],
-        ':id'         => $id
+        ':first_name'   => $data['first_name'] ?? null,
+        ':last_name'    => $data['last_name'] ?? null,
+        ':email'        => $data['email'] ?? null,
+        ':phone_number' => $data['phone'] ?? null,
+        ':address'      => $data['address'] ?? null,
+        ':zip_code'     => $data['zip_code'] ?? null,
+        ':city'         => $data['city'] ?? null,
+        ':gender'       => $data['gender'] ?? null,
+        ':age'          => $data['age'] ?? null,
+        ':linkedin_url' => $data['linkedin'] ?? null,
+        ':position'     => $data['current_position'] ?? null,
+        ':note'         => $data['note'] ?? null,
+        ':id'           => $id
     ]);
 
     echo json_encode(['success' => true]);

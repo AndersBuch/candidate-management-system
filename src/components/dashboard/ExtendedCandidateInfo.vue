@@ -24,8 +24,7 @@ defineExpose({
   rootRef
 })
 
-const showEditModal = ref(false)
-const showDeleteModal = ref(false)
+const emit = defineEmits(['candidateDeleted'])
 
 const openEditModal = () => {
   showEditModal.value = true
@@ -35,15 +34,23 @@ const closeEditModal = () => {
   showEditModal.value = false
 }
 
+const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+
 const openDeleteModal = () => {
   showDeleteModal.value = true
+}
+
+const handleCandidateDeleted = () => {
+  emit('candidateDeleted')
+  showDeleteModal.value = false
 }
 
 
 </script>
 
 <template>
-<aside class="exstendedCandidateContainer" ref="rootRef" @click.stop>
+<aside class="exstendedCandidateContainer" ref="rootRef" @click.stop @pointerdown.stop>
 
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
@@ -94,7 +101,9 @@ const openDeleteModal = () => {
 <DeleteModal
   v-if="showDeleteModal"
   :candidateId="candidate.id"
+  :showTrigger="false"
   @close="showDeleteModal = false"
+  @deleted="handleCandidateDeleted"
 />
 
     </section>
