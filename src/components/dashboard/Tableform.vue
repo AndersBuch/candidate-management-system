@@ -9,6 +9,12 @@ import { useCompanyStore } from '@/stores/useCompanyStore'
 const selectedCandidate = ref(null)
 const showEditModal = ref(false)
 
+const props = defineProps({
+  activeIndex: {
+    type: [Number, null],
+    default: null
+  }
+})
 
 const emit = defineEmits(['openCandidate'])
 
@@ -17,7 +23,6 @@ const companyStore = useCompanyStore()
 // Rækker = alle kandidater til den aktive stilling
 const rows = computed(() => companyStore.activeCandidates)
 
-const activeIndex = ref(null)
 
 function onEdit(row) {
   selectedCandidate.value = row
@@ -28,11 +33,10 @@ function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
 
-// sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
 function setActiveRow(index) {
-  activeIndex.value = activeIndex.value === index ? null : index
-  emit('openCandidate', activeIndex.value)
+  emit('openCandidate', index)
 }
+
 
 const toasts = ref([])
 
@@ -83,9 +87,8 @@ function removeToast(id) {
   :email="r.email"
   :status="r.status"
   :linkedin-url="r.linkedin"
-  :is-active="activeIndex === i"
+  :is-active="props.activeIndex === i"
   @rowClick="setActiveRow"
-  @statusClick="() => onStatusClick(r)"
   @edit="() => onEdit(r)"
 />
 

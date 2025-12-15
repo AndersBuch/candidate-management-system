@@ -23,29 +23,6 @@ const props = defineProps({
 })
 
 const rowRef = ref(null)
-const extendedRef = ref(null)
-
-function handleClickOutside(event) {
-  const clickedInsideRow = rowRef.value?.contains(event.target) ?? false
-  const clickedInsideExtended = extendedRef.value?.contains(event.target) ?? false
-
-  // hvis klik er i row ELLER i extended -> gør ingenting
-  if (clickedInsideRow || clickedInsideExtended) return
-
-  emit('rowClick', null)
-}
-
-onMounted(async () => {
-  await nextTick()
-  // Ret selector hvis din extended-pane har et andet classnavn
-  extendedRef.value = document.querySelector('.exstendedCandidateContainer') || document.querySelector('.ExtendedCandidateInfo') || null
-
-  document.addEventListener('click', handleClickOutside)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
 
 const store = useCandidateStore()
 const localStatus = ref(props.status || 'Afventer')
@@ -73,12 +50,7 @@ const rowClass = computed(() =>
 )
 
 // <-- ÆNDRET: stop propagation her
-function handleClick(event) {
-  if (event.target.closest('.colStatus')) {
-    event.stopPropagation()
-    return
-  }
-  event.stopPropagation()
+function handleClick() {
   emit('rowClick', props.index)
 }
 

@@ -5,7 +5,7 @@ import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 import DeleteModal from '@/components/dashboard/DeleteModal.vue'
 
-import { ref } from 'vue'
+import { ref, defineExpose } from 'vue'
 
 const props = defineProps({
   candidate: {
@@ -16,6 +16,12 @@ const props = defineProps({
     type: [Number, null],
     default: null
   }
+})
+
+const rootRef = ref(null)
+
+defineExpose({
+  rootRef
 })
 
 const showEditModal = ref(false)
@@ -33,21 +39,12 @@ const openDeleteModal = () => {
   showDeleteModal.value = true
 }
 
-function handleClickOutside(event) {
-  const clickedInsideRow = rowRef.value?.contains(event.target) ?? false;
-  const clickedInsideExtended = extendedRef.value?.contains(event.target) ?? false;
-
-  // Luk kun hvis klik er udenfor både row OG extended
-  if (!clickedInsideRow && !clickedInsideExtended) {
-    emit('rowClick', null)
-  }
-}
-
 
 </script>
 
 <template>
-<aside ref="extendedRef" v-if="props.activeIndex !== null" class="exstendedCandidateContainer">
+<aside class="exstendedCandidateContainer" ref="rootRef" @click.stop>
+
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
       <h2 class="adminName">Claus Bjerring - Admin</h2>

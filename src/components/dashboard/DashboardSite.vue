@@ -5,7 +5,7 @@ import Tableform from '@/components/dashboard/Tableform.vue'
 import ExtendedCandidateInfo from '@/components/dashboard/ExtendedCandidateInfo.vue'
 import Fromi from '@/components/atoms/ConfimationForm.vue'
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const showExtendedInfo = ref(false)
@@ -50,33 +50,60 @@ const extendedCandidate = computed(() => {
   }
 })
 
-function handleOpenCandidate(index) {
-  activeIndex.value = index
-  showExtendedInfo.value = index !== null
+const dashboardRef = ref(null)
+const extendedRef = ref(null)
+
+function openCandidate(index) {
+  activeIndex.value =
+    activeIndex.value === index ? null : index
 }
+
+function handleClickOutside(event) {
+  const clickedDashboard =
+    dashboardRef.value?.contains(event.target)
+
+  const clickedExtended =
+    extendedRef.value?.rootRef?.contains(event.target)
+
+  if (!clickedDashboard && !clickedExtended) {
+    activeIndex.value = null
+  }
+}
+
+
+onMounted(() => {
+  document.addEventListener('pointerdown', handleClickOutside, true)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleClickOutside, true)
+})
+
 </script>
 
 <template>
   <div class="dashboardLayout">
     <SideMenu />
 
-    <section class="dashboardContentWrapper">
-      <div class="dashboardContent">
-        <DashboardHeader />
-        <Tableform @openCandidate="handleOpenCandidate" />
-        <Fromi />
-      </div>
+    <section ref="dashboardRef" class="dashboardContentWrapper">
+      <DashboardHeader />
+      <Tableform
+  :active-index="activeIndex"
+  @openCandidate="openCandidate"
+/>
     </section>
 
-    <Transition name="slide-right">
-      <ExtendedCandidateInfo
-        v-if="showExtendedInfo && extendedCandidate"
-        :active-index="activeIndex"
-        :candidate="extendedCandidate"
-      />
-    </Transition>
+<Transition name="slide-right">
+  <ExtendedCandidateInfo
+    v-if="extendedCandidate"
+    ref="extendedRef"
+    :candidate="extendedCandidate"
+  />
+</Transition>
+
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .dashboardLayout {
