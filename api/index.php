@@ -33,13 +33,6 @@ $method = $_SERVER['REQUEST_METHOD'];
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path   = preg_replace('#^/api#', '', $uri); // fjerner /api prefix
 
-// PATCH /candidates/:id/status (special-case før switch)
-if ($method === 'PATCH' && preg_match('#^/candidates/(\d+)/status$#', $path, $matches)) {
-    $controller = new CandidateController($pdo);
-    $controller->updateStatus($matches[1]);
-    exit;
-}
-
 // Debug: log incoming request (kan fjernes)
 error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
 error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
@@ -121,7 +114,7 @@ case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
     if ($method === 'PUT') {
         $controller->update($id); // brug update-metoden i CandidateController
     } elseif ($method === 'PATCH') {
-        $controller->updateStatus($id); // hvis du vil ændre status via PATCH
+        $controller->updateStatus($id); // opdater status
     } elseif ($method === 'DELETE') {
         $controller->destroy($id);
     } else {

@@ -63,7 +63,7 @@ function handleClickOutside(event) {
     dashboardRef.value?.contains(event.target)
 
   const clickedExtended =
-    extendedRef.value?.rootRef?.contains(event.target)
+    extendedRef.value?.rootRef?.value?.contains(event.target)
 
   if (!clickedDashboard && !clickedExtended) {
     activeIndex.value = null

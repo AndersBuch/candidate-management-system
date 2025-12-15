@@ -39,8 +39,8 @@ watch(
 )
 
 async function onStatusClick(newStatus) {
-  if (!props.id) return
-  const success = await store.updateStatus(props.id, newStatus)
+  if (!props.applicationId) return
+  const success = await store.updateStatus(props.applicationId, newStatus)
   if (success) localStatus.value = newStatus
   else alert('Kunne ikke opdatere status på serveren')
 }
