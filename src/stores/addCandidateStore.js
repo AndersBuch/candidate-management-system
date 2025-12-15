@@ -79,6 +79,59 @@ export const useCandidateStore = defineStore('candidate', () => {
       return false
     }
   }
+  async function deleteCandidate(id) {
+  try {
+    const base = getApiBase()
+    const url = `${base}/api/candidates/${id}`
 
-  return { addCandidate, updateStatus }
+    const res = await fetch(url, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+
+    if (!res.ok) {
+      console.error('Delete failed:', await res.text())
+      throw new Error('Delete failed')
+    }
+
+    const jobId = companyStore.activePosition?.id || null
+    if (jobId) {
+      await companyStore.fetchCandidatesForPosition(jobId)
+    }
+
+    return true
+  } catch (err) {
+    console.error('deleteCandidate error:', err)
+    return false
+  }
+}
+
+async function updateCandidate(id, payload) {
+  try {
+    const base = getApiBase()
+    const url = `${base}/api/candidates/${id}`
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: 'include'
+    })
+
+    if (!res.ok) throw new Error('Update failed')
+
+    const jobId = companyStore.activePosition?.id || null
+    if (jobId) {
+      await companyStore.fetchCandidatesForPosition(jobId)
+    }
+
+    return true
+  } catch (err) {
+    console.error("updateCandidate error:", err)
+    return false
+  }
+}
+
+
+  return { addCandidate, updateStatus, deleteCandidate, updateCandidate }
 })

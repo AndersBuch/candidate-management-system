@@ -6,6 +6,7 @@ import EditModal from '@/components/dashboard/EditModal.vue'
 import { ref, watch, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
+
 const emit = defineEmits(['statusClick', 'toggle', 'rowClick', 'edit'])
 
 const props = defineProps({
@@ -16,7 +17,9 @@ const props = defineProps({
   email: String,
   status: String,
   linkedinUrl: String,
-  isActive: Boolean
+  isActive: Boolean,
+  candidateId: Number,
+  applicationId: Number
 })
 
 const rowRef = ref(null)
@@ -84,8 +87,9 @@ function openLinkedin() {
 }
 
 function onEdit() {
-  emit('edit')
+  emit('edit', props.candidateId)
 }
+
 
 const normalizedStatus = computed({
   get() {
@@ -141,7 +145,11 @@ const normalizedStatus = computed({
       />
 
       <div class="notActions">
-        <EditModal />
+        <BasicIconAndLogo
+  name="Edit"
+  @click.stop="onEdit"
+/>
+
       </div>
     </div>
   </div>

@@ -3,8 +3,18 @@ import Modal from '@/components/Modal.vue'
 import Button from '@/components/atoms/Button.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
-
 import { ref, reactive, computed, watch } from 'vue'
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const props = defineProps({
+    candidateId: {
+        type: Number,
+        required: true
+    }
+})
+
+
+const store = useCandidateStore()
 
 const showModal = ref(false)
 
@@ -36,10 +46,15 @@ function removeToast(id) {
     toasts.value = toasts.value.filter(t => t.id !== id)
 }
 
-function confirmDelete() {
-    closeModal()     // luk modal
-    showToast()      // vis toast
+async function confirmDelete() {
+    const ok = await store.deleteCandidate(props.candidateId)
+
+    if (ok) {
+        closeModal()
+        showToast()
+    }
 }
+
 </script>
 
 <template>

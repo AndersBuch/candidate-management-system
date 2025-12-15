@@ -2,7 +2,12 @@
 import { ref, computed } from 'vue'
 import TableField from '@/components/dashboard/TableField.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import EditModal from '@/components/dashboard/EditModal.vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
+
+const selectedCandidate = ref(null)
+const showEditModal = ref(false)
+
 
 const emit = defineEmits(['openCandidate'])
 
@@ -14,7 +19,8 @@ const rows = computed(() => companyStore.activeCandidates)
 const activeIndex = ref(null)
 
 function onEdit(row) {
-  console.log('📝 edit:', row.name)
+  selectedCandidate.value = row
+  showEditModal.value = true
 }
 
 function onStatusClick(row) {
@@ -52,6 +58,8 @@ function setActiveRow(index) {
   :key="r.id ?? i"
   :id="r.applicationId"
   :index="i"
+  :candidate-id="r.id"
+  :application-id="r.applicationId"
   :name="r.name"
   :phone="r.phone"
   :email="r.email"
@@ -62,6 +70,13 @@ function setActiveRow(index) {
   @statusClick="() => onStatusClick(r)"
   @edit="() => onEdit(r)"
 />
+
+<EditModal
+  v-if="showEditModal && selectedCandidate"
+  :candidate="selectedCandidate"
+  @close="showEditModal = false"
+/>
+
 </template>
 
 <style lang="scss">

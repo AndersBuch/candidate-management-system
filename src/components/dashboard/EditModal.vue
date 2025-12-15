@@ -10,16 +10,21 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
 
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const candidateStore = useCandidateStore()
+
+
+const emit = defineEmits(['close'])
+
+const props = defineProps({
+  candidate: {
+    type: Object,
+    required: true
+  }
+})
+
 const showModal = ref(false)
-
-
-const openModal = () => {
-  showModal.value = true
-}
-
-const closeModal = () => {
-  showModal.value = false
-}
 
 const formData = reactive({
   name: '',
@@ -34,6 +39,7 @@ const formData = reactive({
   age: '',
   company: '',
   status: '',
+  gender: '',
 
   touched: {
     name: false,
@@ -45,9 +51,62 @@ const formData = reactive({
     postal: false,
     linkedin: false,
     message: false,
-    status: false
+    status: false,
+    gender: false,
   }
 })
+
+watch(
+  () => props.candidate,
+  (candidate) => {
+    if (!candidate) return
+
+    formData.name = candidate.first_name
+    formData.lastname = candidate.last_name
+    formData.email = candidate.email
+    formData.phone = candidate.phone
+    formData.address = candidate.address
+    formData.postal = candidate.zip_code
+    formData.city = candidate.city
+    formData.age = candidate.age
+    formData.linkedin = candidate.linkedin
+    formData.company = candidate.current_position
+    formData.message = candidate.note
+    formData.status = candidate.status
+
+    showModal.value = true
+  },
+  { immediate: true }
+)
+
+const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
+
+
+const closeModal = () => {
+  showModal.value = false
+  emit('close')
+}
+
+const submitForm = async () => {
+  const success = await candidateStore.updateCandidate(props.candidate.id, {
+    first_name: formData.name,
+    last_name: formData.lastname,
+    email: formData.email,
+    phone: formData.phone,
+    address: formData.address,
+    zip_code: formData.postal,
+    city: formData.city,
+    age: formData.age,
+    linkedin: formData.linkedin,
+    current_position: formData.company,
+    note: formData.message,
+    status: formData.status
+  })
+
+  if (success) {
+    closeModal()
+  }
+}
 
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
@@ -72,108 +131,81 @@ const emailErrorMessage = computed(() => {
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
 
-const submitForm = () => {
-  // Marker alle felter som touched, så fejl vises
-  Object.keys(formData.touched).forEach(key => formData.touched[key] = true)
-
-  // Tjek fejl inden submit
-  if (!hasErrors.value) {
-    console.log('Form sendes:', formData)
-    // Her kan du kalde API eller email-funktion
-  } else {
-    console.log('Der er fejl i formularen')
-  }
-}
-
-const onEdit = () => openModal()
-
 function handleRemoved(file) {
   console.log('Filen blev fjernet', file)
 }
-
 </script>
 
 <template>
-<BasicIconAndLogo 
-  :name="showModal ? 'EditWhite' : 'Edit'" 
-  :iconSize="true" 
-  class="iconBtn" 
-  role="button" 
-  tabindex="0" 
-  :aria-label="showModal ? 'Aktiv' : 'Rediger'" 
-  @click.stop="onEdit" 
-/>
- <transition name="fade">
-  <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
-    <div class="formGrid">
-      <FormField id="name" label="Fornavn" placeholder="Fornavn" v-model="formData.name"
-        :touched="formData.touched.name" @blur="formData.touched.name = true" />
+  <transition name="fade">
+    <Modal v-if="showModal" modalTitle="Rediger kandidat" titleAlign="left" @close="closeModal" height="900px">
 
-      <FormField id="lastname" label="Efternavn" placeholder="Efternavn" v-model="formData.lastname"
-        :touched="formData.touched.lastname" @blur="formData.touched.lastname = true" />
+      <div class="formGrid">
+        <FormField id="name" label="Fornavn" placeholder="Fornavn" v-model="formData.name"
+          :touched="formData.touched.name" @blur="formData.touched.name = true" />
+
+        <FormField id="lastname" label="Efternavn" placeholder="Efternavn" v-model="formData.lastname"
+          :touched="formData.touched.lastname" @blur="formData.touched.lastname = true" />
 
 
-      <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
-        :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
-        @input="formData.touched.email = true" @blur="formData.touched.email = true" />
+        <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
+          :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
+          @blur="formData.touched.email = true" />
 
-      <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
-        :touched="formData.touched.address" @blur="formData.touched.address = true" />
+        <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
+          :touched="formData.touched.address" @blur="formData.touched.address = true" />
 
+        <FormField id="postal" label="Postnummer" placeholder="Postnummer" fieldType="text" v-model="formData.postal"
+          :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
+          @blur="formData.touched.postal = true" />
 
-      <FormField id="postal" label="Postnummer" placeholder="Postnummer" fieldType="text" v-model="formData.postal"
-        :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
-        @blur="formData.touched.postal = true" />
+        <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
+          :touched="formData.touched.status" />
 
-      <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
-        :touched="formData.touched.status" />
+        <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city"
+          :touched="formData.touched.city" @blur="formData.touched.city = true" />
 
-      <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city" :touched="formData.touched.city"
-        @blur="formData.touched.city = true" />
+        <FormField id="phone" label="Telefon" placeholder="Indtast telefon" fieldType="text" v-model="formData.phone"
+          :touched="formData.touched.phone" @input="handleNumberInput($event, 10, 'phone')"
+          @blur="formData.touched.phone = true" />
 
+        <FormField id="linkedin" label="LinkedIn"
+          placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
+          v-model="formData.linkedin" :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
-      <FormField id="phone" label="Telefon" placeholder="Indtast telefon" fieldType="text" v-model="formData.phone"
-        :touched="formData.touched.phone" @input="handleNumberInput($event, 10, 'phone')"
-        @blur="formData.touched.phone = true" />
+        <FormLabel v-model="formData.gender" />
 
-      <FormField id="linkedin" label="LinkedIn"
-        placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)" v-model="formData.linkedin"
-        :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
+        <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
+          @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
 
+        <FormField id="company" label="Nuværenede Firma" placeholder="Nuværenede Firma" v-model="formData.company"
+          :touched="formData.touched.company" @blur="formData.touched.company = true" />
 
-      <FormLabel />
+        <FormField id="message" label="Note" placeholder="Maks 150 tegn" fieldType="textarea" v-model="formData.message"
+          :touched="formData.touched.message" @blur="formData.touched.message = true" class="noteField"></FormField>
+      </div>
 
-      <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
-        @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
+      <div class="uploadeButtons">
+        <UploadButton title="CV" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
+          @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
 
-      <FormField id="company" label="Nuværenede Firma" placeholder="Nuværenede Firma" v-model="formData.company"
-        :touched="formData.touched.company" @blur="formData.touched.company = true" />
+        <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg" :max-size-mb="2" :multiple="false"
+          @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
 
-      <FormField id="message" label="Note" placeholder="Maks 150 tegn" fieldType="textarea" v-model="formData.message"
-        :touched="formData.touched.message" @blur="formData.touched.message = true" class="noteField"></FormField>
-    </div>
+        <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,.doc,.docx,.png,.jpg" :max-size-mb="2"
+          :multiple="true" @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
 
-    <div class="uploadeButtons">
-      <UploadButton title="CV" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
-        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+        <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
+          @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+      </div>
 
-      <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg" :max-size-mb="2" :multiple="false"
-        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
+      <div class="buttonContainer">
+        <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
+        <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" @click="submitForm" />
+      </div>
 
-      <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,.doc,.docx,.png,.jpg" :max-size-mb="2"
-        :multiple="true" @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
-
-      <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
-        @file-selected="handleFile" @error="handleError" @file-removed="handleRemoved" />
-    </div>
-
-    <div class="buttonContainer">
-      <Button type="smallSecondaryButton" label="Annuller" aria-label="Annuller" @click="closeModal" />
-      <Button type="smallDashboard" label="Gem" aria-label="Gem formular til kandidaten" />
-    </div>
-
-  </Modal>
+    </Modal>
   </transition>
 </template>
 
@@ -228,14 +260,19 @@ function handleRemoved(file) {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
-.fade-enter-to, .fade-leave-from {
+
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
   transform: translateY(0);
 }
