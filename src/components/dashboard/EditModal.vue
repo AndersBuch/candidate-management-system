@@ -108,8 +108,6 @@ const submitForm = async () => {
   }
 }
 
-
-
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
   const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
@@ -133,12 +131,9 @@ const emailErrorMessage = computed(() => {
 // Computed for hele formen - tjek for fejl
 const hasErrors = computed(() => !!emailErrorMessage.value)
 
-
-
 function handleRemoved(file) {
   console.log('Filen blev fjernet', file)
 }
-
 </script>
 
 <template>
@@ -156,22 +151,20 @@ function handleRemoved(file) {
 
         <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
           :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
-           @blur="formData.touched.email = true" />
+          @blur="formData.touched.email = true" />
 
         <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
           :touched="formData.touched.address" @blur="formData.touched.address = true" />
-
 
         <FormField id="postal" label="Postnummer" placeholder="Postnummer" fieldType="text" v-model="formData.postal"
           :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
           @blur="formData.touched.postal = true" />
 
-      <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
-        :touched="formData.touched.status" />
+        <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
+          :touched="formData.touched.status" />
 
         <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city"
           :touched="formData.touched.city" @blur="formData.touched.city = true" />
-
 
         <FormField id="phone" label="Telefon" placeholder="Indtast telefon" fieldType="text" v-model="formData.phone"
           :touched="formData.touched.phone" @input="handleNumberInput($event, 10, 'phone')"
@@ -180,7 +173,6 @@ function handleRemoved(file) {
         <FormField id="linkedin" label="LinkedIn"
           placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
           v-model="formData.linkedin" :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
-
 
         <FormLabel v-model="formData.gender" />
 
