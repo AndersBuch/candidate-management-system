@@ -7,15 +7,18 @@ import Button from '@/components/atoms/Button.vue'
 import FormDropdown from '@/components/molecules/FormDropdown.vue'
 import UploadButton from '@/components/dashboard/UploadButton.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import Toast from '@/components/dashboard/ToastDashboard.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
+
 
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
 const candidateStore = useCandidateStore()
 
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'saved'])
+
 
 const props = defineProps({
   candidate: {
@@ -73,6 +76,7 @@ watch(
     formData.company = candidate.current_position
     formData.message = candidate.note
     formData.status = candidate.status
+    formData.gender = candidate.gender
 
     showModal.value = true
   },
@@ -100,12 +104,14 @@ const submitForm = async () => {
     linkedin: formData.linkedin,
     current_position: formData.company,
     note: formData.message,
-    status: formData.status
+    status: formData.status,
+    gender: formData.gender
   })
+if (success) {
+  emit('saved')
+  closeModal()
+}
 
-  if (success) {
-    closeModal()
-  }
 }
 
 // Funktion der sikrer kun tal og max-længde
@@ -134,6 +140,12 @@ const hasErrors = computed(() => !!emailErrorMessage.value)
 function handleRemoved(file) {
   console.log('Filen blev fjernet', file)
 }
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
+
 </script>
 
 <template>
@@ -207,6 +219,7 @@ function handleRemoved(file) {
 
     </Modal>
   </transition>
+
 </template>
 
 <style lang="scss">

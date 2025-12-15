@@ -8,49 +8,46 @@ import DeleteModal from '@/components/dashboard/DeleteModal.vue'
 import { ref } from 'vue'
 
 const props = defineProps({
-  activeIndex: { type: [Number, String, null], default: null },
   candidate: {
     type: Object,
-    default: () => ({
-      firstName: 'Mads',
-      lastName: 'Mikkelsen Hansen',
-      age: '',
-      gender: 'Mand',
-      phone: '11223344',
-      status: 'Afventer',
-      email: 'Madharenmail@gmail.com',
-      address: 'Mullervej 2',
-      postal: '5230',
-      city: 'Odense',
-      company: '',
-      note: 'Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens fødevareteknologi?',
-      profilePicture: '/img/TestProfilePicture.jpg',
-      linkedin: ''
-    })
+    required: true
+  },
+  activeIndex: {
+    type: [Number, null],
+    default: null
   }
 })
-
-const showEdit = ref(false)
-const activeCandidate = ref(null)
-
-function handleOpenCandidate(c) {
-  activeCandidate.value = c
-  showEdit.value = true
-}
-
 
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 
-const openEditModal = () => (showEditModal.value = true)
-const closeEditModal = () => (showEditModal.value = false)
+const openEditModal = () => {
+  showEditModal.value = true
+}
 
-const openDeleteModal = () => (showDeleteModal.value = true)
-const closeDeleteModal = () => (showDeleteModal.value = false)
+const closeEditModal = () => {
+  showEditModal.value = false
+}
+
+const openDeleteModal = () => {
+  showDeleteModal.value = true
+}
+
+function handleClickOutside(event) {
+  const clickedInsideRow = rowRef.value?.contains(event.target) ?? false;
+  const clickedInsideExtended = extendedRef.value?.contains(event.target) ?? false;
+
+  // Luk kun hvis klik er udenfor både row OG extended
+  if (!clickedInsideRow && !clickedInsideExtended) {
+    emit('rowClick', null)
+  }
+}
+
+
 </script>
 
 <template>
-  <aside v-if="props.activeIndex !== null" class="exstendedCandidateContainer">
+<aside ref="extendedRef" v-if="props.activeIndex !== null" class="exstendedCandidateContainer">
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
       <h2 class="adminName">Claus Bjerring - Admin</h2>
@@ -60,21 +57,21 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
 
     <section class="flexContainer flexContainerCenter">
       <div class="iconContainer">
-<div @click="openEditModal">
-<EditModal 
-    v-if="showEdit" 
-    :candidate="activeCandidate" 
-    @close="showEdit = false"
-    @updated="refreshCandidates"
-/>
+<div class="iconContainer">
+  <!-- EDIT IKON -->
+  <BasicIconAndLogo
+    name="Edit"
+    :iconSize="true"
+    @click="openEditModal"
+  />
 
+  <!-- DELETE IKON -->
+  <BasicIconAndLogo
+    name="Thash"
+    :iconSize="true"
+    @click="openDeleteModal"
+  />
 </div>
-
-<div @click="openDeleteModal">
-  <DeleteModal :candidateId="candidate.id" />
-</div>
-
-
 
       </div>
       <img
@@ -90,6 +87,19 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
         :iconSize="true"
         v-if="candidate.linkedin"
       />
+
+      <EditModal
+  v-if="showEditModal"
+  :candidate="candidate"
+  @close="showEditModal = false"
+/>
+
+<DeleteModal
+  v-if="showDeleteModal"
+  :candidateId="candidate.id"
+  @close="showDeleteModal = false"
+/>
+
     </section>
 
     <div class="divider"></div>
