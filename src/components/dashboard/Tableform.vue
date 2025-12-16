@@ -5,6 +5,11 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
+import { useSearchStore } from '@/stores/useSearchStore'
+
+const searchStore = useSearchStore()
+const rows = computed(() => searchStore.filteredCandidates)
+
 
 const selectedCandidate = ref(null)
 const showEditModal = ref(false)
@@ -19,10 +24,6 @@ const props = defineProps({
 const emit = defineEmits(['openCandidate'])
 
 const companyStore = useCompanyStore()
-
-// Rækker = alle kandidater til den aktive stilling
-const rows = computed(() => companyStore.activeCandidates)
-
 
 function onEdit(row) {
   selectedCandidate.value = row
