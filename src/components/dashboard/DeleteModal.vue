@@ -17,12 +17,12 @@ const props = defineProps({
     }
 })
 
-
 const store = useCandidateStore()
 
 const showModal = ref(false)
 
-const emit = defineEmits(['close', 'deleted'])
+const emit = defineEmits(['close', 'confirm'])
+
 
 const openModal = () => {
     showModal.value = true
@@ -43,30 +43,12 @@ onMounted(() => {
     }
 })
 
-const toasts = ref([])
 
-function showToast() {
-    toasts.value.push({
-        id: Date.now(),
-        title: 'Kandidat slettet',
-        subtitle: 'Kandidaten blev fjernet korrekt',
-        variant: 'danger',   // eller 'success'
-        duration: 3000
-    })
+function confirmDelete() {
+  emit('confirm', props.candidateId)
+  emit('close')
 }
 
-function removeToast(id) {
-    toasts.value = toasts.value.filter(t => t.id !== id)
-}
-
-async function confirmDelete() {
-    const ok = await store.deleteCandidate(props.candidateId)
-
-    if (ok) {
-        emit('deleted')
-        closeModal()
-    }
-}
 
 </script>
 
@@ -87,23 +69,9 @@ async function confirmDelete() {
 
         </Modal>
     </transition>
-
-    <div class="toastWrapper">
-        <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" />
-    </div>
 </template>
 
 <style lang="scss">
-.toastWrapper {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
-}
-
 .deleteCandidateModal .closeIcon {
     display: none !important;
 }

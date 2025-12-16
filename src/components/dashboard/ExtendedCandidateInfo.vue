@@ -4,8 +4,14 @@ import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 import DeleteModal from '@/components/dashboard/DeleteModal.vue'
+import Toast from '@/components/dashboard/ToastDashboard.vue'
 
 import { ref, defineExpose } from 'vue'
+
+import { useCandidateStore } from '@/stores/addCandidateStore'
+
+const store = useCandidateStore()
+
 
 const props = defineProps({
   candidate: {
@@ -23,6 +29,41 @@ const rootRef = ref(null)
 defineExpose({
   rootRef
 })
+
+const toasts = ref([])
+const pendingDelete = ref(null)
+const deleteTimer = ref(null)
+
+function startDelete(candidateId) {
+  pendingDelete.value = candidateId
+
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat slettet',
+    subtitle: 'Du kan fortryde handlingen',
+    variant: 'danger',
+    duration: 3000,
+    showUndo: true
+  })
+
+  deleteTimer.value = setTimeout(async () => {
+    await store.deleteCandidate(candidateId)
+    emit('candidateDeleted')
+    pendingDelete.value = null
+  }, 3000)
+}
+
+function undoDelete() {
+  if (deleteTimer.value) {
+    clearTimeout(deleteTimer.value)
+    deleteTimer.value = null
+  }
+  pendingDelete.value = null
+}
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
 
 const emit = defineEmits(['candidateDeleted'])
 
@@ -60,7 +101,6 @@ const handleCandidateDeleted = () => {
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerCenter">
-      <div class="iconContainer">
 <div class="iconContainer">
   <!-- EDIT IKON -->
   <BasicIconAndLogo
@@ -76,8 +116,6 @@ const handleCandidateDeleted = () => {
     @click="openDeleteModal"
   />
 </div>
-
-      </div>
       <img
         class="profilePicture"
         src="/img/TestProfilePicture.jpg"
@@ -103,8 +141,21 @@ const handleCandidateDeleted = () => {
   :candidateId="candidate.id"
   :showTrigger="false"
   @close="showDeleteModal = false"
-  @deleted="handleCandidateDeleted"
+  @confirm="startDelete"
 />
+
+
+
+    <div class="toastWrapper">
+        <Toast
+  v-for="t in toasts"
+  :key="t.id"
+  v-bind="t"
+  @close="removeToast"
+  @undo="undoDelete"
+/>
+
+    </div>
 
     </section>
 
@@ -140,6 +191,17 @@ const handleCandidateDeleted = () => {
 </template>
 
 <style scoped lang="scss">
+
+  .toastWrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
 .exstendedCandidateContainer {
   height: 100vh;
   max-width: 500px;
@@ -185,6 +247,7 @@ const handleCandidateDeleted = () => {
 .iconContainer {
   display: flex;
   gap: 10px;
+  cursor: pointer;
 }
 
 .divider {
