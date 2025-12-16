@@ -3,13 +3,17 @@ import Modal from '@/components/Modal.vue'
 import Button from '@/components/atoms/Button.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
 const props = defineProps({
     candidateId: {
         type: Number,
         required: true
+    },
+    showTrigger: {
+        type: Boolean,
+        default: true
     }
 })
 
@@ -18,17 +22,26 @@ const store = useCandidateStore()
 
 const showModal = ref(false)
 
+const emit = defineEmits(['close', 'deleted'])
+
 const openModal = () => {
     showModal.value = true
 }
 
 const closeModal = () => {
     showModal.value = false
+    emit('close')
 }
 
 const thashModal = () => {
     openModal()
 }
+
+onMounted(() => {
+    if (!props.showTrigger) {
+        showModal.value = true
+    }
+})
 
 const toasts = ref([])
 
@@ -50,15 +63,15 @@ async function confirmDelete() {
     const ok = await store.deleteCandidate(props.candidateId)
 
     if (ok) {
+        emit('deleted')
         closeModal()
-        showToast()
     }
 }
 
 </script>
 
 <template>
-    <BasicIconAndLogo name="Thash" :iconSize="true" @click.stop="thashModal" class="iconBtn" />
+    <BasicIconAndLogo v-if="props.showTrigger" name="Thash" :iconSize="true" @click.stop="thashModal" class="iconBtn" />
     <transition name="fade">
         <Modal v-if="showModal" @close="closeModal" height="260px" class="deleteCandidateModal">
 

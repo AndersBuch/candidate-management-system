@@ -7,15 +7,18 @@ import Button from '@/components/atoms/Button.vue'
 import FormDropdown from '@/components/molecules/FormDropdown.vue'
 import UploadButton from '@/components/dashboard/UploadButton.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
+import Toast from '@/components/dashboard/ToastDashboard.vue'
 
 import { ref, reactive, computed, watch } from 'vue'
+
 
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
 const candidateStore = useCandidateStore()
 
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'saved'])
+
 
 const props = defineProps({
   candidate: {
@@ -60,19 +63,63 @@ watch(
   () => props.candidate,
   (candidate) => {
     if (!candidate) return
+    // Support both snake_case (API) and camelCase (mapped) candidate objects
+    const get = (a, b, c) => (a !== undefined ? a : (b !== undefined ? b : c))
 
-    formData.name = candidate.first_name
-    formData.lastname = candidate.last_name
-    formData.email = candidate.email
-    formData.phone = candidate.phone
-    formData.address = candidate.address
-    formData.postal = candidate.zip_code
-    formData.city = candidate.city
-    formData.age = candidate.age
-    formData.linkedin = candidate.linkedin
-    formData.company = candidate.current_position
-    formData.message = candidate.note
-    formData.status = candidate.status
+    const hasValue = (v) => v !== undefined && v !== null && (typeof v !== 'string' || v.trim() !== '')
+
+    const incomingName = get(candidate.first_name, candidate.firstName, candidate.name)
+    if (hasValue(incomingName)) {
+      if (typeof incomingName === 'string' && incomingName.includes(' ')) {
+        const parts = incomingName.trim().split(' ')
+        formData.name = parts[0]
+        formData.lastname = parts.slice(1).join(' ')
+      } else {
+        // if full name not provided, prefer explicit fields
+        const fn = get(candidate.first_name, candidate.firstName)
+        const ln = get(candidate.last_name, candidate.lastName)
+        if (hasValue(fn)) formData.name = fn
+        if (hasValue(ln)) formData.lastname = ln
+      }
+    } else {
+      const fn = get(candidate.first_name, candidate.firstName)
+      const ln = get(candidate.last_name, candidate.lastName)
+      if (hasValue(fn)) formData.name = fn
+      if (hasValue(ln)) formData.lastname = ln
+    }
+
+    const email = get(candidate.email, null, null)
+    if (hasValue(email)) formData.email = email
+
+    const phone = get(candidate.phone, candidate.phone_number, null)
+    if (hasValue(phone)) formData.phone = phone
+
+    const address = get(candidate.address, null, null)
+    if (hasValue(address)) formData.address = address
+
+    const postal = get(candidate.zip_code, candidate.postal, null)
+    if (hasValue(postal)) formData.postal = postal
+
+    const city = get(candidate.city, null, null)
+    if (hasValue(city)) formData.city = city
+
+    const age = get(candidate.age, null, null)
+    if (hasValue(age)) formData.age = age
+
+    const linkedin = get(candidate.linkedin, candidate.linkedin_url, null)
+    if (hasValue(linkedin)) formData.linkedin = linkedin
+
+    const company = get(candidate.current_position, candidate.company, null)
+    if (hasValue(company)) formData.company = company
+
+    const message = get(candidate.note, null, null)
+    if (hasValue(message)) formData.message = message
+
+    const status = get(candidate.status, null, null)
+    if (hasValue(status)) formData.status = status
+
+    const gender = get(candidate.gender, null, null)
+    if (hasValue(gender)) formData.gender = gender
 
     showModal.value = true
   },
@@ -80,6 +127,16 @@ watch(
 )
 
 const statusOptions = ['Kontakt', 'Afventer', 'Accepteret', 'Afvist']
+
+// Opdater status når den ændres i formularen
+const onStatusChange = async (event) => {
+  const newStatus = event.value
+  const applicationId = props.candidate.applicationId
+  
+  if (applicationId) {
+    await candidateStore.updateStatus(applicationId, newStatus)
+  }
+}
 
 
 const closeModal = () => {
@@ -100,12 +157,14 @@ const submitForm = async () => {
     linkedin: formData.linkedin,
     current_position: formData.company,
     note: formData.message,
-    status: formData.status
+    status: formData.status,
+    gender: formData.gender
   })
+if (success) {
+  emit('saved')
+  closeModal()
+}
 
-  if (success) {
-    closeModal()
-  }
 }
 
 // Funktion der sikrer kun tal og max-længde
@@ -134,6 +193,12 @@ const hasErrors = computed(() => !!emailErrorMessage.value)
 function handleRemoved(file) {
   console.log('Filen blev fjernet', file)
 }
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
+
 </script>
 
 <template>
@@ -161,7 +226,7 @@ function handleRemoved(file) {
           @blur="formData.touched.postal = true" />
 
         <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
-          :touched="formData.touched.status" />
+          :touched="formData.touched.status" @change="onStatusChange" :id="props.candidate.applicationId" />
 
         <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city"
           :touched="formData.touched.city" @blur="formData.touched.city = true" />
@@ -207,6 +272,7 @@ function handleRemoved(file) {
 
     </Modal>
   </transition>
+
 </template>
 
 <style lang="scss">

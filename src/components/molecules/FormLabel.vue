@@ -1,6 +1,6 @@
 <script setup>
 import InputField from '@/components/atoms/InputField.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const gender = defineModel() // <-- dette er værdi parent får tilbage
 
@@ -15,6 +15,12 @@ const updateGender = (selected) => {
   genderWomen.value = selected === 'Kvinde'
   genderNothing.value = selected === 'Andet'
 }
+
+watch(gender, (newVal) => {
+  genderMan.value = newVal === 'Mand'
+  genderWomen.value = newVal === 'Kvinde'
+  genderNothing.value = newVal === 'Andet'
+}, { immediate: true })
 </script>
 
 <template>
@@ -22,29 +28,14 @@ const updateGender = (selected) => {
     <p>Køn</p>
 
     <div class="checkbox-row">
-      <InputField
-        v-model:checked="genderMan"
-        label="Mand"
-        @update:checked="updateGender('Mand')"
-      />
+      <InputField v-model:checked="genderMan" label="Mand" @update:checked="updateGender('Mand')" />
 
-      <InputField
-        v-model:checked="genderWomen"
-        label="Kvinde"
-        @update:checked="updateGender('Kvinde')"
-      />
+      <InputField v-model:checked="genderWomen" label="Kvinde" @update:checked="updateGender('Kvinde')" />
 
-      <InputField
-        v-model:checked="genderNothing"
-        label="Intet/andet køn"
-        @update:checked="updateGender('Andet')"
-      />
+      <InputField v-model:checked="genderNothing" label="Intet/andet køn" @update:checked="updateGender('Andet')" />
     </div>
   </div>
 </template>
-
-
-
 
 <style scoped lang="scss">
 .inputContainer {

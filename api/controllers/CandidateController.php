@@ -81,8 +81,35 @@ class CandidateController {
     }
 
     // PATCH /api/candidates/{id}/status
-    // NB: her tolker vi {id} som APPLICATION-ID (ikke kandidat-id)
-// PATCH /api/candidates/{id}
+    // Opdaterer status på en application (id = application_id)
+    public function updateStatus($id) {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!isset($data['status'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Status is required']);
+            return;
+        }
+
+        try {
+            $sql = "UPDATE application SET status = :status WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':status' => $data['status'],
+                ':id'     => $id
+            ]);
+
+            http_response_code(200);
+            echo json_encode(['success' => true, 'status' => $data['status']]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Could not update status', 'message' => $e->getMessage()]);
+        }
+    }
+
+    // PATCH /api/candidates/{id}
 public function update($id) {
     header('Content-Type: application/json; charset=utf-8');
 
@@ -93,12 +120,13 @@ public function update($id) {
             first_name = :first_name,
             last_name = :last_name,
             email = :email,
-            phone_number = :phone,
+            phone_number = :phone_number,
             address = :address,
-            zip_code = :zip,
+            zip_code = :zip_code,
             city = :city,
+            gender = :gender,
             age = :age,
-            linkedin_url = :linkedin,
+            linkedin_url = :linkedin_url,
             current_position = :position,
             note = :note
         WHERE id = :id
@@ -106,18 +134,19 @@ public function update($id) {
 
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute([
-        ':first_name' => $data['first_name'],
-        ':last_name'  => $data['last_name'],
-        ':email'      => $data['email'],
-        ':phone'      => $data['phone'],
-        ':address'    => $data['address'],
-        ':zip'        => $data['zip_code'],
-        ':city'       => $data['city'],
-        ':age'        => $data['age'],
-        ':linkedin'   => $data['linkedin'],
-        ':position'   => $data['current_position'],
-        ':note'       => $data['note'],
-        ':id'         => $id
+        ':first_name'   => $data['first_name'] ?? null,
+        ':last_name'    => $data['last_name'] ?? null,
+        ':email'        => $data['email'] ?? null,
+        ':phone_number' => $data['phone'] ?? null,
+        ':address'      => $data['address'] ?? null,
+        ':zip_code'     => $data['zip_code'] ?? null,
+        ':city'         => $data['city'] ?? null,
+        ':gender'       => $data['gender'] ?? null,
+        ':age'          => $data['age'] ?? null,
+        ':linkedin_url' => $data['linkedin'] ?? null,
+        ':position'     => $data['current_position'] ?? null,
+        ':note'         => $data['note'] ?? null,
+        ':id'           => $id
     ]);
 
     echo json_encode(['success' => true]);

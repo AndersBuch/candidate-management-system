@@ -3,11 +3,18 @@ import { ref, computed } from 'vue'
 import TableField from '@/components/dashboard/TableField.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
+import Toast from '@/components/dashboard/ToastDashboard.vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const selectedCandidate = ref(null)
 const showEditModal = ref(false)
 
+const props = defineProps({
+  activeIndex: {
+    type: [Number, null],
+    default: null
+  }
+})
 
 const emit = defineEmits(['openCandidate'])
 
@@ -16,7 +23,6 @@ const companyStore = useCompanyStore()
 // Rækker = alle kandidater til den aktive stilling
 const rows = computed(() => companyStore.activeCandidates)
 
-const activeIndex = ref(null)
 
 function onEdit(row) {
   selectedCandidate.value = row
@@ -27,11 +33,27 @@ function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
 
-// sæt lokal activeIndex OG emit til parent så DashboardSite kan åbne panelet
 function setActiveRow(index) {
-  activeIndex.value = activeIndex.value === index ? null : index
-  emit('openCandidate', activeIndex.value)
+  emit('openCandidate', index)
 }
+
+
+const toasts = ref([])
+
+function showToast() {
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat opdateret',
+    subtitle: 'Ændringerne blev gemt korrekt',
+    variant: 'success',
+    duration: 3000
+  })
+}
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
 </script>
 
 <template>
@@ -65,21 +87,43 @@ function setActiveRow(index) {
   :email="r.email"
   :status="r.status"
   :linkedin-url="r.linkedin"
-  :is-active="activeIndex === i"
+  :is-active="props.activeIndex === i"
   @rowClick="setActiveRow"
-  @statusClick="() => onStatusClick(r)"
   @edit="() => onEdit(r)"
 />
 
 <EditModal
-  v-if="showEditModal && selectedCandidate"
+  v-if="showEditModal"
   :candidate="selectedCandidate"
   @close="showEditModal = false"
+  @saved="showToast"
 />
+
+<div class="toastWrapper">
+  <Toast
+    v-for="t in toasts"
+    :key="t.id"
+    :title="t.title"
+    :subtitle="t.subtitle"
+    :variant="t.variant"
+    :duration="t.duration"
+    @close="removeToast(t.id)"
+  />
+</div>
+
 
 </template>
 
 <style lang="scss">
+    .toastWrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
 .tableHeader {
   display: grid;
   grid-template-columns: 2.8fr 1fr 3fr 1.2fr 0.8fr;

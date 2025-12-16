@@ -40,7 +40,7 @@ const isError = computed(() => props.error && props.touched)
       <textarea v-if="fieldType === 'textarea'" :id="id" :placeholder="placeholder" v-model="localValue"
         @blur="emit('blur')" :maxlength="150" :class="['textareaField', { hasValue }]"></textarea>
 
-      <input :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id" :placeholder="placeholder"
+      <input v-else :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id" :placeholder="placeholder"
         v-model="localValue" @blur="emit('blur')" :class="{ errorField: isError, hasValue: hasValue }" />
 
       <!-- Eye / EyeOff ikon -->

@@ -54,19 +54,22 @@ export const useCandidateStore = defineStore('candidate', () => {
   }
 
   // Opdater status på kandidat (application)
-  async function updateStatus(id, newStatus) {
+  async function updateStatus(applicationId, newStatus) {
     try {
       const base = getApiBase()
-      const url = `${base}/api/candidates/${id}/status`
+      const url = `${base}/api/candidates/${applicationId}`
 
       const res = await fetch(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }), // også dansk
+        body: JSON.stringify({ status: newStatus }),
         credentials: 'include'
       })
 
-      if (!res.ok) throw new Error('Status update failed')
+      if (!res.ok) {
+        console.error('Update status failed:', await res.text())
+        throw new Error('Update status failed')
+      }
 
       const jobId = companyStore.activePosition?.id || null
       if (jobId) {
@@ -79,6 +82,8 @@ export const useCandidateStore = defineStore('candidate', () => {
       return false
     }
   }
+
+
   async function deleteCandidate(id) {
   try {
     const base = getApiBase()
