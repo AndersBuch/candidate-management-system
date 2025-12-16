@@ -24,7 +24,7 @@ defineExpose({
   rootRef
 })
 
-const emit = defineEmits(['candidateDeleted', 'deleteRequested'])
+const emit = defineEmits(['candidateDeleted', 'deleteRequested', 'saved'])
 
 const openEditModal = () => {
   showEditModal.value = true
@@ -44,6 +44,12 @@ const openDeleteModal = () => {
 const handleCandidateDeleted = () => {
   emit('candidateDeleted')
   showDeleteModal.value = false
+}
+
+const handleSaved = () => {
+  console.log('✅ ExtendedCandidateInfo handleSaved triggered, emitting saved')
+  showEditModal.value = false
+  emit('saved')
 }
 
 
@@ -95,6 +101,7 @@ const handleCandidateDeleted = () => {
   v-if="showEditModal"
   :candidate="candidate"
   @close="showEditModal = false"
+  @saved="handleSaved"
 />
 
 <DeleteModal

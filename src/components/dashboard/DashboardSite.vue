@@ -123,6 +123,18 @@ function handleCandidateDeleted() {
   })
 }
 
+function handleSaved() {
+  console.log('✅ DashboardSite handleSaved triggered, showing toast')
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat opdateret',
+    subtitle: 'Ændringerne blev gemt korrekt',
+    variant: 'success',
+    duration: 3000,
+    showUndo: false 
+  })
+}
+
 function removeToast(id) {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }
@@ -157,11 +169,12 @@ onBeforeUnmount(() => {
     :candidate="extendedCandidate"
     @candidateDeleted="handleCandidateDeleted"
     @deleteRequested="requestDelete"
+    @saved="handleSaved"
   />
 </Transition>
 
 <div class="toastWrapper">
-  <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" @undo="undoDelete" />
+  <Toast v-for="t in toasts" :key="t.id" :showUndo="t.showUndo" v-bind="t" @close="removeToast" @undo="undoDelete" />
 </div>
 
   </div>

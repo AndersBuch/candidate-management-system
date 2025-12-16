@@ -46,7 +46,8 @@ function showToast() {
     title: 'Kandidat opdateret',
     subtitle: 'Ændringerne blev gemt korrekt',
     variant: 'success',
-    duration: 3000
+    duration: 3000,
+    showUndo: false
   })
 }
 
@@ -107,6 +108,7 @@ function removeToast(id) {
     :subtitle="t.subtitle"
     :variant="t.variant"
     :duration="t.duration"
+    :showUndo="t.showUndo"
     @close="removeToast(t.id)"
   />
 </div>
