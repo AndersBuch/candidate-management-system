@@ -76,48 +76,48 @@ function removeToast(id) {
     </div>
   </div>
 
-<TableField
-  v-for="(r, i) in rows"
-  :key="r.id ?? i"
-  :id="r.applicationId"
-  :index="i"
-  :candidate-id="r.id"
-  :application-id="r.applicationId"
-  :name="r.name"
-  :phone="r.phone"
-  :email="r.email"
-  :status="r.status"
-  :linkedin-url="r.linkedin"
-  :is-active="props.activeIndex === i"
-  @rowClick="setActiveRow"
-  @edit="() => onEdit(r)"
-/>
+  <div class="tableFormContainer">
+    <TableField
+      v-for="(r, i) in rows"
+      :key="r.id ?? i"
+      :id="r.applicationId"
+      :index="i"
+      :candidate-id="r.id"
+      :application-id="r.applicationId"
+      :name="r.name"
+      :phone="r.phone"
+      :email="r.email"
+      :status="r.status"
+      :linkedin-url="r.linkedin"
+      :is-active="props.activeIndex === i"
+      @rowClick="setActiveRow"
+      @edit="() => onEdit(r)"
+    />
+  </div>
 
-<EditModal
-  v-if="showEditModal"
-  :candidate="selectedCandidate"
-  @close="showEditModal = false"
-  @saved="showToast"
-/>
-
-<div class="toastWrapper">
-  <Toast
-    v-for="t in toasts"
-    :key="t.id"
-    :title="t.title"
-    :subtitle="t.subtitle"
-    :variant="t.variant"
-    :duration="t.duration"
-    :showUndo="t.showUndo"
-    @close="removeToast(t.id)"
+  <EditModal
+    v-if="showEditModal"
+    :candidate="selectedCandidate"
+    @close="showEditModal = false"
+    @saved="showToast"
   />
-</div>
 
-
+  <div class="toastWrapper">
+    <Toast
+      v-for="t in toasts"
+      :key="t.id"
+      :title="t.title"
+      :subtitle="t.subtitle"
+      :variant="t.variant"
+      :duration="t.duration"
+      :showUndo="t.showUndo"
+      @close="removeToast(t.id)"
+    />
+  </div>
 </template>
 
 <style lang="scss">
-    .toastWrapper {
+.toastWrapper {
   position: fixed;
   bottom: 20px;
   left: 20px;
@@ -126,11 +126,13 @@ function removeToast(id) {
   gap: 10px;
   z-index: 9999;
 }
+
 .tableHeader {
   display: grid;
   grid-template-columns: 2.8fr 1fr 3fr 1.2fr 0.8fr;
   gap: 12px;
   padding: 10px 20px;
+  flex-shrink: 0;
 }
 
 .headerItem {
@@ -148,6 +150,19 @@ function removeToast(id) {
   &:hover {
     color: rgba($black, 0.95);
     opacity: 0.8;
+  }
+}
+
+.tableFormContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 </style>
