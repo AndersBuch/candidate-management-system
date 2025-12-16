@@ -4,8 +4,8 @@ import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 import DeleteModal from '@/components/dashboard/DeleteModal.vue'
-
 import { ref, defineExpose } from 'vue'
+
 
 const props = defineProps({
   candidate: {
@@ -24,7 +24,7 @@ defineExpose({
   rootRef
 })
 
-const emit = defineEmits(['candidateDeleted'])
+const emit = defineEmits(['candidateDeleted', 'deleteRequested', 'saved'])
 
 const openEditModal = () => {
   showEditModal.value = true
@@ -46,11 +46,19 @@ const handleCandidateDeleted = () => {
   showDeleteModal.value = false
 }
 
+const handleSaved = () => {
+  console.log('✅ ExtendedCandidateInfo handleSaved triggered, emitting saved')
+  showEditModal.value = false
+  emit('saved')
+}
+
 
 </script>
 
 <template>
+
 <aside class="exstendedCandidateContainer" ref="rootRef" @click.stop @pointerdown.stop>
+
 
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
@@ -60,7 +68,6 @@ const handleCandidateDeleted = () => {
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerCenter">
-      <div class="iconContainer">
 <div class="iconContainer">
   <!-- EDIT IKON -->
   <BasicIconAndLogo
@@ -76,8 +83,6 @@ const handleCandidateDeleted = () => {
     @click="openDeleteModal"
   />
 </div>
-
-      </div>
       <img
         class="profilePicture"
         src="/img/TestProfilePicture.jpg"
@@ -96,6 +101,7 @@ const handleCandidateDeleted = () => {
   v-if="showEditModal"
   :candidate="candidate"
   @close="showEditModal = false"
+  @saved="handleSaved"
 />
 
 <DeleteModal
@@ -103,7 +109,7 @@ const handleCandidateDeleted = () => {
   :candidateId="candidate.id"
   :showTrigger="false"
   @close="showDeleteModal = false"
-  @deleted="handleCandidateDeleted"
+  @confirm="() => { emit('deleteRequested', candidate.id); showDeleteModal = false }"
 />
 
     </section>
@@ -140,6 +146,17 @@ const handleCandidateDeleted = () => {
 </template>
 
 <style scoped lang="scss">
+
+  .toastWrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
 .exstendedCandidateContainer {
   height: 100vh;
   max-width: 500px;
@@ -185,6 +202,7 @@ const handleCandidateDeleted = () => {
 .iconContainer {
   display: flex;
   gap: 10px;
+  cursor: pointer;
 }
 
 .divider {
