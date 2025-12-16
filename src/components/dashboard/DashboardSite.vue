@@ -184,10 +184,25 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .dashboardLayout {
   display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .dashboardContentWrapper {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.dashboardContentWrapper :deep(> *:first-child) {
+  flex-shrink: 0;
+}
+
+.dashboardContentWrapper :deep(> [class*="Tableform"]) {
+  flex: 1;
+  min-height: 0;
 }
 
 .toastWrapper {
@@ -198,10 +213,6 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 10px;
   z-index: 9999;
-}
-
-.dashboardContentWrapper {
-  flex: 1;
 }
 
 .slide-right-enter-active,

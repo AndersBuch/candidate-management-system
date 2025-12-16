@@ -109,6 +109,22 @@ class CandidateController {
         }
     }
 
+    // Hent antal "slettede" kandidater (fx dem med status = 'Rejected') i de sidste X dage
+public function countDeleted($days = 30) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $stmt = $this->pdo->prepare("
+        SELECT COUNT(*) as total
+        FROM candidate
+        WHERE status = 'Rejected'
+          AND created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
+    ");
+    $stmt->execute([':days' => $days]);
+    $result = $stmt->fetch();
+    echo json_encode(['count' => (int)$result['total']]);
+}
+
+
     // PATCH /api/candidates/{id}
 public function update($id) {
     header('Content-Type: application/json; charset=utf-8');

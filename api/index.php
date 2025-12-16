@@ -123,6 +123,16 @@ case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
     }
     break;
 
+case '/candidates/deleted':
+    if ($method !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+    $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
+    $controller = new CandidateController($pdo);
+    $controller->countDeleted($days);
+    break;
 
 
 
