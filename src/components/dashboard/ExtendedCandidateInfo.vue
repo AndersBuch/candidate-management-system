@@ -4,13 +4,7 @@ import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 import DeleteModal from '@/components/dashboard/DeleteModal.vue'
-import Toast from '@/components/dashboard/ToastDashboard.vue'
-
 import { ref, defineExpose } from 'vue'
-
-import { useCandidateStore } from '@/stores/addCandidateStore'
-
-const store = useCandidateStore()
 
 
 const props = defineProps({
@@ -30,42 +24,7 @@ defineExpose({
   rootRef
 })
 
-const toasts = ref([])
-const pendingDelete = ref(null)
-const deleteTimer = ref(null)
-
-function startDelete(candidateId) {
-  pendingDelete.value = candidateId
-
-  toasts.value.push({
-    id: Date.now(),
-    title: 'Kandidat slettet',
-    subtitle: 'Du kan fortryde handlingen',
-    variant: 'danger',
-    duration: 3000,
-    showUndo: true
-  })
-
-  deleteTimer.value = setTimeout(async () => {
-    await store.deleteCandidate(candidateId)
-    emit('candidateDeleted')
-    pendingDelete.value = null
-  }, 3000)
-}
-
-function undoDelete() {
-  if (deleteTimer.value) {
-    clearTimeout(deleteTimer.value)
-    deleteTimer.value = null
-  }
-  pendingDelete.value = null
-}
-
-function removeToast(id) {
-  toasts.value = toasts.value.filter(t => t.id !== id)
-}
-
-const emit = defineEmits(['candidateDeleted'])
+const emit = defineEmits(['candidateDeleted', 'deleteRequested'])
 
 const openEditModal = () => {
   showEditModal.value = true
@@ -91,7 +50,9 @@ const handleCandidateDeleted = () => {
 </script>
 
 <template>
+
 <aside class="exstendedCandidateContainer" ref="rootRef" @click.stop @pointerdown.stop>
+
 
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
@@ -141,21 +102,8 @@ const handleCandidateDeleted = () => {
   :candidateId="candidate.id"
   :showTrigger="false"
   @close="showDeleteModal = false"
-  @confirm="startDelete"
+  @confirm="() => { emit('deleteRequested', candidate.id); showDeleteModal = false }"
 />
-
-
-
-    <div class="toastWrapper">
-        <Toast
-  v-for="t in toasts"
-  :key="t.id"
-  v-bind="t"
-  @close="removeToast"
-  @undo="undoDelete"
-/>
-
-    </div>
 
     </section>
 

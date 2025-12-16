@@ -13,6 +13,7 @@ export const useCompanyStore = defineStore('company', () => {
   // Kandidater per stilling/job-id
   // struktur: { [jobId]: [ { ...kandidatdata... } ] }
   const candidatesByPositionId = ref({})
+  const deletedCandidates = ref({})
 
   // === COMPUTED ===
 
@@ -126,11 +127,70 @@ export const useCompanyStore = defineStore('company', () => {
     await fetchCompanies()
   }
 
+  function hideCandidate(candidateId) {
+    const posId = activePositionId.value
+    if (!posId) return
+    const list = candidatesByPositionId.value[posId] || []
+    const idx = list.findIndex(c => c.id === candidateId)
+    if (idx === -1) return
+    deletedCandidates.value[candidateId] = list[idx]
+    candidatesByPositionId.value = {
+      ...candidatesByPositionId.value,
+      [posId]: list.filter(c => c.id !== candidateId)
+    }
+  }
+
+  function restoreCandidate(candidateId) {
+    const posId = activePositionId.value
+    if (!posId) return
+    const cand = deletedCandidates.value[candidateId]
+    if (!cand) return
+    const list = candidatesByPositionId.value[posId] || []
+    candidatesByPositionId.value = {
+      ...candidatesByPositionId.value,
+      [posId]: [cand, ...list]
+    }
+    delete deletedCandidates.value[candidateId]
+  }
+
+  async function deleteCandidate(candidateId) {
+    try {
+      const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
+      const url = `${base}/api/candidates/${candidateId}`
+
+      const res = await fetch(url, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+
+      if (!res.ok) {
+        console.error('Delete failed:', await res.text())
+        throw new Error('Delete failed')
+      }
+
+      const posId = activePositionId.value
+      if (posId) {
+        const list = candidatesByPositionId.value[posId] || []
+        candidatesByPositionId.value = {
+          ...candidatesByPositionId.value,
+          [posId]: list.filter(c => c.id !== candidateId)
+        }
+      }
+
+      delete deletedCandidates.value[candidateId]
+      return true
+    } catch (err) {
+      console.error('deleteCandidate error:', err)
+      return false
+    }
+  }
+
   return {
     companies,
     activeCompanyId,
     activePositionId,
     candidatesByPositionId,
+    deletedCandidates,
     activeCompany,
     activePosition,
     activeCandidates,
@@ -139,5 +199,6 @@ export const useCompanyStore = defineStore('company', () => {
     fetchCompanies,
     fetchCandidatesForPosition,
     addCompany
+    ,hideCandidate, restoreCandidate, deleteCandidate
   }
 })

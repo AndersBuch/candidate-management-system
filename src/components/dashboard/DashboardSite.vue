@@ -74,6 +74,44 @@ function handleClickOutside(event) {
   }
 }
 
+const pendingDeleteId = ref(null)
+const deleteTimer = ref(null)
+
+function requestDelete(candidateId) {
+  pendingDeleteId.value = candidateId
+
+  // 🔥 Fjern kandidat fra UI med det samme
+  companyStore.hideCandidate(candidateId)
+
+  activeIndex.value = null
+
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat slettet',
+    subtitle: 'Du kan fortryde handlingen',
+    variant: 'danger',
+    duration: 3000,
+    showUndo: true
+  })
+
+  deleteTimer.value = setTimeout(async () => {
+    await companyStore.deleteCandidate(candidateId)
+    pendingDeleteId.value = null
+  }, 3000)
+}
+
+function undoDelete() {
+  if (!pendingDeleteId.value) return
+
+  clearTimeout(deleteTimer.value)
+  deleteTimer.value = null
+
+  companyStore.restoreCandidate(pendingDeleteId.value)
+
+  pendingDeleteId.value = null
+}
+
+
 function handleCandidateDeleted() {
   activeIndex.value = null
   toasts.value.push({
@@ -118,11 +156,12 @@ onBeforeUnmount(() => {
     ref="extendedRef"
     :candidate="extendedCandidate"
     @candidateDeleted="handleCandidateDeleted"
+    @deleteRequested="requestDelete"
   />
 </Transition>
 
 <div class="toastWrapper">
-  <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" />
+  <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" @undo="undoDelete" />
 </div>
 
   </div>
