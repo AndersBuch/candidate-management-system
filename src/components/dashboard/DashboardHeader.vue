@@ -3,11 +3,22 @@ import SearchBar from '@/components/dashboard/SearchBar.vue'
 import AddPersonModal from '@/components/dashboard/AddPersonModal.vue'
 
 import { storeToRefs } from 'pinia'
+import { watch } from 'vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
+import { useSearchStore } from '@/stores/useSearchStore'
 
 const companyStore = useCompanyStore()
+const searchStore = useSearchStore()
 
+const { searchTerm } = storeToRefs(searchStore)
 const { activeCompany, activePosition } = storeToRefs(companyStore)
+
+watch(
+  () => companyStore.activePosition?.id,
+  () => {
+    searchStore.clearSearch()
+  }
+)
 </script>
 
 <template>
