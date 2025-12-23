@@ -8,11 +8,27 @@ import { useCompanyStore } from '@/stores/useCompanyStore'
 import { useSearchStore } from '@/stores/useSearchStore'
 
 const searchStore = useSearchStore()
-const rows = computed(() => searchStore.filteredCandidates)
+const rows = computed(() => {
+  const data = [...searchStore.filteredCandidates]
+
+  if (!sortKey.value) return data
+
+  return data.sort((a, b) => {
+    const A = (a[sortKey.value] ?? '').toString().toLowerCase()
+    const B = (b[sortKey.value] ?? '').toString().toLowerCase()
+
+    if (A < B) return sortDirection.value === 'asc' ? -1 : 1
+    if (A > B) return sortDirection.value === 'asc' ? 1 : -1
+    return 0
+  })
+})
+
 
 
 const selectedCandidate = ref(null)
 const showEditModal = ref(false)
+const sortKey = ref(null)      // 'name' | 'email' | 'status'
+const sortDirection = ref('asc') // 'asc' | 'desc'
 
 const props = defineProps({
   activeIndex: {
@@ -33,6 +49,17 @@ function onEdit(row) {
 function onStatusClick(row) {
   console.log('✅ status click:', row.status)
 }
+
+function sortBy(key) {
+  if (sortKey.value === key) {
+    // klik igen → skift retning
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortKey.value = key
+    sortDirection.value = 'asc'
+  }
+}
+
 
 function setActiveRow(index) {
   emit('openCandidate', index)
@@ -60,21 +87,23 @@ function removeToast(id) {
 
 <template>
   <div class="tableHeader">
-    <div class="headerItem">
-      <p>Navn</p>
-      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
-    </div>
+<div class="headerItem" @click="sortBy('name')">
+  <p>Navn</p>
+  <BasicIconAndLogo name="Shuffle" :iconSize="true" />
+</div>
     <div class="headerItem">
       <p>Tlf</p>
     </div>
-    <div class="headerItem">
-      <p>Email</p>
-      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
-    </div>
-    <div class="headerItem">
-      <p>Status</p>
-      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
-    </div>
+<div class="headerItem" @click="sortBy('email')">
+  <p>Email</p>
+  <BasicIconAndLogo name="Shuffle" :iconSize="true" />
+</div>
+
+<div class="headerItem" @click="sortBy('status')">
+  <p>Status</p>
+  <BasicIconAndLogo name="Shuffle" :iconSize="true" />
+</div>
+
   </div>
 
   <div class="tableFormContainer">
