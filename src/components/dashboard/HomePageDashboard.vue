@@ -6,6 +6,7 @@ import WigdetForm from '@/components/dashboard/WigdetForm.vue'
 import WigdetShortcut from '@/components/dashboard/WigdetShortcut.vue'
 
 import { ref } from 'vue'
+const searchTerm = ref('')
 
 </script>
 
@@ -61,9 +62,9 @@ import { ref } from 'vue'
 }
 
 .homepageContainer {
-  display: flex;
-  flex-direction: column; /* Hvis du vil have dem stacked lodret */
-  justify-content: center; /* Vertikal centering */
-  align-items: center;     /* Horisontal centering */
-  }    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 </style>

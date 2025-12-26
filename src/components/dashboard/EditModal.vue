@@ -138,7 +138,6 @@ const onStatusChange = async (event) => {
   }
 }
 
-
 const closeModal = () => {
   showModal.value = false
   emit('close')

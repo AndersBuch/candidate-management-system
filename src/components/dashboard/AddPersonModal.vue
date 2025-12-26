@@ -64,6 +64,9 @@ const handleNumberInput = (event, maxLength, key) => {
 function handleFile(f) { console.log('valgt fil', f) }
 function handleError(e) { console.warn('upload error', e) }
 
+function handleRemoved(file) {
+  console.log('Filen blev fjernet', file)
+}
 // Simpel emailvalidering
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
@@ -163,6 +166,9 @@ const resetForm = () => {
   })
 }
 
+function handleUndo() {
+  console.log('Undo klikket – ikke implementeret endnu')
+}
 
 </script>
 
