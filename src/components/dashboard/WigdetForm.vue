@@ -8,6 +8,10 @@ const candidateStatsStore = useCandidateStatsStore()
 onMounted(() => {
   candidateStatsStore.init()
 })
+
+const handleEdit = () => {
+  console.log('Klikket')
+}
 </script>
 
 
