@@ -24,7 +24,7 @@ async function handleLogin() {
         // Debug: se hvad der bliver sendt til backend
         console.log('Sender login:', JSON.stringify({ email: form.email, password: form.password }));
 
-        const res = await fetch('http://localhost:8085/api/login', {
+        const res = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: form.email, password: form.password }),
