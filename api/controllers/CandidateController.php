@@ -109,19 +109,33 @@ class CandidateController {
         }
     }
 
-    // Hent antal "slettede" kandidater (fx dem med status = 'Rejected') i de sidste X dage
+
+// Hent antal "slettede" kandidater (fx dem med status = 'Rejected') i de sidste X dage
 public function countDeleted($days = 30) {
     header('Content-Type: application/json; charset=utf-8');
 
-    $stmt = $this->pdo->prepare("
-        SELECT COUNT(*) as total
-        FROM candidate
-        WHERE status = 'Rejected'
-          AND created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
-    ");
-    $stmt->execute([':days' => $days]);
-    $result = $stmt->fetch();
-    echo json_encode(['count' => (int)$result['total']]);
+    $days = (int)$days;
+    if ($days < 0) $days = 0;
+
+    try {
+        $sql = "
+            SELECT COUNT(*) as total
+            FROM `candidate`
+            WHERE status = 'Rejected'
+              AND created_at >= DATE_SUB(NOW(), INTERVAL $days DAY)
+        ";
+
+        $stmt = $this->pdo->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        echo json_encode(['count' => (int)($result['total'] ?? 0)]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'error' => 'Could not count deleted candidates',
+            'message' => $e->getMessage()
+        ]);
+    }
 }
 
 
@@ -178,19 +192,32 @@ public function update($id) {
         echo json_encode(['count' => (int)$result['total']]);
     }
 
-    // Hent antal kandidater oprettet i de sidste X dage
-    public function countRecent($days = 30) {
-        header('Content-Type: application/json; charset=utf-8');
+// Hent antal kandidater oprettet i de sidste X dage
+public function countRecent($days = 30) {
+    header('Content-Type: application/json; charset=utf-8');
 
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) as total 
-            FROM candidate 
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
-        ");
-        $stmt->execute([':days' => $days]);
-        $result = $stmt->fetch();
-        echo json_encode(['count' => (int)$result['total']]);
+    $days = (int)$days;
+    if ($days < 0) $days = 0;
+
+    try {
+        $sql = "
+            SELECT COUNT(*) as total
+            FROM `candidate`
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL $days DAY)
+        ";
+
+        $stmt = $this->pdo->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        echo json_encode(['count' => (int)($result['total'] ?? 0)]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'error' => 'Could not count recent candidates',
+            'message' => $e->getMessage()
+        ]);
     }
+}
 
     // DELETE /api/candidates/{id}
 public function destroy($id) {
