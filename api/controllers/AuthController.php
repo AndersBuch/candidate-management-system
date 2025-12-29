@@ -15,7 +15,7 @@ class AuthController {
             return;
         }
 
-        $stmt = $this->pdo->prepare("SELECT * FROM User WHERE email = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM `user` WHERE email = ?");
         $stmt->execute([$data['email']]);
         $user = $stmt->fetch();
 
