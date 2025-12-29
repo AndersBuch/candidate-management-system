@@ -5,10 +5,6 @@ import { useCompanyStore } from '@/stores/useCompanyStore'
 export const useCandidateStore = defineStore('candidate', () => {
   const companyStore = useCompanyStore()
 
-  function getApiBase() {
-    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
-  }
-
   // Opret kandidat på aktivt job
   async function addCandidate(payload) {
     try {
@@ -24,8 +20,7 @@ export const useCandidateStore = defineStore('candidate', () => {
       console.log('JOB ID SENT:', jobId)
       console.log('FULL BODY:', body)
 
-      const base = getApiBase()
-      const url = `${base}/api/candidates`
+      const url = `/api/candidates`
 
       const res = await fetch(url, {
         method: 'POST',
@@ -56,8 +51,8 @@ export const useCandidateStore = defineStore('candidate', () => {
   // Opdater status på kandidat (application)
   async function updateStatus(applicationId, newStatus) {
     try {
-      const base = getApiBase()
-      const url = `${base}/api/candidates/${applicationId}`
+
+      const url = `/api/candidates/${applicationId}`
 
       const res = await fetch(url, {
         method: 'PATCH',
@@ -86,8 +81,8 @@ export const useCandidateStore = defineStore('candidate', () => {
 
   async function deleteCandidate(id) {
   try {
-    const base = getApiBase()
-    const url = `${base}/api/candidates/${id}`
+    
+    const url = `/api/candidates/${id}`
 
     const res = await fetch(url, {
       method: 'DELETE',
@@ -113,8 +108,8 @@ export const useCandidateStore = defineStore('candidate', () => {
 
 async function updateCandidate(id, payload) {
   try {
-    const base = getApiBase()
-    const url = `${base}/api/candidates/${id}`
+    
+    const url = `/api/candidates/${id}`
 
     const res = await fetch(url, {
       method: 'PUT',
