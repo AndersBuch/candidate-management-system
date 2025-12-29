@@ -19,8 +19,8 @@ class Company
                 j.id   AS job_id,
                 j.title,
                 j.public_id
-            FROM Company c
-            LEFT JOIN Job j ON j.company_id = c.id
+            FROM company c
+            LEFT JOIN job j ON j.company_id = c.id
             ORDER BY c.name, j.title
         ";
 
