@@ -7,7 +7,7 @@ export const useSearchStore = defineStore('candidateSearch', () => {
 
   const companyStore = useCompanyStore()
 
-  // 👇 filtrer kandidater baseret på navn
+  // filtrer kandidater baseret på navn
   const filteredCandidates = computed(() => {
     if (!searchTerm.value.trim()) {
       return companyStore.activeCandidates

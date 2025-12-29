@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-const API_BASE = 'http://localhost:8085/api'
+
 
 export const useCandidateStatsStore = defineStore('candidateStats', () => {
   const totalCandidates = ref(0)
@@ -10,19 +10,19 @@ export const useCandidateStatsStore = defineStore('candidateStats', () => {
   const initialized = ref(false)
 
   async function fetchTotalCandidates() {
-    const res = await fetch(`${API_BASE}/candidates/count`)
+    const res = await fetch(`/api/candidates/count`)
     const data = await res.json()
     totalCandidates.value = data.count
   }
 
   async function fetchRecentCandidates(days = 7) {
-    const res = await fetch(`${API_BASE}/candidates/recent?days=${days}`)
+    const res = await fetch(`/api/candidates/recent?days=${days}`)
     const data = await res.json()
     recentCandidates.value = data.count
   }
 
   async function fetchDeletedCandidates(days = 7) {
-    const res = await fetch(`${API_BASE}/candidates/deleted?days=${days}`);
+    const res = await fetch(`/api/candidates/deleted?days=${days}`);
     const data = await res.json();
     deletedCandidates.value = data.count;
   }

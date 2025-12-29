@@ -60,8 +60,8 @@ export const useCompanyStore = defineStore('company', () => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token')
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {}
 
-      // du brugte tidligere hardcoded http://localhost:8085
-      const res = await fetch('http://localhost:8085/api/companies', { headers })
+
+      const res = await fetch('/api/companies', { headers })
 
       if (!res.ok) {
         throw new Error('Kunne ikke hente firmaer')
@@ -92,7 +92,7 @@ export const useCompanyStore = defineStore('company', () => {
     if (!positionId) return
 
     try {
-      const res = await fetch(`http://localhost:8085/api/jobs/${positionId}/candidates`)
+      const res = await fetch(`/api/jobs/${positionId}/candidates`)
 
       if (!res.ok) {
         throw new Error('Kunne ikke hente kandidater')
@@ -116,7 +116,7 @@ export const useCompanyStore = defineStore('company', () => {
       token ? { 'Authorization': `Bearer ${token}` } : {}
     )
 
-    const res = await fetch('http://localhost:8085/api/companies', {
+    const res = await fetch('/api/companies', {
       method: 'POST',
       headers,
       body: JSON.stringify(payload)
@@ -155,8 +155,7 @@ export const useCompanyStore = defineStore('company', () => {
 
   async function deleteCandidate(candidateId) {
     try {
-      const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8085'
-      const url = `${base}/api/candidates/${candidateId}`
+      const url = `/api/candidates/${candidateId}`
 
       const res = await fetch(url, {
         method: 'DELETE',

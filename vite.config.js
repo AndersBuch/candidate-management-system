@@ -15,18 +15,17 @@ export default defineConfig({
     }
   },
 
-  // ⬇⬇⬇ DETTE ER NYT ⬇⬇⬇
+
   server: {
     proxy: {
       '/api': {
-        target: 'https://buchdesigns.dk',
+        target: 'http://localhost:8085',
         changeOrigin: true,
-        secure: false
       }
     }
   },
 
-  // ⬆⬆⬆ DETTE ER NYT ⬆⬆⬆
+
 
   css: {
     preprocessorOptions: {
