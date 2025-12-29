@@ -5,11 +5,14 @@ import Tableform from '@/components/dashboard/Tableform.vue'
 import ExtendedCandidateInfo from '@/components/dashboard/ExtendedCandidateInfo.vue'
 import Fromi from '@/components/atoms/ConfimationForm.vue'
 
-import { ref, computed } from 'vue'
+import Toast from '@/components/dashboard/ToastDashboard.vue'
+
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const showExtendedInfo = ref(false)
 const activeIndex = ref(null)
+const toasts = ref([])
 
 // kandidater fra companyStore
 const companyStore = useCompanyStore()
@@ -33,6 +36,7 @@ const extendedCandidate = computed(() => {
 
   return {
     id: row.id,
+    applicationId: row.applicationId,
     firstName,
     lastName,
     age: row.age ?? '',
@@ -50,41 +54,165 @@ const extendedCandidate = computed(() => {
   }
 })
 
-function handleOpenCandidate(index) {
-  activeIndex.value = index
-  showExtendedInfo.value = index !== null
+const dashboardRef = ref(null)
+const extendedRef = ref(null)
+
+function openCandidate(index) {
+  activeIndex.value =
+    activeIndex.value === index ? null : index
 }
+
+function handleClickOutside(event) {
+  const clickedDashboard =
+    dashboardRef.value?.contains(event.target)
+
+  const clickedExtended =
+    extendedRef.value?.rootRef?.value?.contains(event.target)
+
+  if (!clickedDashboard && !clickedExtended) {
+    activeIndex.value = null
+  }
+}
+
+const pendingDeleteId = ref(null)
+const deleteTimer = ref(null)
+
+function requestDelete(candidateId) {
+  pendingDeleteId.value = candidateId
+
+  // 🔥 Fjern kandidat fra UI med det samme
+  companyStore.hideCandidate(candidateId)
+
+  activeIndex.value = null
+
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat slettet',
+    subtitle: 'Du kan fortryde handlingen',
+    variant: 'danger',
+    duration: 3000,
+    showUndo: true
+  })
+
+  deleteTimer.value = setTimeout(async () => {
+    await companyStore.deleteCandidate(candidateId)
+    pendingDeleteId.value = null
+  }, 3000)
+}
+
+function undoDelete() {
+  if (!pendingDeleteId.value) return
+
+  clearTimeout(deleteTimer.value)
+  deleteTimer.value = null
+
+  companyStore.restoreCandidate(pendingDeleteId.value)
+
+  pendingDeleteId.value = null
+}
+
+
+function handleCandidateDeleted() {
+  activeIndex.value = null
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat slettet',
+    subtitle: 'Kandidaten blev fjernet korrekt',
+    variant: 'danger',
+    duration: 3000
+  })
+}
+
+function handleSaved() {
+  console.log('✅ DashboardSite handleSaved triggered, showing toast')
+  toasts.value.push({
+    id: Date.now(),
+    title: 'Kandidat opdateret',
+    subtitle: 'Ændringerne blev gemt korrekt',
+    variant: 'success',
+    duration: 3000,
+    showUndo: false 
+  })
+}
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
+
+onMounted(() => {
+  document.addEventListener('pointerdown', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleClickOutside)
+})
+
 </script>
 
 <template>
   <div class="dashboardLayout">
     <SideMenu />
 
-    <section class="dashboardContentWrapper">
-      <div class="dashboardContent">
-        <DashboardHeader />
-        <Tableform @openCandidate="handleOpenCandidate" />
-        <Fromi />
-      </div>
+    <section ref="dashboardRef" class="dashboardContentWrapper">
+      <DashboardHeader />
+      <Tableform
+  :active-index="activeIndex"
+  @openCandidate="openCandidate"
+/>
     </section>
 
-    <Transition name="slide-right">
-      <ExtendedCandidateInfo
-        v-if="showExtendedInfo && extendedCandidate"
-        :active-index="activeIndex"
-        :candidate="extendedCandidate"
-      />
-    </Transition>
+<Transition name="slide-right">
+  <ExtendedCandidateInfo
+    v-if="extendedCandidate"
+    ref="extendedRef"
+    :candidate="extendedCandidate"
+    @candidateDeleted="handleCandidateDeleted"
+    @deleteRequested="requestDelete"
+    @saved="handleSaved"
+  />
+</Transition>
+
+<div class="toastWrapper">
+  <Toast v-for="t in toasts" :key="t.id" :showUndo="t.showUndo" v-bind="t" @close="removeToast" @undo="undoDelete" />
+</div>
+
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .dashboardLayout {
   display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .dashboardContentWrapper {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.dashboardContentWrapper :deep(> *:first-child) {
+  flex-shrink: 0;
+}
+
+.dashboardContentWrapper :deep(> [class*="Tableform"]) {
+  flex: 1;
+  min-height: 0;
+}
+
+.toastWrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
 }
 
 .slide-right-enter-active,

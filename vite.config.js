@@ -16,15 +16,15 @@ export default defineConfig({
   },
 
   // ⬇⬇⬇ DETTE ER NYT ⬇⬇⬇
-server: {
-  proxy: {
-    '/api': {
-      target: 'https://buchdesigns.dk',
-      changeOrigin: true,
-      secure: false
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://buchdesigns.dk',
+        changeOrigin: true,
+        secure: false
+      }
     }
-  }
-},
+  },
 
   // ⬆⬆⬆ DETTE ER NYT ⬆⬆⬆
 

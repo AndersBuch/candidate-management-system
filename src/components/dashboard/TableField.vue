@@ -6,6 +6,7 @@ import EditModal from '@/components/dashboard/EditModal.vue'
 import { ref, watch, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
+
 const emit = defineEmits(['statusClick', 'toggle', 'rowClick', 'edit'])
 
 const props = defineProps({
@@ -16,33 +17,12 @@ const props = defineProps({
   email: String,
   status: String,
   linkedinUrl: String,
-  isActive: Boolean
+  isActive: Boolean,
+  candidateId: Number,
+  applicationId: Number
 })
 
 const rowRef = ref(null)
-const extendedRef = ref(null)
-
-function handleClickOutside(event) {
-  const clickedInsideRow = rowRef.value?.contains(event.target) ?? false
-  const clickedInsideExtended = extendedRef.value?.contains(event.target) ?? false
-
-  // hvis klik er i row ELLER i extended -> gør ingenting
-  if (clickedInsideRow || clickedInsideExtended) return
-
-  emit('rowClick', null)
-}
-
-onMounted(async () => {
-  await nextTick()
-  // Ret selector hvis din extended-pane har et andet classnavn
-  extendedRef.value = document.querySelector('.exstendedCandidateContainer') || document.querySelector('.ExtendedCandidateInfo') || null
-
-  document.addEventListener('click', handleClickOutside)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
 
 const store = useCandidateStore()
 const localStatus = ref(props.status || 'Afventer')
@@ -59,8 +39,8 @@ watch(
 )
 
 async function onStatusClick(newStatus) {
-  if (!props.id) return
-  const success = await store.updateStatus(props.id, newStatus)
+  if (!props.applicationId) return
+  const success = await store.updateStatus(props.applicationId, newStatus)
   if (success) localStatus.value = newStatus
   else alert('Kunne ikke opdatere status på serveren')
 }
@@ -70,12 +50,7 @@ const rowClass = computed(() =>
 )
 
 // <-- ÆNDRET: stop propagation her
-function handleClick(event) {
-  if (event.target.closest('.colStatus')) {
-    event.stopPropagation()
-    return
-  }
-  event.stopPropagation()
+function handleClick() {
   emit('rowClick', props.index)
 }
 
@@ -84,8 +59,9 @@ function openLinkedin() {
 }
 
 function onEdit() {
-  emit('edit')
+  emit('edit', props.candidateId)
 }
+
 
 const normalizedStatus = computed({
   get() {
@@ -141,7 +117,11 @@ const normalizedStatus = computed({
       />
 
       <div class="notActions">
-        <EditModal />
+        <BasicIconAndLogo
+  name="Edit"
+  @click.stop="onEdit"
+/>
+
       </div>
     </div>
   </div>

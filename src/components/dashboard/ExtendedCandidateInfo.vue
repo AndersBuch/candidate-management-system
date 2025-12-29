@@ -4,44 +4,62 @@ import DefinitionRow from '@/components/atoms/DefinitionRow.vue'
 import CandidateDocuments from '@/components/dashboard/CandidateDocuments.vue'
 import EditModal from '@/components/dashboard/EditModal.vue'
 import DeleteModal from '@/components/dashboard/DeleteModal.vue'
+import { ref, defineExpose } from 'vue'
 
-import { ref } from 'vue'
 
 const props = defineProps({
-  activeIndex: { type: [Number, String, null], default: null },
   candidate: {
     type: Object,
-    default: () => ({
-      firstName: 'Mads',
-      lastName: 'Mikkelsen Hansen',
-      age: '',
-      gender: 'Mand',
-      phone: '11223344',
-      status: 'Afventer',
-      email: 'Madharenmail@gmail.com',
-      address: 'Mullervej 2',
-      postal: '5230',
-      city: 'Odense',
-      company: '',
-      note: 'Brænder du for at arbejde med procesudstyr og bidrage til udviklingen af fremtidens fødevareteknologi?',
-      profilePicture: '/img/TestProfilePicture.jpg',
-      linkedin: ''
-    })
+    required: true
+  },
+  activeIndex: {
+    type: [Number, null],
+    default: null
   }
 })
+
+const rootRef = ref(null)
+
+defineExpose({
+  rootRef
+})
+
+const emit = defineEmits(['candidateDeleted', 'deleteRequested', 'saved'])
+
+const openEditModal = () => {
+  showEditModal.value = true
+}
+
+const closeEditModal = () => {
+  showEditModal.value = false
+}
 
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 
-const openEditModal = () => (showEditModal.value = true)
-const closeEditModal = () => (showEditModal.value = false)
+const openDeleteModal = () => {
+  showDeleteModal.value = true
+}
 
-const openDeleteModal = () => (showDeleteModal.value = true)
-const closeDeleteModal = () => (showDeleteModal.value = false)
+const handleCandidateDeleted = () => {
+  emit('candidateDeleted')
+  showDeleteModal.value = false
+}
+
+const handleSaved = () => {
+  console.log('✅ ExtendedCandidateInfo handleSaved triggered, emitting saved')
+  showEditModal.value = false
+  emit('saved')
+}
+
+
 </script>
 
 <template>
-  <aside v-if="props.activeIndex !== null" class="exstendedCandidateContainer">
+
+<aside class="exstendedCandidateContainer" ref="rootRef" @click.stop @pointerdown.stop>
+
+
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
       <h2 class="adminName">Claus Bjerring - Admin</h2>
@@ -50,17 +68,21 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerCenter">
-      <div class="iconContainer">
-<div @click="openEditModal">
-  <EditModal />
+<div class="iconContainer">
+  <!-- EDIT IKON -->
+  <BasicIconAndLogo
+    name="Edit"
+    :iconSize="true"
+    @click="openEditModal"
+  />
+
+  <!-- DELETE IKON -->
+  <BasicIconAndLogo
+    name="Thash"
+    :iconSize="true"
+    @click="openDeleteModal"
+  />
 </div>
-
-<div @click="openDeleteModal">
-  <DeleteModal />
-</div>
-
-
-      </div>
       <img
         class="profilePicture"
         src="/img/TestProfilePicture.jpg"
@@ -74,6 +96,22 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
         :iconSize="true"
         v-if="candidate.linkedin"
       />
+
+      <EditModal
+  v-if="showEditModal"
+  :candidate="candidate"
+  @close="showEditModal = false"
+  @saved="handleSaved"
+/>
+
+<DeleteModal
+  v-if="showDeleteModal"
+  :candidateId="candidate.id"
+  :showTrigger="false"
+  @close="showDeleteModal = false"
+  @confirm="() => { emit('deleteRequested', candidate.id); showDeleteModal = false }"
+/>
+
     </section>
 
     <div class="divider"></div>
@@ -104,20 +142,21 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
       <CandidateDocuments />
     </section>
 
-    <EditModal
-      v-if="showEditModal"
-      :candidate="candidate"
-      @close="closeEditModal"
-    />
-    <DeleteModal
-      v-if="showDeleteModal"
-      :candidateId="candidate.id"
-      @close="closeDeleteModal"
-    />
   </aside>
 </template>
 
 <style scoped lang="scss">
+
+  .toastWrapper {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
 .exstendedCandidateContainer {
   height: 100vh;
   max-width: 500px;
@@ -163,6 +202,7 @@ const closeDeleteModal = () => (showDeleteModal.value = false)
 .iconContainer {
   display: flex;
   gap: 10px;
+  cursor: pointer;
 }
 
 .divider {

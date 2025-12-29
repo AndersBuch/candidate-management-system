@@ -29,7 +29,7 @@ const props = defineProps({
   },
   ariaLabel: {
     type: String,
-    required: true,
+    default: '',
   },
 })
 

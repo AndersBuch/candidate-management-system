@@ -64,6 +64,9 @@ const handleNumberInput = (event, maxLength, key) => {
 function handleFile(f) { console.log('valgt fil', f) }
 function handleError(e) { console.warn('upload error', e) }
 
+function handleRemoved(file) {
+  console.log('Filen blev fjernet', file)
+}
 // Simpel emailvalidering
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
@@ -98,7 +101,8 @@ function showToast() {
     title: 'Kandidat tilføjet',
     subtitle: 'Kandidaten blev tilføjet korrekt',
     variant: 'success',
-    duration: 3000
+    duration: 3000,
+    showUndo: false 
   })
 }
 
@@ -162,6 +166,9 @@ const resetForm = () => {
   })
 }
 
+function handleUndo() {
+  console.log('Undo klikket – ikke implementeret endnu')
+}
 
 </script>
 
@@ -243,7 +250,7 @@ const resetForm = () => {
 
   <div class="toastWrapper">
     <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
-      :duration="t.duration" @close="removeToast(t.id)" @undo="handleUndo" />
+      :duration="t.duration" :showUndo="t.showUndo"  @close="removeToast(t.id)" @undo="handleUndo" />
   </div>
 </template>
 

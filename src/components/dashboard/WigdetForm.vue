@@ -8,6 +8,10 @@ const candidateStatsStore = useCandidateStatsStore()
 onMounted(() => {
   candidateStatsStore.init()
 })
+
+const handleEdit = () => {
+  console.log('Klikket')
+}
 </script>
 
 
@@ -32,7 +36,7 @@ onMounted(() => {
         icon="UserWhite" 
         title="Kandidater slettet" 
         subtitle="Antallet fra den seneste uge" 
-        :count="-22" 
+        :count="- candidateStatsStore.deletedCandidates" 
       />
     </div>
   </div>

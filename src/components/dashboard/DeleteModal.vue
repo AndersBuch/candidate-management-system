@@ -3,10 +3,26 @@ import Modal from '@/components/Modal.vue'
 import Button from '@/components/atoms/Button.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import Toast from '@/components/dashboard/ToastDashboard.vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { useCandidateStore } from '@/stores/addCandidateStore'
 
-import { ref, reactive, computed, watch } from 'vue'
+const props = defineProps({
+    candidateId: {
+        type: Number,
+        required: true
+    },
+    showTrigger: {
+        type: Boolean,
+        default: true
+    }
+})
+
+const store = useCandidateStore()
 
 const showModal = ref(false)
+
+const emit = defineEmits(['close', 'confirm'])
+
 
 const openModal = () => {
     showModal.value = true
@@ -14,36 +30,30 @@ const openModal = () => {
 
 const closeModal = () => {
     showModal.value = false
+    emit('close')
 }
 
 const thashModal = () => {
     openModal()
 }
 
-const toasts = ref([])
+onMounted(() => {
+    if (!props.showTrigger) {
+        showModal.value = true
+    }
+})
 
-function showToast() {
-    toasts.value.push({
-        id: Date.now(),
-        title: 'Kandidat slettet',
-        subtitle: 'Kandidaten blev fjernet korrekt',
-        variant: 'danger',   // eller 'success'
-        duration: 3000
-    })
-}
-
-function removeToast(id) {
-    toasts.value = toasts.value.filter(t => t.id !== id)
-}
 
 function confirmDelete() {
-    closeModal()     // luk modal
-    showToast()      // vis toast
+  emit('confirm', props.candidateId)
+  emit('close')
 }
+
+
 </script>
 
 <template>
-    <BasicIconAndLogo name="Thash" :iconSize="true" @click.stop="thashModal" class="iconBtn" />
+    <BasicIconAndLogo v-if="props.showTrigger" name="Thash" :iconSize="true" @click.stop="thashModal" class="iconBtn" />
     <transition name="fade">
         <Modal v-if="showModal" @close="closeModal" height="260px" class="deleteCandidateModal">
 
@@ -59,23 +69,9 @@ function confirmDelete() {
 
         </Modal>
     </transition>
-
-    <div class="toastWrapper">
-        <Toast v-for="t in toasts" :key="t.id" v-bind="t" @close="removeToast" />
-    </div>
 </template>
 
 <style lang="scss">
-.toastWrapper {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
-}
-
 .deleteCandidateModal .closeIcon {
     display: none !important;
 }

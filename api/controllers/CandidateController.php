@@ -81,11 +81,11 @@ class CandidateController {
     }
 
     // PATCH /api/candidates/{id}/status
-    // NB: her tolker vi {id} som APPLICATION-ID (ikke kandidat-id)
+    // Opdaterer status på en application (id = application_id)
     public function updateStatus($id) {
         header('Content-Type: application/json; charset=utf-8');
 
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = json_decode(file_get_contents("php://input"), true);
 
         if (!isset($data['status'])) {
             http_response_code(400);
@@ -101,19 +101,73 @@ class CandidateController {
                 ':id'     => $id
             ]);
 
-            echo json_encode([
-                'success' => true,
-                'id'      => $id,
-                'status'  => $data['status']
-            ]);
+            http_response_code(200);
+            echo json_encode(['success' => true, 'status' => $data['status']]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode([
-                'error'   => 'Could not update status',
-                'message' => $e->getMessage()
-            ]);
+            echo json_encode(['error' => 'Could not update status', 'message' => $e->getMessage()]);
         }
     }
+
+    // Hent antal "slettede" kandidater (fx dem med status = 'Rejected') i de sidste X dage
+public function countDeleted($days = 30) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $stmt = $this->pdo->prepare("
+        SELECT COUNT(*) as total
+        FROM candidate
+        WHERE status = 'Rejected'
+          AND created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
+    ");
+    $stmt->execute([':days' => $days]);
+    $result = $stmt->fetch();
+    echo json_encode(['count' => (int)$result['total']]);
+}
+
+
+    // PATCH /api/candidates/{id}
+public function update($id) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    $sql = "
+        UPDATE candidate SET
+            first_name = :first_name,
+            last_name = :last_name,
+            email = :email,
+            phone_number = :phone_number,
+            address = :address,
+            zip_code = :zip_code,
+            city = :city,
+            gender = :gender,
+            age = :age,
+            linkedin_url = :linkedin_url,
+            current_position = :position,
+            note = :note
+        WHERE id = :id
+    ";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+        ':first_name'   => $data['first_name'] ?? null,
+        ':last_name'    => $data['last_name'] ?? null,
+        ':email'        => $data['email'] ?? null,
+        ':phone_number' => $data['phone'] ?? null,
+        ':address'      => $data['address'] ?? null,
+        ':zip_code'     => $data['zip_code'] ?? null,
+        ':city'         => $data['city'] ?? null,
+        ':gender'       => $data['gender'] ?? null,
+        ':age'          => $data['age'] ?? null,
+        ':linkedin_url' => $data['linkedin'] ?? null,
+        ':position'     => $data['current_position'] ?? null,
+        ':note'         => $data['note'] ?? null,
+        ':id'           => $id
+    ]);
+
+    echo json_encode(['success' => true]);
+}
+
 
     // Hent antal kandidater (alle)
     public function count() {
@@ -137,4 +191,31 @@ class CandidateController {
         $result = $stmt->fetch();
         echo json_encode(['count' => (int)$result['total']]);
     }
+
+    // DELETE /api/candidates/{id}
+public function destroy($id) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+        // Start transaction — fordi application og documents også skal slettes
+        $this->pdo->beginTransaction();
+
+        // Slet kandidat → pga. CASCADE slettes application + documents automatisk
+        $stmt = $this->pdo->prepare("DELETE FROM candidate WHERE id = ?");
+        $stmt->execute([$id]);
+
+        $this->pdo->commit();
+
+        echo json_encode(["success" => true, "deleted_id" => $id]);
+
+    } catch (Exception $e) {
+        $this->pdo->rollBack();
+        http_response_code(500);
+        echo json_encode([
+            "error" => "Could not delete candidate",
+            "message" => $e->getMessage()
+        ]);
+    }
+}
+
 }

@@ -15,7 +15,8 @@ const props = defineProps({
   showToggle: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['update:modelValue', 'blur', 'input'])
+const emit = defineEmits(['update:modelValue', 'blur'])
+
 
 const localValue = ref(props.modelValue)
 const showPassword = ref(false)
@@ -37,12 +38,10 @@ const isError = computed(() => props.error && props.touched)
 
       <!-- Ellers default input -->
       <textarea v-if="fieldType === 'textarea'" :id="id" :placeholder="placeholder" v-model="localValue"
-        @blur="emit('blur')" @input="emit('input', $event)" :maxlength="150"
-        :class="['textareaField', { hasValue: hasValue }]"></textarea>
+        @blur="emit('blur')" :maxlength="150" :class="['textareaField', { hasValue }]"></textarea>
 
-      <input v-else :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id"
-        :placeholder="placeholder" v-model="localValue" @blur="emit('blur')" @input="emit('input', $event)"
-        :class="{ errorField: isError, hasValue: hasValue }" />
+      <input v-else :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id" :placeholder="placeholder"
+        v-model="localValue" @blur="emit('blur')" :class="{ errorField: isError, hasValue: hasValue }" />
 
       <!-- Eye / EyeOff ikon -->
       <button v-if="showToggle" type="button" class="eyeToggle" @click="showPassword = !showPassword">

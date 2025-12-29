@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Methods: GET, POST, PATCH, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS, PUT");
 
 // Preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -32,13 +32,6 @@ spl_autoload_register(function ($class) {
 $method = $_SERVER['REQUEST_METHOD'];
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path   = preg_replace('#^/api#', '', $uri); // fjerner /api prefix
-
-// PATCH /candidates/:id/status (special-case før switch)
-if ($method === 'PATCH' && preg_match('#^/candidates/(\d+)/status$#', $path, $matches)) {
-    $controller = new CandidateController($pdo);
-    $controller->updateStatus($matches[1]);
-    exit;
-}
 
 // Debug: log incoming request (kan fjernes)
 error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
@@ -113,6 +106,35 @@ switch ($path) {
         $controller = new CandidateController($pdo);
         $controller->countRecent($days);
         break;
+
+case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
+    $controller = new CandidateController($pdo);
+    $id = (int)$m[1];
+
+    if ($method === 'PUT') {
+        $controller->update($id); // brug update-metoden i CandidateController
+    } elseif ($method === 'PATCH') {
+        $controller->updateStatus($id); // opdater status
+    } elseif ($method === 'DELETE') {
+        $controller->destroy($id);
+    } else {
+        http_response_code(405);
+        echo json_encode(["error" => "Method not allowed"]);
+    }
+    break;
+
+case '/candidates/deleted':
+    if ($method !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+    $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
+    $controller = new CandidateController($pdo);
+    $controller->countDeleted($days);
+    break;
+
+
 
     default:
         // 👇 NYT: /jobs/{jobId}/candidates
