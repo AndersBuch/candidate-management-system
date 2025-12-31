@@ -7,6 +7,109 @@ class CandidateController {
         $this->pdo = $pdo;
     }
 
+
+    private function requestData(): array {
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (stripos($contentType, 'multipart/form-data') !== false) {
+        return $_POST; // FormData felter
+    }
+    $data = json_decode(file_get_contents("php://input"), true);
+    return is_array($data) ? $data : [];
+}
+
+private function uploadsBasePath(): string {
+    $base = realpath(__DIR__ . '/../../storage/uploads');
+    if (!$base) throw new Exception("Missing storage/uploads");
+    return $base;
+}
+
+private function normalizeFilesArray(array $fileField): array {
+    if (!is_array($fileField['name'])) return [$fileField];
+
+    $out = [];
+    $count = count($fileField['name']);
+    for ($i = 0; $i < $count; $i++) {
+        $out[] = [
+            'name'     => $fileField['name'][$i],
+            'type'     => $fileField['type'][$i] ?? null,
+            'tmp_name' => $fileField['tmp_name'][$i],
+            'error'    => $fileField['error'][$i],
+            'size'     => $fileField['size'][$i] ?? null,
+        ];
+    }
+    return $out;
+}
+
+private function saveUploadedFile(int $applicationId, array $file): array {
+    $base = $this->uploadsBasePath();
+    $dir = $base . "/applications/{$applicationId}";
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+    $original = $file['name'] ?? 'file';
+    $ext = strtolower(pathinfo($original, PATHINFO_EXTENSION));
+    $safe = bin2hex(random_bytes(16)) . ($ext ? ".{$ext}" : "");
+
+    $relative = "applications/{$applicationId}/{$safe}";
+    $target = $base . "/" . $relative;
+
+    if (!move_uploaded_file($file['tmp_name'], $target)) {
+        throw new Exception("Could not save file");
+    }
+
+    return ['original' => $original, 'relative' => $relative];
+}
+
+private function deleteRelativeFile(string $relativePath): void {
+    $base = $this->uploadsBasePath();
+    $full = $base . "/" . ltrim($relativePath, "/");
+
+    $real = realpath($full);
+    $realBase = realpath($base);
+
+    if ($real && $realBase && str_starts_with($real, $realBase) && is_file($real)) {
+        @unlink($real);
+    }
+}
+
+private function handleDocumentUploads(int $applicationId): void {
+    if (empty($_FILES)) return;
+
+    require_once __DIR__ . '/../models/Document.php';
+    $docModel = new Document($this->pdo);
+
+    // single filer (erstatter hvis findes)
+    $singleMap = [
+        'cv'        => 'CV',
+        'ansogning' => 'Ansøgning',
+        'photo'     => 'Foto',
+    ];
+
+    foreach ($singleMap as $field => $kind) {
+        if (!isset($_FILES[$field])) continue;
+        $f = $_FILES[$field];
+        if (($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) continue;
+
+        $saved = $this->saveUploadedFile($applicationId, $f);
+
+        $existing = $docModel->getByApplicationAndKind($applicationId, $kind);
+        if ($existing) {
+            $this->deleteRelativeFile($existing['file_url']);
+            $docModel->update((int)$existing['id'], $saved['original'], $saved['relative']);
+        } else {
+            $docModel->insert($applicationId, $kind, $saved['original'], $saved['relative']);
+        }
+    }
+
+    // multiple "andet[]"
+    if (isset($_FILES['andet'])) {
+        foreach ($this->normalizeFilesArray($_FILES['andet']) as $f) {
+            if (($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) continue;
+            $saved = $this->saveUploadedFile($applicationId, $f);
+            $docModel->insert($applicationId, 'Andet', $saved['original'], $saved['relative']);
+        }
+    }
+}
+
     // OPTIONAL: generel liste, bruges ikke til job-filteret i øjeblikket
     public function index() {
         header('Content-Type: application/json; charset=utf-8');
@@ -31,54 +134,59 @@ class CandidateController {
     }
 
     // POST /api/candidates
-    public function store() {
-        header('Content-Type: application/json; charset=utf-8');
+public function store() {
+    header('Content-Type: application/json; charset=utf-8');
 
-        $data = json_decode(file_get_contents("php://input"), true);
-        file_put_contents("debug.log", "Received data:\n" . print_r($data, true), FILE_APPEND);
+    $data = $this->requestData();
 
-        if (!$data) {
-            http_response_code(400);
-            echo json_encode(["error" => "Invalid JSON"]);
-            return;
-        }
-
-        try {
-            $this->pdo->beginTransaction();
-
-            $candidateModel = new Candidate($this->pdo);
-            $candidateId = $candidateModel->create($data);
-
-            // Hvis der er sendt job_id med, opret en application-row
-            if (!empty($data['job_id'])) {
-                $stmt = $this->pdo->prepare("
-                    INSERT INTO application (candidate_id, job_id, status)
-                    VALUES (:candidate_id, :job_id, :status)
-                ");
-
-                $stmt->execute([
-                    ':candidate_id' => $candidateId,
-                    ':job_id'       => $data['job_id'],
-                    ':status'       => $data['status'] ?? 'Afventer',
-                ]);
-            }
-
-            $this->pdo->commit();
-
-            http_response_code(201);
-            echo json_encode([
-                "id"     => $candidateId,
-                "status" => $data["status"] ?? "Afventer"
-            ]);
-        } catch (Exception $e) {
-            $this->pdo->rollBack();
-            http_response_code(500);
-            echo json_encode([
-                "error"   => "Could not create candidate",
-                "message" => $e->getMessage()
-            ]);
-        }
+    if (!$data) {
+        http_response_code(400);
+        echo json_encode(["error" => "No data received"]);
+        return;
     }
+
+    try {
+        $this->pdo->beginTransaction();
+
+        $candidateModel = new Candidate($this->pdo);
+        $candidateId = $candidateModel->create($data);
+
+        $applicationId = null;
+
+        if (!empty($data['job_id'])) {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO application (candidate_id, job_id, status)
+                VALUES (:candidate_id, :job_id, :status)
+            ");
+            $stmt->execute([
+                ':candidate_id' => $candidateId,
+                ':job_id'       => $data['job_id'],
+                ':status'       => $data['status'] ?? 'Afventer',
+            ]);
+
+            $applicationId = (int)$this->pdo->lastInsertId();
+        }
+
+        // docs upload (kun hvis application findes)
+        if ($applicationId) {
+            $this->handleDocumentUploads($applicationId);
+        }
+
+        $this->pdo->commit();
+
+        http_response_code(201);
+        echo json_encode([
+            "id" => $candidateId,
+            "application_id" => $applicationId,
+            "status" => $data["status"] ?? "Afventer"
+        ]);
+    } catch (Exception $e) {
+        $this->pdo->rollBack();
+        http_response_code(500);
+        echo json_encode(["error" => "Could not create candidate", "message" => $e->getMessage()]);
+    }
+}
+
 
     // PATCH /api/candidates/{id}/status
     // Opdaterer status på en application (id = application_id)
@@ -143,44 +251,72 @@ public function countDeleted($days = 30) {
 public function update($id) {
     header('Content-Type: application/json; charset=utf-8');
 
-    $data = json_decode(file_get_contents("php://input"), true);
+    $data = $this->requestData();
+    if (!$data) {
+        http_response_code(400);
+        echo json_encode(["error" => "No data received"]);
+        return;
+    }
 
-    $sql = "
-        UPDATE candidate SET
-            first_name = :first_name,
-            last_name = :last_name,
-            email = :email,
-            phone_number = :phone_number,
-            address = :address,
-            zip_code = :zip_code,
-            city = :city,
-            gender = :gender,
-            age = :age,
-            linkedin_url = :linkedin_url,
-            current_position = :position,
-            note = :note
-        WHERE id = :id
-    ";
+    // Vi skal kende application_id for at uploade docs til rigtig mappe
+    $applicationId = isset($data['application_id']) ? (int)$data['application_id'] : null;
 
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([
-        ':first_name'   => $data['first_name'] ?? null,
-        ':last_name'    => $data['last_name'] ?? null,
-        ':email'        => $data['email'] ?? null,
-        ':phone_number' => $data['phone'] ?? null,
-        ':address'      => $data['address'] ?? null,
-        ':zip_code'     => $data['zip_code'] ?? null,
-        ':city'         => $data['city'] ?? null,
-        ':gender'       => $data['gender'] ?? null,
-        ':age'          => $data['age'] ?? null,
-        ':linkedin_url' => $data['linkedin'] ?? null,
-        ':position'     => $data['current_position'] ?? null,
-        ':note'         => $data['note'] ?? null,
-        ':id'           => $id
-    ]);
+    try {
+        $this->pdo->beginTransaction();
 
-    echo json_encode(['success' => true]);
+        $sql = "
+            UPDATE candidate SET
+                first_name = :first_name,
+                last_name = :last_name,
+                email = :email,
+                phone_number = :phone_number,
+                address = :address,
+                zip_code = :zip_code,
+                city = :city,
+                gender = :gender,
+                age = :age,
+                linkedin_url = :linkedin_url,
+                current_position = :position,
+                note = :note
+            WHERE id = :id
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':first_name'   => $data['first_name'] ?? null,
+            ':last_name'    => $data['last_name'] ?? null,
+            ':email'        => $data['email'] ?? null,
+
+            // understøt både "phone" (din EditModal) og "phone_number" (DB)
+            ':phone_number' => $data['phone_number'] ?? ($data['phone'] ?? null),
+
+            ':address'      => $data['address'] ?? null,
+            ':zip_code'     => $data['zip_code'] ?? ($data['postal'] ?? null),
+            ':city'         => $data['city'] ?? null,
+            ':gender'       => $data['gender'] ?? null,
+            ':age'          => $data['age'] ?? null,
+
+            // understøt både linkedin / linkedin_url
+            ':linkedin_url' => $data['linkedin_url'] ?? ($data['linkedin'] ?? null),
+
+            ':position'     => $data['current_position'] ?? null,
+            ':note'         => $data['note'] ?? ($data['message'] ?? null),
+            ':id'           => (int)$id
+        ]);
+
+        if ($applicationId) {
+            $this->handleDocumentUploads($applicationId);
+        }
+
+        $this->pdo->commit();
+        echo json_encode(['success' => true]);
+    } catch (Exception $e) {
+        $this->pdo->rollBack();
+        http_response_code(500);
+        echo json_encode(['error' => 'Could not update candidate', 'message' => $e->getMessage()]);
+    }
 }
+
 
 
     // Hent antal kandidater (alle)
@@ -224,25 +360,34 @@ public function destroy($id) {
     header('Content-Type: application/json; charset=utf-8');
 
     try {
-        // Start transaction — fordi application og documents også skal slettes
         $this->pdo->beginTransaction();
 
-        // Slet kandidat → pga. CASCADE slettes application + documents automatisk
+        // Find alle filer der hører til candidate via application -> document
+        $stmt = $this->pdo->prepare("
+            SELECT d.file_url
+            FROM document d
+            INNER JOIN application a ON a.id = d.application_id
+            WHERE a.candidate_id = ?
+        ");
+        $stmt->execute([(int)$id]);
+        $files = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($files as $rel) {
+            if ($rel) $this->deleteRelativeFile($rel);
+        }
+
+        // Slet candidate (cascade sletter application + document rows hvis FK er sat)
         $stmt = $this->pdo->prepare("DELETE FROM candidate WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt->execute([(int)$id]);
 
         $this->pdo->commit();
-
-        echo json_encode(["success" => true, "deleted_id" => $id]);
-
+        echo json_encode(["success" => true, "deleted_id" => (int)$id]);
     } catch (Exception $e) {
         $this->pdo->rollBack();
         http_response_code(500);
-        echo json_encode([
-            "error" => "Could not delete candidate",
-            "message" => $e->getMessage()
-        ]);
+        echo json_encode(["error" => "Could not delete candidate", "message" => $e->getMessage()]);
     }
 }
+
 
 }
