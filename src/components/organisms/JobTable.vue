@@ -1,10 +1,26 @@
 <script setup>
+import { computed, onMounted } from 'vue'
+import { useCompanyStore } from '@/stores/useCompanyStore'
 import Button from '@/components/atoms/Button.vue'
 import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
-
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+const companyStore = useCompanyStore()
+
+onMounted(() => {
+  companyStore.fetchCompanies()
+})
+
+const rows = computed(() => {
+  return (companyStore.companies || []).flatMap(company =>
+    (company.positions || []).map(position => ({
+      company,
+      position
+    }))
+  )
+})
 
 function goToPageTwo() {
   router.push({ name: 'PageTwo' })
@@ -38,32 +54,32 @@ function onApplyClick() {
         </tr>
       </thead>
 
-      <tbody>
-        <tr @click="goToPageTwo" style="cursor: pointer">
-          <td class="cellCompany">
-            <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
-            WSA A/S
-          </td>
-          <td>Værktøjsmager</td>
-          <td>Præcisionsplast</td>
-          <td>København</td>
-          <td class="cell-cta">
-            <Button label="Søg job" type="small" aria-label="Søg job" @click="onApplyClick" />
-          </td>
-        </tr>
-        <tr>
-          <td class="cellCompany">
-            <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
-            WSA A/S
-          </td>
-          <td>Værktøjsmager</td>
-          <td>Præcisionsplast</td>
-          <td>København</td>
-          <td class="cellCta">
-            <Button label="Søg job" type="small" aria-label="Søg job" @click="onApplyClick" />
-          </td>
-        </tr>
-      </tbody>
+    <tbody>
+      <tr
+        v-for="row in rows"
+        :key="`${row.company.id}-${row.position.id}`"
+        @click="goToPageTwo"
+        style="cursor: pointer"
+      >
+        <td class="cellCompany">
+          <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
+          {{ row.company.name }}
+        </td>
+
+        <td>{{ row.position.name }}</td>
+        <td>{{ row.position.branch }}</td>
+        <td>{{ row.position.geography }}</td>
+
+        <td class="cellCta">
+          <Button
+            label="Søg job"
+            type="small"
+            aria-label="Søg job"
+            @click="onApplyClick"
+          />
+        </td>
+      </tr>
+    </tbody>
     </table>
   </div>
 </template>
