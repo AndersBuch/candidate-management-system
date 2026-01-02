@@ -362,6 +362,11 @@ public function destroy($id) {
     try {
         $this->pdo->beginTransaction();
 
+        // ✅ Find application IDs for candidate (så vi kan fjerne mapperne bagefter)
+        $stmt = $this->pdo->prepare("SELECT id FROM application WHERE candidate_id = ?");
+        $stmt->execute([(int)$id]);
+        $appIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
         // Find alle filer der hører til candidate via application -> document
         $stmt = $this->pdo->prepare("
             SELECT d.file_url
@@ -376,18 +381,36 @@ public function destroy($id) {
             if ($rel) $this->deleteRelativeFile($rel);
         }
 
+        // ✅ Fjern tomme application-mapper (EFTER filer er slettet)
+        $base = $this->uploadsBasePath(); // /storage/uploads
+        foreach ($appIds as $appId) {
+            $dir = $base . "/applications/" . (int)$appId;
+
+            if (is_dir($dir)) {
+                $items = array_diff(scandir($dir), ['.', '..']);
+                if (count($items) === 0) {
+                    @rmdir($dir);
+                }
+            }
+        }
+
         // Slet candidate (cascade sletter application + document rows hvis FK er sat)
         $stmt = $this->pdo->prepare("DELETE FROM candidate WHERE id = ?");
         $stmt->execute([(int)$id]);
 
         $this->pdo->commit();
         echo json_encode(["success" => true, "deleted_id" => (int)$id]);
+
     } catch (Exception $e) {
         $this->pdo->rollBack();
         http_response_code(500);
-        echo json_encode(["error" => "Could not delete candidate", "message" => $e->getMessage()]);
+        echo json_encode([
+            "error" => "Could not delete candidate",
+            "message" => $e->getMessage()
+        ]);
     }
 }
+
 
 
 }
