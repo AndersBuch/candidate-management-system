@@ -12,6 +12,11 @@ const routes = [
     component: () => import('../components/pages/PageTwoKandidat.vue')
   },
   {
+    path: '/apply/:companyId/:positionId',
+    name: 'ApplyJob',
+    component: () => import('../components/pages/PageThirdKandidat.vue')
+  },
+  {
     path: '/pagethree',
     name: 'PageThree',
     component: () => import('../components/pages/PageThirdKandidat.vue')

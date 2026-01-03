@@ -108,33 +108,66 @@ switch ($path) {
         $controller->countRecent($days);
         break;
 
-case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
-    $controller = new CandidateController($pdo);
-    $id = (int)$m[1];
+    case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
+        $controller = new CandidateController($pdo);
+        $id = (int)$m[1];
 
-    if ($method === 'PUT') {
-        $controller->update($id); // brug update-metoden i CandidateController
-    } elseif ($method === 'PATCH') {
-        $controller->updateStatus($id); // opdater status
-    } elseif ($method === 'DELETE') {
-        $controller->destroy($id);
-    } else {
-        http_response_code(405);
-        echo json_encode(["error" => "Method not allowed"]);
-    }
-    break;
+        if ($method === 'PUT') {
+            $controller->update($id); // brug update-metoden i CandidateController
+        } elseif ($method === 'PATCH') {
+            $controller->updateStatus($id); // opdater status
+        } elseif ($method === 'DELETE') {
+            $controller->destroy($id);
+        } else {
+            http_response_code(405);
+            echo json_encode(["error" => "Method not allowed"]);
+        }
+        break;
 
-case '/candidates/deleted':
+    case '/candidates/deleted':
+        if ($method !== 'GET') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
+        }
+        $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
+        $controller = new CandidateController($pdo);
+        $controller->countDeleted($days);
+        break;
+
+    case (preg_match('#^/applications/(\d+)/documents$#', $path, $m) ? true : false):
     if ($method !== 'GET') {
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);
         break;
     }
-    $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
-    $controller = new CandidateController($pdo);
-    $controller->countDeleted($days);
+    require_once __DIR__ . '/controllers/DocumentController.php';
+    $controller = new DocumentController($pdo);
+    $controller->listByApplication((int)$m[1]);
     break;
 
+    case (preg_match('#^/documents/(\d+)$#', $path, $m) ? true : false):
+        require_once __DIR__ . '/controllers/DocumentController.php';
+        $controller = new DocumentController($pdo);
+
+        if ($method === 'DELETE') {
+            $controller->delete((int)$m[1]);
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+        }
+        break;
+
+    case (preg_match('#^/documents/(\d+)/download$#', $path, $m) ? true : false):
+        if ($method !== 'GET') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
+        }
+        require_once __DIR__ . '/controllers/DocumentController.php';
+        $controller = new DocumentController($pdo);
+        $controller->download((int)$m[1]);
+        break;
 
 
     default:

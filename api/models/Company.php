@@ -12,17 +12,19 @@ class Company
 
     public function allWithJobs(): array
     {
-        $sql = "
-            SELECT 
-                c.id   AS company_id,
-                c.name AS company_name,
-                j.id   AS job_id,
-                j.title,
-                j.public_id
-            FROM company c
-            LEFT JOIN job j ON j.company_id = c.id
-            ORDER BY c.name, j.title
-        ";
+    $sql = "
+        SELECT 
+            c.id   AS company_id,
+            c.name AS company_name,
+            j.id   AS job_id,
+            j.title,
+            j.public_id,
+            j.branch,
+            j.geography
+        FROM company c
+        LEFT JOIN job j ON j.company_id = c.id
+        ORDER BY c.name, j.title
+    ";
 
         $stmt = $this->pdo->query($sql);
         $rows = $stmt->fetchAll();
@@ -41,11 +43,13 @@ class Company
             }
 
             if (!empty($row['job_id'])) {
-                $companies[$companyId]['positions'][] = [
-                    'id'            => (int) $row['job_id'],
-                    'name'          => $row['title'],
-                    'applicationId' => $row['public_id'], // public_id i DB = applicationId i frontend
-                ];
+            $companies[$companyId]['positions'][] = [
+            'id'            => (int) $row['job_id'],
+            'name'          => $row['title'],
+            'applicationId' => $row['public_id'],
+            'branch'        => $row['branch'],
+            'geography'     => $row['geography'],
+            ];
             }
         }
 

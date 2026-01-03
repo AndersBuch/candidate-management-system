@@ -31,6 +31,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  htmlType: {
+  type: String,
+  default: null, // vigtig: default = null så vi ikke ændrer eksisterende adfærd
+},
 })
 
 const emit = defineEmits(['click'])
@@ -61,7 +65,7 @@ const difftentButton = computed(() => ({
 
 <template>
   <button :class="[difftentButton, { disabledButton: props.disabled }]" :aria-label="props.ariaLabel"
-    :disabled="props.disabled" @click.stop="!props.disabled && emit('click')">
+    :disabled="props.disabled" :type="props.htmlType" @click.stop="!props.disabled && emit('click', $event)">
     <BasicIconAndLogo v-if="showIcon && iconName" :name="iconName" />
     <p>{{ label }}</p>
   </button>
