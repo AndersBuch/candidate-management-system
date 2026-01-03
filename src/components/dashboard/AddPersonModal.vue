@@ -362,49 +362,57 @@ async function confirmAdd() {
       </div>
 
       <div class="uploadeButtons">
-        <UploadButton
-          title="CV"
-          button-text="Upload"
-          accept=".pdf,doc,docx"
-          :max-size-mb="2"
-          :multiple="false"
-          @file-selected="(f) => handleFile('cv', f)"
-          @error="handleError"
-          @file-removed="(f) => handleRemoved('cv', f)"
-        />
+        <div class="uploadItem">
+          <UploadButton
+            title="CV"
+            button-text="Upload"
+            accept=".pdf,doc,docx"
+            :max-size-mb="2"
+            :multiple="false"
+            @file-selected="(f) => handleFile('cv', f)"
+            @error="handleError"
+            @file-removed="(f) => handleRemoved('cv', f)"
+          />
+        </div>
 
-        <UploadButton
-          title="Billede"
-          button-text="Upload"
-          accept=".png,.jpg,.jpeg"
-          :max-size-mb="2"
-          :multiple="false"
-          @file-selected="(f) => handleFile('photo', f)"
-          @error="handleError"
-          @file-removed="(f) => handleRemoved('photo', f)"
-        />
+        <div class="uploadItem">
+          <UploadButton
+            title="Billede"
+            button-text="Upload"
+            accept=".png,.jpg,.jpeg"
+            :max-size-mb="2"
+            :multiple="false"
+            @file-selected="(f) => handleFile('photo', f)"
+            @error="handleError"
+            @file-removed="(f) => handleRemoved('photo', f)"
+          />
+        </div>
 
-        <UploadButton
-          title="Andre dokumenter"
-          button-text="Upload"
-          accept=".pdf,doc,docx,png,jpg,jpeg"
-          :max-size-mb="2"
-          :multiple="true"
-          @file-selected="(f) => handleFile('andet', f)"
-          @error="handleError"
-          @file-removed="(f) => handleRemoved('andet', f)"
-        />
+        <div class="uploadItem">
+          <UploadButton
+            title="Andre dokumenter"
+            button-text="Upload"
+            accept=".pdf,doc,docx,png,jpg,jpeg"
+            :max-size-mb="2"
+            :multiple="true"
+            @file-selected="(f) => handleFile('andet', f)"
+            @error="handleError"
+            @file-removed="(f) => handleRemoved('andet', f)"
+          />
+        </div>
 
-        <UploadButton
-          title="Ansøgning"
-          button-text="Upload"
-          accept=".pdf,doc,docx"
-          :max-size-mb="2"
-          :multiple="false"
-          @file-selected="(f) => handleFile('ansogning', f)"
-          @error="handleError"
-          @file-removed="(f) => handleRemoved('ansogning', f)"
-        />
+        <div class="uploadItem">
+          <UploadButton
+            title="Ansøgning"
+            button-text="Upload"
+            accept=".pdf,doc,docx"
+            :max-size-mb="2"
+            :multiple="false"
+            @file-selected="(f) => handleFile('ansogning', f)"
+            @error="handleError"
+            @file-removed="(f) => handleRemoved('ansogning', f)"
+          />
+        </div>
       </div>
 
       <div class="buttonContainer">

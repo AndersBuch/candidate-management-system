@@ -179,28 +179,60 @@ export const useCandidateStore = defineStore('candidate', () => {
 
     const fd = new FormData()
 
+    // Append payload fields (skip undefined/null)
     Object.entries(payload).forEach(([k, v]) => {
-      if (v !== undefined && v !== null) fd.append(k, v)
+      if (v !== undefined && v !== null) {
+        fd.append(k, v)
+      }
     })
 
-    if (files?.cv) fd.append('cv', files.cv)
-    if (files?.ansogning) fd.append('ansogning', files.ansogning)
-    if (files?.photo) fd.append('photo', files.photo)
+    // Debug: log what's being appended
+    console.log('FormData payload fields:', Object.keys(payload))
+    console.log('FormData files before append:', { 
+      cv: files?.cv instanceof File ? files.cv.name : files?.cv,
+      ansogning: files?.ansogning instanceof File ? files.ansogning.name : files?.ansogning,
+      photo: files?.photo instanceof File ? files.photo.name : files?.photo,
+      andet: files?.andet?.filter(f => f instanceof File).map(f => f.name) || []
+    })
 
-    // ✅ vigtig ændring: brug "andet" (ikke andet[])
-    if (files?.andet?.length) {
-      files.andet.forEach((f) => fd.append('andet', f))
+    // Append file fields - ONLY if they are File instances
+    if (files?.cv && files.cv instanceof File) {
+      fd.append('cv', files.cv)
+      console.log('✅ Appended cv:', files.cv.name)
     }
+    if (files?.ansogning && files.ansogning instanceof File) {
+      fd.append('ansogning', files.ansogning)
+      console.log('✅ Appended ansogning:', files.ansogning.name)
+    }
+    if (files?.photo && files.photo instanceof File) {
+      fd.append('photo', files.photo)
+      console.log('✅ Appended photo:', files.photo.name)
+    }
+
+    // Append andet array - ONLY valid File instances
+    if (files?.andet && Array.isArray(files.andet) && files.andet.length > 0) {
+      const validFiles = files.andet.filter(f => f instanceof File)
+      validFiles.forEach((f) => {
+        fd.append('andet', f)
+        console.log('✅ Appended andet:', f.name)
+      })
+      console.log(`Appended ${validFiles.length} andet files`)
+    }
+
+    console.log('Final FormData ready for POST to /api/candidates/' + candidateId)
 
     const res = await fetch(`/api/candidates/${candidateId}`, {
       method: 'PUT',
       body: fd,
       credentials: 'include'
+      // NOTE: Do NOT set Content-Type header - browser will set it with boundary for FormData
     })
 
     if (!res.ok) {
-      console.error('updateCandidateWithFiles failed:', await res.text())
-      throw new Error('updateCandidateWithFiles failed')
+      const errorText = await res.text()
+      console.error('updateCandidateWithFiles failed:', errorText)
+      console.error('Status:', res.status, res.statusText)
+      throw new Error(`updateCandidateWithFiles failed: ${errorText}`)
     }
 
     const jobId = companyStore.activePosition?.id || null
