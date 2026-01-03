@@ -1,12 +1,20 @@
 <script setup>
 import Hero from '@/components/atoms/Hero.vue'
+import { computed } from 'vue'
+import { useCompanyStore } from '@/stores/useCompanyStore'
+
+
+const companyStore = useCompanyStore()
+
+
+const positionName = computed(() => companyStore.activePosition?.name ?? '')
 </script>
 
 <template>
   <div class="heroWrapper">
     <Hero type="hero3" />
     <div class="heroContainer">
-      <h1>Lihme Protein Solutions ApS</h1>
+      <h1 v-if="positionName">{{ positionName }}</h1>
     </div>
   </div>
 </template>

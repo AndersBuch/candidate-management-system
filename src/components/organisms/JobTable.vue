@@ -28,8 +28,9 @@ function goToPageTwo() {
 
 const emit = defineEmits(['open-privacy-modal'])
 
-function onApplyClick() {
-  emit('open-privacy-modal')
+function onApplyClick(row, e) {
+  e?.stopPropagation()
+  emit('open-privacy-modal', { companyId: row.company.id, positionId: row.position.id })
 }
 </script>
 
@@ -75,7 +76,7 @@ function onApplyClick() {
             label="Søg job"
             type="small"
             aria-label="Søg job"
-            @click="onApplyClick"
+            @click="(e) => onApplyClick(row, e)"
           />
         </td>
       </tr>

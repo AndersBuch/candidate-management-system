@@ -9,20 +9,29 @@ import InputField from '@/components/atoms/InputField.vue'
 
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const showModal = ref(false)
 
 const acceptedTerms = ref(false)
 
 const router = useRouter()
+const companyStore = useCompanyStore()
 
-function openPrivacyModal() {
+const pendingCompanyId = ref(null)
+const pendingPositionId = ref(null)
+
+function openPrivacyModal(payload) {
+  pendingCompanyId.value = payload?.companyId ?? null
+  pendingPositionId.value = payload?.positionId ?? null
   showModal.value = true
 }
 
 function closeModal() {
   showModal.value = false
   acceptedTerms.value = false
+  pendingCompanyId.value = null
+  pendingPositionId.value = null
 }
 
 const acceptButtonType = computed(() =>
@@ -31,10 +40,26 @@ const acceptButtonType = computed(() =>
 
 const acceptButtonDisabled = computed(() => !acceptedTerms.value)
 
+
 function onAccept() {
   if (!acceptedTerms.value) return
+
+  // kræv at vi faktisk har et valgt job fra JobTable
+  if (!pendingCompanyId.value || !pendingPositionId.value) return
+
+  // Sæt job i store (så FormComponent kan sende job_id)
+  companyStore.selectPosition(pendingCompanyId.value, pendingPositionId.value)
+
   showModal.value = false
-  router.push('/pagethree')
+
+  // Navigér til ny route med params
+  router.push({
+    name: 'ApplyJob',
+    params: {
+      companyId: pendingCompanyId.value,
+      positionId: pendingPositionId.value
+    }
+  })
 }
 
 const jobTableRef = ref(null)
