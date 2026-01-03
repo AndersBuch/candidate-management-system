@@ -79,12 +79,7 @@ const variantClass = computed(() => (variant === 'danger' ? 'toastDanger' : 'toa
 
             </div>
 
-<Button
-  v-if="showUndo"
-  type="smallDashboard"
-  :label="undoLabel"
-  @click="doUndo"
-/>
+            <Button v-if="showUndo" type="smallDashboard" :label="undoLabel" @click="doUndo" />
         </div>
 
         <div class="toastProgressWrap" aria-hidden>
