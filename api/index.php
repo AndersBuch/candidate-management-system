@@ -15,6 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+
+// Method override: gør det muligt at sende multipart som POST og "lade som" PUT
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $override = $_POST['_method'] ?? $_GET['_method'] ?? null;
+    if ($override) {
+        $override = strtoupper($override);
+        if (in_array($override, ['PUT', 'PATCH', 'DELETE'], true)) {
+            $_SERVER['REQUEST_METHOD'] = $override;
+        }
+    }
+}
+
 $pdo = require __DIR__ . '/config/database.php';
 
 spl_autoload_register(function ($class) {
@@ -77,7 +89,7 @@ switch ($path) {
     case '/candidates':
         $controller = new CandidateController($pdo);
         if ($method === 'GET') {
-            // du kan vælge at holde index() til generel liste eller ikke bruge den
+            
             $controller->index();
         } elseif ($method === 'POST') {
             $controller->store();
@@ -124,16 +136,6 @@ switch ($path) {
         }
         break;
 
-    case '/candidates/deleted':
-        if ($method !== 'GET') {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-            break;
-        }
-        $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
-        $controller = new CandidateController($pdo);
-        $controller->countDeleted($days);
-        break;
 
     case (preg_match('#^/applications/(\d+)/documents$#', $path, $m) ? true : false):
     if ($method !== 'GET') {
@@ -169,9 +171,20 @@ switch ($path) {
         $controller->download((int)$m[1]);
         break;
 
+    case (preg_match('#^/documents/(\d+)/view$#', $path, $m) ? true : false):
+    if ($method !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+    require_once __DIR__ . '/controllers/DocumentController.php';
+    $controller = new DocumentController($pdo);
+    $controller->view((int)$m[1]);
+    break;
+
 
     default:
-        // 👇 NYT: /jobs/{jobId}/candidates
+            //jobs/{jobId}/candidates
         if (preg_match('#^/jobs/(\d+)/candidates$#', $path, $matches)) {
             if ($method !== 'GET') {
                 http_response_code(405);

@@ -13,7 +13,9 @@ const props = defineProps({
   buttonText: { type: String, default: 'Upload filer' },
   accept: { type: String, default: '.pdf, .doc, .docx, .png, .jpg' },
   maxSizeMB: { type: Number, default: 2 },
-  multiple: { type: Boolean, default: false }
+  multiple: { type: Boolean, default: false },
+  existingFiles: { type: Array, default: () => [] },
+  markedForDeletion: { type: Set, default: () => new Set() }
 })
 
 const {
@@ -25,15 +27,18 @@ const {
   buttonText,
   accept,
   maxSizeMB,
-  multiple
+  multiple,
+  existingFiles,
+  markedForDeletion
 } = props
 
 
-const emit = defineEmits(['file-selected', 'error', 'file-removed'])
+const emit = defineEmits(['file-selected', 'error', 'file-removed', 'remove-existing'])
 
 const fileInput = ref(null)
 const dragging = ref(false)
 const files = ref([])
+
 const errorMessage = ref('')
 const inputId = 'upload-input-' + Date.now().toString(36)
 
@@ -119,6 +124,10 @@ function removeFile(index) {
   emit('file-removed', removed)
 }
 
+function removeExistingFile(docId) {
+  emit('remove-existing', docId)
+}
+
 const fileNames = computed(() => files.value.map(f => f.name))
 const stateClass = computed(() => {
   if (errorMessage.value) return 'error'
@@ -147,10 +156,20 @@ const stateClass = computed(() => {
     </div>
 
     <!-- ✔ FILE META LIGGER NU HER -->
-    <div class="fileMeta" v-if="files.length">
-      <div class="fileRow" v-for="(name, index) in fileNames" :key="index">
+    <div class="fileMeta" v-if="files.length || existingFiles.length">
+      <!-- Nye uploads -->
+      <div class="fileRow" v-for="(name, index) in fileNames" :key="`new-${index}`">
         <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
         <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeFile(index)"
+          :iconSize="true" />
+      </div>
+      
+      <!-- Eksisterende filer fra backend -->
+      <div class="fileRow" v-for="doc in existingFiles" :key="`existing-${doc.id}`" :class="{ 'marked-for-deletion': markedForDeletion.has(doc.id) }">
+        <a class="fileLink" :href="`/api/documents/${doc.id}/download`" target="_blank" rel="noopener">
+          {{ doc.file_name }}
+        </a>
+        <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeExistingFile(doc.id)"
           :iconSize="true" />
       </div>
     </div>
@@ -189,6 +208,16 @@ const stateClass = computed(() => {
   min-width: 0; // VIGTIGSTE LINJE!
   max-width: 330px;
   overflow: hidden;
+  transition: opacity 0.2s ease;
+
+  &.marked-for-deletion {
+    opacity: 0.5;
+    
+    .fileLink {
+      text-decoration: line-through;
+      color: $dangerRed;
+    }
+  }
 }
 
 .fileMeta {

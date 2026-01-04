@@ -139,7 +139,7 @@ const handleSaved = () => {
     </section>
 
     <section class="flexContainer flexContainerLeft note">
-      <CandidateDocuments />
+      <CandidateDocuments :applicationId="candidate.applicationId" />
     </section>
 
   </aside>

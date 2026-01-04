@@ -65,8 +65,21 @@ const files = reactive({
   andet: []
 })
 
+/**
+ * ✅ Document IDs marked for deletion (will be deleted on submitForm)
+ */
+const markedForDeletion = ref(new Set())
+
 const hasAnyFiles = computed(() => {
-  return !!files.cv || !!files.photo || !!files.ansogning || (files.andet && files.andet.length > 0)
+  const isFile = (f) => f instanceof File
+  const hasFileInArray = (arr) => Array.isArray(arr) && arr.some(isFile)
+
+  return (
+    isFile(files.cv) ||
+    isFile(files.photo) ||
+    isFile(files.ansogning) ||
+    hasFileInArray(files.andet)
+  )
 })
 
 /**
@@ -101,13 +114,16 @@ const addToast = (toast) => {
 const removeToast = (id) => {
   toasts.value = toasts.value.filter((t) => t.id !== id)
 }
+const docsByKind = (kind) => {
+  if (!documents.value || !Array.isArray(documents.value)) return []
+  return documents.value.filter(d => d.kind === kind)
+}
 
 watch(
   () => props.candidate,
   async (candidate) => {
     if (!candidate) return
 
-    showModal.value = true
     // Support both snake_case (API) and camelCase (mapped) candidate objects
     const get = (a, b, c) => (a !== undefined ? a : (b !== undefined ? b : c))
     const hasValue = (v) => v !== undefined && v !== null && (typeof v !== 'string' || v.trim() !== '')
@@ -170,8 +186,11 @@ watch(
     files.ansogning = null
     files.andet = []
 
-    // Load existing docs
+    // Load existing docs BEFORE showing modal
     await loadDocuments()
+    
+    // NOW show the modal (docs are loaded)
+    showModal.value = true
   },
   { immediate: true }
 )
@@ -247,18 +266,15 @@ const emailErrorMessage = computed(() => {
 })
 
 /**
- * ✅ Remove a single existing document (DB + physical file)
+ * ✅ Mark a document for deletion (will be deleted on submitForm, not immediately)
  */
-const removeDocument = async (docId) => {
-  try {
-    if (!candidateStore.deleteDocument) return
-    await candidateStore.deleteDocument(docId)
-    await loadDocuments()
-    addToast({ title: 'Dokument fjernet', subtitle: 'Filen blev slettet.', variant: 'success' })
-  } catch (err) {
-    console.error('removeDocument error:', err)
-    addToast({ title: 'Fejl', subtitle: 'Kunne ikke slette dokumentet.', variant: 'error' })
-  }
+const removeDocument = (docId) => {
+  markedForDeletion.value.add(docId)
+  // Reload documents to update UI (show marked docs with visual indicator)
+  loadDocuments().catch(err => {
+    console.error('Failed to reload documents:', err)
+  })
+  addToast({ title: 'Markeret til sletning', subtitle: 'Filen slettes når du gemmer.', variant: 'success' })
 }
 
 const submitForm = async () => {
@@ -284,10 +300,33 @@ const submitForm = async () => {
       gender: formData.gender
     }
 
+    // ✅ Delete marked documents FIRST (before upload)
+    for (const docId of markedForDeletion.value) {
+      try {
+        if (candidateStore.deleteDocument) {
+          await candidateStore.deleteDocument(docId)
+        }
+      } catch (err) {
+        console.error(`Failed to delete document ${docId}:`, err)
+        addToast({ 
+          title: 'Fejl', 
+          subtitle: `Kunne ikke slette dokument ${docId}. Fortsætter med upload...`, 
+          variant: 'warning' 
+        })
+      }
+    }
+
     let success = false
 
     if (hasAnyFiles.value && candidateStore.updateCandidateWithFiles) {
-      success = await candidateStore.updateCandidateWithFiles(candidateId, payload, files)
+      // Convert reactive files object to plain object for proper FormData handling
+      const filesObj = {
+        cv: files.cv,
+        ansogning: files.ansogning,
+        photo: files.photo,
+        andet: files.andet && files.andet.length > 0 ? [...files.andet] : []
+      }
+      success = await candidateStore.updateCandidateWithFiles(candidateId, payload, filesObj)
       // refresh doc list after upload
       await loadDocuments()
     } else {
@@ -295,12 +334,17 @@ const submitForm = async () => {
     }
 
     if (success) {
+      // Clear marked for deletion after successful save
+      markedForDeletion.value.clear()
       emit('saved')
       closeModal()
+    } else {
+      addToast({ title: 'Fejl', subtitle: 'Opdateringen mislykkedes. Prøv igen.', variant: 'danger' })
     }
   } catch (err) {
     console.error('submitForm error:', err)
-    addToast({ title: 'Fejl', subtitle: 'Kunne ikke opdatere kandidaten.', variant: 'error' })
+    const errorMsg = err?.message || 'En fejl opstod. Prøv igen.'
+    addToast({ title: 'Fejl', subtitle: errorMsg, variant: 'danger' })
   }
 }
 </script>
@@ -353,33 +397,61 @@ const submitForm = async () => {
       </div>
 
       <div class="uploadeButtons">
-        <UploadButton title="CV" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
-          @file-selected="(f) => handleFile('cv', f)" @error="handleError" @file-removed="(f) => handleRemoved('cv', f)" />
+<div class="uploadItem">
+<UploadButton
+  title="CV"
+  button-text="Upload"
+  accept=".pdf,doc,docx"
+  :multiple="false"
+  :existing-files="docsByKind('CV')"
+  :marked-for-deletion="markedForDeletion"
+  @file-selected="(f) => handleFile('cv', f)"
+  @file-removed="(f) => handleRemoved('cv', f)"
+  @remove-existing="removeDocument"
+/>
+</div>
 
-        <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg,.jpeg" :max-size-mb="2" :multiple="false"
-          @file-selected="(f) => handleFile('photo', f)" @error="handleError"
-          @file-removed="(f) => handleRemoved('photo', f)" />
+<div class="uploadItem">
+  <UploadButton
+    title="Billede"
+    button-text="Upload"
+    accept=".png,.jpg,.jpeg"
+    :multiple="false"
+    :existing-files="docsByKind('Foto')"
+    :marked-for-deletion="markedForDeletion"
+    @file-selected="(f) => handleFile('photo', f)"
+    @file-removed="(f) => handleRemoved('photo', f)"
+    @remove-existing="removeDocument"
+  />
+</div>
 
-        <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,doc,docx,png,jpg,jpeg" :max-size-mb="2"
-          :multiple="true" @file-selected="(f) => handleFile('andet', f)" @error="handleError"
-          @file-removed="(f) => handleRemoved('andet', f)" />
+<div class="uploadItem">
+  <UploadButton
+    title="Andre dokumenter"
+    button-text="Upload"
+    :multiple="true"
+    :existing-files="docsByKind('Andet')"
+    :marked-for-deletion="markedForDeletion"
+    @file-selected="(f) => handleFile('andet', f)"
+    @file-removed="(f) => handleRemoved('andet', f)"
+    @remove-existing="removeDocument"
+  />
+</div>
 
-        <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
-          @file-selected="(f) => handleFile('ansogning', f)" @error="handleError"
-          @file-removed="(f) => handleRemoved('ansogning', f)" />
-      </div>
-
-      <!-- ✅ Existing documents -->
-      <div v-if="documents.length" style="margin-bottom: 20px;">
-        <h3 style="margin-bottom: 10px;">Eksisterende dokumenter</h3>
-
-        <div v-for="d in documents" :key="d.id" style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
-          <span style="min-width:110px;"><strong>{{ d.kind }}</strong></span>
-          <span style="flex:1;">{{ d.file_name }}</span>
-
-          <a :href="`/api/documents/${d.id}/download`" target="_blank" rel="noopener">Download</a>
-          <button type="button" class="iconBtn" @click="removeDocument(d.id)">Fjern</button>
-        </div>
+<div class="uploadItem">
+  <UploadButton
+    title="Ansøgning"
+    button-text="Upload"
+    accept=".pdf,doc,docx"
+    :max-size-mb="2"
+    :multiple="false"
+    :existing-files="docsByKind('Ansøgning')"
+    :marked-for-deletion="markedForDeletion"
+    @file-selected="(f) => handleFile('ansogning', f)"
+    @file-removed="(f) => handleRemoved('ansogning', f)"
+    @remove-existing="removeDocument"
+  />
+</div>
       </div>
 
       <div class="buttonContainer">
@@ -404,6 +476,7 @@ const submitForm = async () => {
 </template>
 
 <style lang="scss">
+
 .toastWrapper {
   position: fixed;
   bottom: 20px;

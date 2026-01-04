@@ -180,10 +180,40 @@ public function store() {
             "application_id" => $applicationId,
             "status" => $data["status"] ?? "Afventer"
         ]);
+    } catch (PDOException $e) {
+        $this->pdo->rollBack();
+
+        $msg = $e->getMessage();
+
+        // Duplicate email (UNIQUE constraint)
+        if (
+            $e->getCode() === '23000' &&
+            stripos($msg, 'duplicate') !== false &&
+            stripos($msg, 'email') !== false
+        ) {
+            http_response_code(409); // 👈 IKKE 500
+            echo json_encode([
+                "error" => "DUPLICATE_EMAIL",
+                "field" => "email",
+                "message" => "Der findes allerede en bruger med denne email."
+            ]);
+            return;
+        }
+
+        // Andre databasefejl
+        http_response_code(500);
+        echo json_encode([
+            "error" => "Database error",
+            "message" => $msg
+        ]);
+
     } catch (Exception $e) {
         $this->pdo->rollBack();
         http_response_code(500);
-        echo json_encode(["error" => "Could not create candidate", "message" => $e->getMessage()]);
+        echo json_encode([
+            "error" => "Could not create candidate",
+            "message" => $e->getMessage()
+        ]);
     }
 }
 
@@ -218,33 +248,6 @@ public function store() {
     }
 
 
-// Hent antal "slettede" kandidater (fx dem med status = 'Rejected') i de sidste X dage
-public function countDeleted($days = 30) {
-    header('Content-Type: application/json; charset=utf-8');
-
-    $days = (int)$days;
-    if ($days < 0) $days = 0;
-
-    try {
-        $sql = "
-            SELECT COUNT(*) as total
-            FROM `candidate`
-            WHERE status = 'Rejected'
-              AND created_at >= DATE_SUB(NOW(), INTERVAL $days DAY)
-        ";
-
-        $stmt = $this->pdo->query($sql);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        echo json_encode(['count' => (int)($result['total'] ?? 0)]);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode([
-            'error' => 'Could not count deleted candidates',
-            'message' => $e->getMessage()
-        ]);
-    }
-}
 
 
     // PATCH /api/candidates/{id}
@@ -287,7 +290,7 @@ public function update($id) {
             ':last_name'    => $data['last_name'] ?? null,
             ':email'        => $data['email'] ?? null,
 
-            // understøt både "phone" (din EditModal) og "phone_number" (DB)
+            // understøt både "phone" (EditModal) og "phone_number" (DB)
             ':phone_number' => $data['phone_number'] ?? ($data['phone'] ?? null),
 
             ':address'      => $data['address'] ?? null,
@@ -362,7 +365,7 @@ public function destroy($id) {
     try {
         $this->pdo->beginTransaction();
 
-        // ✅ Find application IDs for candidate (så vi kan fjerne mapperne bagefter)
+        // Find application IDs for candidate (så vi kan fjerne mapperne bagefter)
         $stmt = $this->pdo->prepare("SELECT id FROM application WHERE candidate_id = ?");
         $stmt->execute([(int)$id]);
         $appIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -381,7 +384,7 @@ public function destroy($id) {
             if ($rel) $this->deleteRelativeFile($rel);
         }
 
-        // ✅ Fjern tomme application-mapper (EFTER filer er slettet)
+        // Fjern tomme application-mapper (EFTER filer er slettet)
         $base = $this->uploadsBasePath(); // /storage/uploads
         foreach ($appIds as $appId) {
             $dir = $base . "/applications/" . (int)$appId;
