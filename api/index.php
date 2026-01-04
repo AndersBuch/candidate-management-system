@@ -136,16 +136,6 @@ switch ($path) {
         }
         break;
 
-    case '/candidates/deleted':
-        if ($method !== 'GET') {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-            break;
-        }
-        $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
-        $controller = new CandidateController($pdo);
-        $controller->countDeleted($days);
-        break;
 
     case (preg_match('#^/applications/(\d+)/documents$#', $path, $m) ? true : false):
     if ($method !== 'GET') {

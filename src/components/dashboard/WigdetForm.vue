@@ -36,7 +36,7 @@ const handleEdit = () => {
         icon="UserWhite" 
         title="Kandidater slettet" 
         subtitle="Antallet fra den seneste uge" 
-        :count="- candidateStatsStore.deletedCandidates" 
+        
       />
     </div>
   </div>
