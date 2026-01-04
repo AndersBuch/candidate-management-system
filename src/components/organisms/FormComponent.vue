@@ -4,12 +4,13 @@ import FormLabel from '@/components/molecules/FormLabel.vue'
 import Button from '@/components/atoms/Button.vue'
 import UploadeBoks from '@/components/molecules/UploadeBoks.vue'
 
-import { reactive, computed, ref } from 'vue'
+import { reactive, computed, ref, } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
 const candidateStore = useCandidateStore()
 const companyStore = useCompanyStore()
+
 
 // Upload state (sendes som multipart/form-data via candidateStore)
 const files = reactive({

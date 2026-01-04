@@ -101,4 +101,46 @@ class DocumentController {
             echo "Download error";
         }
     }
+
+    // GET /api/documents/{id}/view
+    public function view($id) {
+        try {
+            $model = new Document($this->pdo);
+            $doc = $model->getById((int)$id);
+
+            if (!$doc) {
+                http_response_code(404);
+                echo "Not found";
+                return;
+            }
+
+            $base = $this->uploadsBasePath();
+            $full = $base . "/" . ltrim($doc['file_url'], "/");
+
+            $real = realpath($full);
+            $realBase = realpath($base);
+
+            if (!$real || !$realBase || !str_starts_with($real, $realBase) || !is_file($real)) {
+                http_response_code(404);
+                echo "File missing";
+                return;
+            }
+
+            $filename = $doc['file_name'] ?: basename($real);
+
+            // Bedre for PDF i browser
+            header('Content-Type: application/pdf');
+            header('X-Content-Type-Options: nosniff');
+            header('Content-Disposition: inline; filename="' . addslashes($filename) . '"');
+            header('Content-Length: ' . filesize($real));
+
+            readfile($real);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo "View error";
+        }
+    }
+
+
+
 }

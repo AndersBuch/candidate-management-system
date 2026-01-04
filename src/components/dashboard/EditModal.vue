@@ -71,7 +71,15 @@ const files = reactive({
 const markedForDeletion = ref(new Set())
 
 const hasAnyFiles = computed(() => {
-  return !!files.cv || !!files.photo || !!files.ansogning || (files.andet && files.andet.length > 0)
+  const isFile = (f) => f instanceof File
+  const hasFileInArray = (arr) => Array.isArray(arr) && arr.some(isFile)
+
+  return (
+    isFile(files.cv) ||
+    isFile(files.photo) ||
+    isFile(files.ansogning) ||
+    hasFileInArray(files.andet)
+  )
 })
 
 /**

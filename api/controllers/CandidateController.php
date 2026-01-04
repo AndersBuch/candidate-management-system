@@ -287,7 +287,7 @@ public function update($id) {
             ':last_name'    => $data['last_name'] ?? null,
             ':email'        => $data['email'] ?? null,
 
-            // understøt både "phone" (din EditModal) og "phone_number" (DB)
+            // understøt både "phone" (EditModal) og "phone_number" (DB)
             ':phone_number' => $data['phone_number'] ?? ($data['phone'] ?? null),
 
             ':address'      => $data['address'] ?? null,
@@ -362,7 +362,7 @@ public function destroy($id) {
     try {
         $this->pdo->beginTransaction();
 
-        // ✅ Find application IDs for candidate (så vi kan fjerne mapperne bagefter)
+        // Find application IDs for candidate (så vi kan fjerne mapperne bagefter)
         $stmt = $this->pdo->prepare("SELECT id FROM application WHERE candidate_id = ?");
         $stmt->execute([(int)$id]);
         $appIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -381,7 +381,7 @@ public function destroy($id) {
             if ($rel) $this->deleteRelativeFile($rel);
         }
 
-        // ✅ Fjern tomme application-mapper (EFTER filer er slettet)
+        // Fjern tomme application-mapper (EFTER filer er slettet)
         $base = $this->uploadsBasePath(); // /storage/uploads
         foreach ($appIds as $appId) {
             $dir = $base . "/applications/" . (int)$appId;
