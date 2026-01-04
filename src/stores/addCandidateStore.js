@@ -155,27 +155,16 @@ async function addCandidateWithFiles(payload, files) {
     credentials: 'include'
   })
 
-  if (!res.ok) {
-    const text = await res.text()
+if (!res.ok) {
+  const text = await res.text()
+  let data = null
+  try { data = JSON.parse(text) } catch (_) {}
 
-    // 👇 Genkend duplicate email (dit backend-svar indeholder "Duplicate entry" og "email")
-    const isDuplicateEmail =
-      /duplicate entry/i.test(text) && /email/i.test(text)
-
-    if (isDuplicateEmail) {
-      const err = new Error('Der findes allerede en bruger med denne email.')
-      err.code = 'DUPLICATE_EMAIL'
-      err.field = 'email'
-      err.status = res.status
-      err.raw = text
-      throw err
-    }
-
-    const err = new Error('Kunne ikke indsende ansøgning. Prøv igen.')
-    err.status = res.status
-    err.raw = text
-    throw err
-  }
+  const err = new Error(data?.message || 'Kunne ikke indsende ansøgning. Prøv igen.')
+  err.status = res.status
+  err.raw = text
+  throw err
+}
 
   const created = await res.json()
 
@@ -184,9 +173,7 @@ async function addCandidateWithFiles(payload, files) {
 }
 
 
-
-
-  // ✅ Update kandidat + filer (FormData)
+  //  Update kandidat + filer (FormData)
 async function updateCandidateWithFiles(candidateId, payload, files) {
   if (!payload?.application_id) {
     console.warn(

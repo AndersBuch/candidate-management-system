@@ -4,7 +4,7 @@ import FormLabel from '@/components/molecules/FormLabel.vue'
 import Button from '@/components/atoms/Button.vue'
 import UploadeBoks from '@/components/molecules/UploadeBoks.vue'
 
-import { reactive, computed, ref, } from 'vue'
+import { reactive, computed, ref, watch } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 import { useCompanyStore } from '@/stores/useCompanyStore'
 
@@ -54,12 +54,20 @@ const handleNumberInput = (event, maxLength, key) => {
 
 // Simpel emailvalidering
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+const serverEmailError = ref('')
+
+watch(
+  () => formData.email,
+  () => {
+    serverEmailError.value = ''
+  }
+)
 
 const emailErrorMessage = computed(() => {
   if (!formData.touched.email) return ''
   if (formData.email.trim() === '') return 'Email må ikke være tom.'
   if (!isValidEmail(formData.email)) return 'Indtast en gyldig emailadresse med @.'
-  return ''
+  return serverEmailError.value || ''
 })
 
 const hasErrors = computed(() => !!emailErrorMessage.value)
@@ -137,9 +145,17 @@ const submitForm = async () => {
     await candidateStore.addCandidateWithFiles(payload, files)
     submitSuccess.value = true
   } catch (e) {
-    console.error(e)
-    submitError.value = 'Kunne ikke indsende ansøgning. Prøv igen.'
+  // 409 = email findes allerede (backend)
+  if (e?.status === 409) {
+    formData.touched.email = true
+    serverEmailError.value = e.message || 'Der findes allerede en bruger med denne email.'
+    submitError.value = ''
+    return
   }
+
+  console.error(e)
+  submitError.value = 'Kunne ikke indsende ansøgning. Prøv igen.'
+}
 }
 </script>
 
@@ -219,6 +235,7 @@ const submitForm = async () => {
         placeholder="Indtast din email"
         v-model="formData.email"
         :touched="formData.touched.email"
+        :error="!!emailErrorMessage"
         :errorMessage="emailErrorMessage"
         @input="formData.touched.email = true"
         @blur="formData.touched.email = true"

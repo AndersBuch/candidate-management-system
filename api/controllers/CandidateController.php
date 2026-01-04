@@ -180,10 +180,40 @@ public function store() {
             "application_id" => $applicationId,
             "status" => $data["status"] ?? "Afventer"
         ]);
+    } catch (PDOException $e) {
+        $this->pdo->rollBack();
+
+        $msg = $e->getMessage();
+
+        // Duplicate email (UNIQUE constraint)
+        if (
+            $e->getCode() === '23000' &&
+            stripos($msg, 'duplicate') !== false &&
+            stripos($msg, 'email') !== false
+        ) {
+            http_response_code(409); // 👈 IKKE 500
+            echo json_encode([
+                "error" => "DUPLICATE_EMAIL",
+                "field" => "email",
+                "message" => "Der findes allerede en bruger med denne email."
+            ]);
+            return;
+        }
+
+        // Andre databasefejl
+        http_response_code(500);
+        echo json_encode([
+            "error" => "Database error",
+            "message" => $msg
+        ]);
+
     } catch (Exception $e) {
         $this->pdo->rollBack();
         http_response_code(500);
-        echo json_encode(["error" => "Could not create candidate", "message" => $e->getMessage()]);
+        echo json_encode([
+            "error" => "Could not create candidate",
+            "message" => $e->getMessage()
+        ]);
     }
 }
 
