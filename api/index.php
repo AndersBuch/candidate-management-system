@@ -15,6 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+
+// Method override: gør det muligt at sende multipart som POST og "lade som" PUT
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $override = $_POST['_method'] ?? $_GET['_method'] ?? null;
+    if ($override) {
+        $override = strtoupper($override);
+        if (in_array($override, ['PUT', 'PATCH', 'DELETE'], true)) {
+            $_SERVER['REQUEST_METHOD'] = $override;
+        }
+    }
+}
+
 $pdo = require __DIR__ . '/config/database.php';
 
 spl_autoload_register(function ($class) {
@@ -77,7 +89,7 @@ switch ($path) {
     case '/candidates':
         $controller = new CandidateController($pdo);
         if ($method === 'GET') {
-            // du kan vælge at holde index() til generel liste eller ikke bruge den
+            
             $controller->index();
         } elseif ($method === 'POST') {
             $controller->store();
@@ -108,37 +120,71 @@ switch ($path) {
         $controller->countRecent($days);
         break;
 
-case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
-    $controller = new CandidateController($pdo);
-    $id = (int)$m[1];
+    case (preg_match('#^/candidates/(\d+)$#', $path, $m) ? true : false):
+        $controller = new CandidateController($pdo);
+        $id = (int)$m[1];
 
-    if ($method === 'PUT') {
-        $controller->update($id); // brug update-metoden i CandidateController
-    } elseif ($method === 'PATCH') {
-        $controller->updateStatus($id); // opdater status
-    } elseif ($method === 'DELETE') {
-        $controller->destroy($id);
-    } else {
-        http_response_code(405);
-        echo json_encode(["error" => "Method not allowed"]);
-    }
-    break;
+        if ($method === 'PUT') {
+            $controller->update($id); // brug update-metoden i CandidateController
+        } elseif ($method === 'PATCH') {
+            $controller->updateStatus($id); // opdater status
+        } elseif ($method === 'DELETE') {
+            $controller->destroy($id);
+        } else {
+            http_response_code(405);
+            echo json_encode(["error" => "Method not allowed"]);
+        }
+        break;
 
-case '/candidates/deleted':
+
+    case (preg_match('#^/applications/(\d+)/documents$#', $path, $m) ? true : false):
     if ($method !== 'GET') {
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);
         break;
     }
-    $days = isset($_GET['days']) ? (int)$_GET['days'] : 7; // default 7 dage
-    $controller = new CandidateController($pdo);
-    $controller->countDeleted($days);
+    require_once __DIR__ . '/controllers/DocumentController.php';
+    $controller = new DocumentController($pdo);
+    $controller->listByApplication((int)$m[1]);
+    break;
+
+    case (preg_match('#^/documents/(\d+)$#', $path, $m) ? true : false):
+        require_once __DIR__ . '/controllers/DocumentController.php';
+        $controller = new DocumentController($pdo);
+
+        if ($method === 'DELETE') {
+            $controller->delete((int)$m[1]);
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+        }
+        break;
+
+    case (preg_match('#^/documents/(\d+)/download$#', $path, $m) ? true : false):
+        if ($method !== 'GET') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
+        }
+        require_once __DIR__ . '/controllers/DocumentController.php';
+        $controller = new DocumentController($pdo);
+        $controller->download((int)$m[1]);
+        break;
+
+    case (preg_match('#^/documents/(\d+)/view$#', $path, $m) ? true : false):
+    if ($method !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+    require_once __DIR__ . '/controllers/DocumentController.php';
+    $controller = new DocumentController($pdo);
+    $controller->view((int)$m[1]);
     break;
 
 
-
     default:
-        // 👇 NYT: /jobs/{jobId}/candidates
+            //jobs/{jobId}/candidates
         if (preg_match('#^/jobs/(\d+)/candidates$#', $path, $matches)) {
             if ($method !== 'GET') {
                 http_response_code(405);
