@@ -47,13 +47,13 @@ watch(
   margin-bottom: 10px;
 
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 5px;
 
   .titleRow {
     display: flex;
     align-items: center;
-    justify-content: space-between; 
+    justify-content: space-between;
     width: 100%;
   }
 

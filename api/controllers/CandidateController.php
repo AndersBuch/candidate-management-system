@@ -7,7 +7,6 @@ class CandidateController {
         $this->pdo = $pdo;
     }
 
-
     private function requestData(): array {
     $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
     if (stripos($contentType, 'multipart/form-data') !== false) {
@@ -247,19 +246,15 @@ public function store() {
         }
     }
 
+    public function update($id) {
+        header('Content-Type: application/json; charset=utf-8');
 
-
-
-    // PATCH /api/candidates/{id}
-public function update($id) {
-    header('Content-Type: application/json; charset=utf-8');
-
-    $data = $this->requestData();
-    if (!$data) {
-        http_response_code(400);
-        echo json_encode(["error" => "No data received"]);
-        return;
-    }
+        $data = $this->requestData();
+        if (!$data) {
+            http_response_code(400);
+            echo json_encode(["error" => "No data received"]);
+            return;
+        }
 
     // Vi skal kende application_id for at uploade docs til rigtig mappe
     $applicationId = isset($data['application_id']) ? (int)$data['application_id'] : null;

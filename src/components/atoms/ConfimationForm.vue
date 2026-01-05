@@ -7,11 +7,11 @@ import { ref, watch } from 'vue'
 const showModal = ref(false)
 
 const openModal = () => {
-    showModal.value = true
+  showModal.value = true
 }
 
 const closeModal = () => {
-    showModal.value = false
+  showModal.value = false
 }
 
 // Automatisk lukning med 3 sekunders delay
@@ -24,7 +24,7 @@ watch(showModal, (newVal) => {
 })
 
 const thashModal = () => {
-    openModal()
+  openModal()
 }
 </script>
 
@@ -44,48 +44,53 @@ const thashModal = () => {
 
 <style lang="scss">
 .deleteCandidateModal .closeIcon {
-    display: none !important;
+  display: none !important;
 }
 
 .iconBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 
-    &:hover {
-        transform: scale(1.1);
-        opacity: 0.9;
-    }
+  &:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
 }
 
 .kandidateModal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
 }
 
 .kandidateModal p:first-of-type {
-    @include bigBodyText;
+  @include bigBodyText;
 }
 
 .kandidateModal p:last-of-type {
-    @include bodyText;
+  @include bodyText;
 }
 
 /* Fade transition */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
-.fade-enter-to, .fade-leave-from {
+
+.fade-enter-to,
+.fade-leave-from {
   opacity: 1;
   transform: translateY(0);
 }

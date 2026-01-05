@@ -198,6 +198,6 @@ export const useCompanyStore = defineStore('company', () => {
     fetchCompanies,
     fetchCandidatesForPosition,
     addCompany
-    ,hideCandidate, restoreCandidate, deleteCandidate
+    , hideCandidate, restoreCandidate, deleteCandidate
   }
 })

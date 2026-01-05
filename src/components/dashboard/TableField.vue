@@ -6,7 +6,6 @@ import EditModal from '@/components/dashboard/EditModal.vue'
 import { ref, watch, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useCandidateStore } from '@/stores/addCandidateStore'
 
-
 const emit = defineEmits(['statusClick', 'toggle', 'rowClick', 'edit'])
 
 const props = defineProps({
@@ -49,7 +48,6 @@ const rowClass = computed(() =>
   props.index % 2 === 0 ? 'rowEven' : 'rowOdd'
 )
 
-// <-- ÆNDRET: stop propagation her
 function handleClick() {
   emit('rowClick', props.index)
 }
@@ -62,7 +60,6 @@ function onEdit() {
   emit('edit', props.candidateId)
 }
 
-
 const normalizedStatus = computed({
   get() {
     return localStatus.value
@@ -73,21 +70,11 @@ const normalizedStatus = computed({
 })
 </script>
 
-
-
 <template>
-<div
-  class="tableRow"
-  ref="rowRef"
-  :class="[rowClass, { activeRow: isActive }]"
-  @click="handleClick"
->
+  <div class="tableRow" ref="rowRef" :class="[rowClass, { activeRow: isActive }]" @click="handleClick">
     <div class="col colName">
       <div class="avatar">
-        <BasicIconAndLogo
-          :name="isActive ? 'UserWhite' : 'User'"
-          :iconSize="true"
-        />
+        <BasicIconAndLogo :name="isActive ? 'UserWhite' : 'User'" :iconSize="true" />
       </div>
       <div class="nameText">{{ name }}</div>
     </div>
@@ -96,31 +83,16 @@ const normalizedStatus = computed({
     <div class="col colEmail">{{ email }}</div>
 
     <div class="colStatus">
-      <StatusDropdown
-        v-model="normalizedStatus"
-        :is-open="isActive"
-        @toggle="emit('rowClick', index)"
-        @click.stop
-        @update:modelValue="onStatusClick"
-      />
+      <StatusDropdown v-model="normalizedStatus" :is-open="isActive" @toggle="emit('rowClick', index)" @click.stop
+        @update:modelValue="onStatusClick" />
     </div>
 
     <div class="col colActions">
-      <BasicIconAndLogo
-        :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'"
-        :iconSize="true"
-        class="iconBtn linkedin"
-        role="button"
-        tabindex="0"
-        aria-label="LinkedIn"
-        @click.stop="openLinkedin"
-      />
+      <BasicIconAndLogo :name="isActive ? 'LinkinIconWhite' : 'LinkinIcon'" :iconSize="true" class="iconBtn linkedin"
+        role="button" tabindex="0" aria-label="LinkedIn" @click.stop="openLinkedin" />
 
       <div class="notActions">
-        <BasicIconAndLogo
-  name="Edit"
-  @click.stop="onEdit"
-/>
+        <BasicIconAndLogo name="Edit" @click.stop="onEdit" />
 
       </div>
     </div>

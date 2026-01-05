@@ -145,12 +145,8 @@ const stateClass = computed(() => {
           <div class="actions">
             <input ref="fileInput" :id="inputId" class="fileInput" type="file" :accept="props.accept"
               :multiple="props.multiple" @change="onInputChange" />
-              <Button
-                htmlType="button"
-                @click="triggerFileInput"
-                :label="props.buttonText"
-                :aria-label="props.buttonText"
-              />
+            <Button htmlType="button" @click="triggerFileInput" :label="props.buttonText"
+              :aria-label="props.buttonText" />
           </div>
         </div>
       </div>
@@ -159,8 +155,6 @@ const stateClass = computed(() => {
 </template>
 
 <style scoped lang="scss">
-
-
 .uploadBox {
   border: 2px dashed $primaryBlue;
   border-radius: 5px;

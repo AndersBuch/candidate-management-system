@@ -55,9 +55,6 @@ const formData = reactive({
   }
 })
 
-/**
- * ✅ Selected files waiting to be uploaded in this edit session
- */
 const files = reactive({
   cv: null,
   photo: null,
@@ -65,9 +62,6 @@ const files = reactive({
   andet: []
 })
 
-/**
- * ✅ Document IDs marked for deletion (will be deleted on submitForm)
- */
 const markedForDeletion = ref(new Set())
 
 const hasAnyFiles = computed(() => {
@@ -82,9 +76,6 @@ const hasAnyFiles = computed(() => {
   )
 })
 
-/**
- * ✅ Existing documents fetched from backend for this application
- */
 const documents = ref([])
 
 const loadDocuments = async () => {
@@ -99,7 +90,7 @@ const loadDocuments = async () => {
   documents.value = await candidateStore.fetchDocuments(applicationId)
 }
 
-// Toasts (optional)
+// Toasts
 const toasts = ref([])
 const addToast = (toast) => {
   toasts.value.push({
@@ -124,7 +115,6 @@ watch(
   async (candidate) => {
     if (!candidate) return
 
-    // Support both snake_case (API) and camelCase (mapped) candidate objects
     const get = (a, b, c) => (a !== undefined ? a : (b !== undefined ? b : c))
     const hasValue = (v) => v !== undefined && v !== null && (typeof v !== 'string' || v.trim() !== '')
 
@@ -188,7 +178,7 @@ watch(
 
     // Load existing docs BEFORE showing modal
     await loadDocuments()
-    
+
     // NOW show the modal (docs are loaded)
     showModal.value = true
   },
@@ -210,13 +200,10 @@ const closeModal = () => {
   emit('close')
 }
 
-/**
- * ✅ Upload handlers (typed)
- */
 function handleFile(type, fileOrFiles) {
   if (!fileOrFiles) return
 
-  // Hvis UploadButton sender flere filer på én gang (array eller FileList)
+  // Hvis UploadButton sender flere filer på en gang (array eller FileList)
   const list = Array.isArray(fileOrFiles)
     ? fileOrFiles
     : (fileOrFiles instanceof FileList ? Array.from(fileOrFiles) : [fileOrFiles])
@@ -251,8 +238,8 @@ function handleError(e) {
 
 // Funktion der sikrer kun tal og max-længde
 const handleNumberInput = (event, maxLength, key) => {
-  const value = event.target.value.replace(/\D/g, '') // Fjern ikke-tal
-  formData[key] = value.slice(0, maxLength) // Begræns længde
+  const value = event.target.value.replace(/\D/g, '')
+  formData[key] = value.slice(0, maxLength)
 }
 
 // Simpel emailvalidering
@@ -265,12 +252,8 @@ const emailErrorMessage = computed(() => {
   return ''
 })
 
-/**
- * ✅ Mark a document for deletion (will be deleted on submitForm, not immediately)
- */
 const removeDocument = (docId) => {
   markedForDeletion.value.add(docId)
-  // Reload documents to update UI (show marked docs with visual indicator)
   loadDocuments().catch(err => {
     console.error('Failed to reload documents:', err)
   })
@@ -282,7 +265,6 @@ const submitForm = async () => {
     const candidateId = props.candidate.id
     const applicationId = props.candidate?.applicationId ?? props.candidate?.application_id
 
-    // ✅ payload must include application_id (backend needs it for upload paths)
     const payload = {
       application_id: applicationId,
       first_name: formData.name,
@@ -300,7 +282,6 @@ const submitForm = async () => {
       gender: formData.gender
     }
 
-    // ✅ Delete marked documents FIRST (before upload)
     for (const docId of markedForDeletion.value) {
       try {
         if (candidateStore.deleteDocument) {
@@ -308,10 +289,10 @@ const submitForm = async () => {
         }
       } catch (err) {
         console.error(`Failed to delete document ${docId}:`, err)
-        addToast({ 
-          title: 'Fejl', 
-          subtitle: `Kunne ikke slette dokument ${docId}. Fortsætter med upload...`, 
-          variant: 'warning' 
+        addToast({
+          title: 'Fejl',
+          subtitle: `Kunne ikke slette dokument ${docId}. Fortsætter med upload...`,
+          variant: 'warning'
         })
       }
     }
@@ -319,7 +300,6 @@ const submitForm = async () => {
     let success = false
 
     if (hasAnyFiles.value && candidateStore.updateCandidateWithFiles) {
-      // Convert reactive files object to plain object for proper FormData handling
       const filesObj = {
         cv: files.cv,
         ansogning: files.ansogning,
@@ -327,14 +307,12 @@ const submitForm = async () => {
         andet: files.andet && files.andet.length > 0 ? [...files.andet] : []
       }
       success = await candidateStore.updateCandidateWithFiles(candidateId, payload, filesObj)
-      // refresh doc list after upload
       await loadDocuments()
     } else {
       success = await candidateStore.updateCandidate(candidateId, payload)
     }
 
     if (success) {
-      // Clear marked for deletion after successful save
       markedForDeletion.value.clear()
       emit('saved')
       closeModal()
@@ -370,8 +348,8 @@ const submitForm = async () => {
           :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
           @blur="formData.touched.postal = true" />
 
-        <FormDropdown v-model="formData.status" :options="['Kontakt','Afventer','Accepteret','Afvist']" label="Status"
-          :touched="formData.touched.status" @change="onStatusChange" />
+        <FormDropdown v-model="formData.status" :options="['Kontakt', 'Afventer', 'Accepteret', 'Afvist']"
+          label="Status" :touched="formData.touched.status" @change="onStatusChange" />
 
         <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city"
           :touched="formData.touched.city" @blur="formData.touched.city = true" />
@@ -381,8 +359,8 @@ const submitForm = async () => {
           @blur="formData.touched.phone = true" />
 
         <FormField id="linkedin" label="LinkedIn"
-          placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)" v-model="formData.linkedin"
-          :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
+          placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
+          v-model="formData.linkedin" :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
         <FormLabel v-model="formData.gender" />
 
@@ -397,61 +375,33 @@ const submitForm = async () => {
       </div>
 
       <div class="uploadeButtons">
-<div class="uploadItem">
-<UploadButton
-  title="CV"
-  button-text="Upload"
-  accept=".pdf,doc,docx"
-  :multiple="false"
-  :existing-files="docsByKind('CV')"
-  :marked-for-deletion="markedForDeletion"
-  @file-selected="(f) => handleFile('cv', f)"
-  @file-removed="(f) => handleRemoved('cv', f)"
-  @remove-existing="removeDocument"
-/>
-</div>
+        <div class="uploadItem">
+          <UploadButton title="CV" button-text="Upload" accept=".pdf,doc,docx" :multiple="false"
+            :existing-files="docsByKind('CV')" :marked-for-deletion="markedForDeletion"
+            @file-selected="(f) => handleFile('cv', f)" @file-removed="(f) => handleRemoved('cv', f)"
+            @remove-existing="removeDocument" />
+        </div>
 
-<div class="uploadItem">
-  <UploadButton
-    title="Billede"
-    button-text="Upload"
-    accept=".png,.jpg,.jpeg"
-    :multiple="false"
-    :existing-files="docsByKind('Foto')"
-    :marked-for-deletion="markedForDeletion"
-    @file-selected="(f) => handleFile('photo', f)"
-    @file-removed="(f) => handleRemoved('photo', f)"
-    @remove-existing="removeDocument"
-  />
-</div>
+        <div class="uploadItem">
+          <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg,.jpeg" :multiple="false"
+            :existing-files="docsByKind('Foto')" :marked-for-deletion="markedForDeletion"
+            @file-selected="(f) => handleFile('photo', f)" @file-removed="(f) => handleRemoved('photo', f)"
+            @remove-existing="removeDocument" />
+        </div>
 
-<div class="uploadItem">
-  <UploadButton
-    title="Andre dokumenter"
-    button-text="Upload"
-    :multiple="true"
-    :existing-files="docsByKind('Andet')"
-    :marked-for-deletion="markedForDeletion"
-    @file-selected="(f) => handleFile('andet', f)"
-    @file-removed="(f) => handleRemoved('andet', f)"
-    @remove-existing="removeDocument"
-  />
-</div>
+        <div class="uploadItem">
+          <UploadButton title="Andre dokumenter" button-text="Upload" :multiple="true"
+            :existing-files="docsByKind('Andet')" :marked-for-deletion="markedForDeletion"
+            @file-selected="(f) => handleFile('andet', f)" @file-removed="(f) => handleRemoved('andet', f)"
+            @remove-existing="removeDocument" />
+        </div>
 
-<div class="uploadItem">
-  <UploadButton
-    title="Ansøgning"
-    button-text="Upload"
-    accept=".pdf,doc,docx"
-    :max-size-mb="2"
-    :multiple="false"
-    :existing-files="docsByKind('Ansøgning')"
-    :marked-for-deletion="markedForDeletion"
-    @file-selected="(f) => handleFile('ansogning', f)"
-    @file-removed="(f) => handleRemoved('ansogning', f)"
-    @remove-existing="removeDocument"
-  />
-</div>
+        <div class="uploadItem">
+          <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
+            :existing-files="docsByKind('Ansøgning')" :marked-for-deletion="markedForDeletion"
+            @file-selected="(f) => handleFile('ansogning', f)" @file-removed="(f) => handleRemoved('ansogning', f)"
+            @remove-existing="removeDocument" />
+        </div>
       </div>
 
       <div class="buttonContainer">
@@ -462,21 +412,12 @@ const submitForm = async () => {
   </transition>
 
   <div class="toastWrapper">
-    <Toast
-      v-for="t in toasts"
-      :key="t.id"
-      :title="t.title"
-      :subtitle="t.subtitle"
-      :variant="t.variant"
-      :duration="t.duration"
-      :showUndo="t.showUndo"
-      @close="removeToast(t.id)"
-    />
+    <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
+      :duration="t.duration" :showUndo="t.showUndo" @close="removeToast(t.id)" />
   </div>
 </template>
 
 <style lang="scss">
-
 .toastWrapper {
   position: fixed;
   bottom: 20px;
@@ -544,11 +485,13 @@ const submitForm = async () => {
 .fade-leave-active {
   transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
+
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;

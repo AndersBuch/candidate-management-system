@@ -226,192 +226,78 @@ async function confirmAdd() {
 </script>
 
 <template>
-  <Button
-    type="dashboardPrimary"
-    label="Tilføj kandidat"
-    aria-label="Tilføj kandidat"
-    :showIcon="true"
-    iconName="AddPerson"
-    @click="openModal"
-  />
+  <Button type="dashboardPrimary" label="Tilføj kandidat" aria-label="Tilføj kandidat" :showIcon="true"
+    iconName="AddPerson" @click="openModal" />
 
   <transition name="fade">
-    <Modal
-      v-if="showModal"
-      modalTitle="Tilføj kandidat"
-      titleAlign="left"
-      @close="closeModal"
-      height="900px"
-    >
+    <Modal v-if="showModal" modalTitle="Tilføj kandidat" titleAlign="left" @close="closeModal" height="900px">
       <div class="formGrid">
-        <FormField
-          id="name"
-          label="Fornavn"
-          placeholder="Fornavn"
-          v-model="formData.name"
-          :touched="formData.touched.name"
-          @blur="formData.touched.name = true"
-        />
+        <FormField id="name" label="Fornavn" placeholder="Fornavn" v-model="formData.name"
+          :touched="formData.touched.name" @blur="formData.touched.name = true" />
 
-        <FormField
-          id="lastname"
-          label="Efternavn"
-          placeholder="Efternavn"
-          v-model="formData.lastname"
-          :touched="formData.touched.lastname"
-          @blur="formData.touched.lastname = true"
-        />
+        <FormField id="lastname" label="Efternavn" placeholder="Efternavn" v-model="formData.lastname"
+          :touched="formData.touched.lastname" @blur="formData.touched.lastname = true" />
 
-        <FormField
-          id="email"
-          label="Email"
-          placeholder="Indtast din email"
-          v-model="formData.email"
-          :error="!!emailErrorMessage"
-          :touched="formData.touched.email"
-          :error-message="emailErrorMessage"
-          @input="formData.touched.email = true"
-          @blur="formData.touched.email = true"
-        />
+        <FormField id="email" label="Email" placeholder="Indtast din email" v-model="formData.email"
+          :error="!!emailErrorMessage" :touched="formData.touched.email" :error-message="emailErrorMessage"
+          @input="formData.touched.email = true" @blur="formData.touched.email = true" />
 
-        <FormField
-          id="address"
-          label="Adresse"
-          placeholder="Adresse"
-          v-model="formData.address"
-          :touched="formData.touched.address"
-          @blur="formData.touched.address = true"
-        />
+        <FormField id="address" label="Adresse" placeholder="Adresse" v-model="formData.address"
+          :touched="formData.touched.address" @blur="formData.touched.address = true" />
 
-        <FormField
-          id="postal"
-          label="Postnummer"
-          placeholder="Postnummer"
-          fieldType="text"
-          v-model="formData.postal"
-          :touched="formData.touched.postal"
-          @input="handleNumberInput($event, 4, 'postal')"
-          @blur="formData.touched.postal = true"
-        />
+        <FormField id="postal" label="Postnummer" placeholder="Postnummer" fieldType="text" v-model="formData.postal"
+          :touched="formData.touched.postal" @input="handleNumberInput($event, 4, 'postal')"
+          @blur="formData.touched.postal = true" />
 
-        <FormDropdown
-          v-model="formData.status"
-          :options="statusOptions"
-          label="Status"
-          :touched="formData.touched.status"
-        />
+        <FormDropdown v-model="formData.status" :options="statusOptions" label="Status"
+          :touched="formData.touched.status" />
 
-        <FormField
-          id="city"
-          label="By"
-          placeholder="Indtast by"
-          v-model="formData.city"
-          :touched="formData.touched.city"
-          @blur="formData.touched.city = true"
-        />
+        <FormField id="city" label="By" placeholder="Indtast by" v-model="formData.city"
+          :touched="formData.touched.city" @blur="formData.touched.city = true" />
 
-        <FormField
-          id="phone"
-          label="Telefon"
-          placeholder="Indtast telefon"
-          fieldType="text"
-          v-model="formData.phone"
-          :touched="formData.touched.phone"
-          @input="handleNumberInput($event, 10, 'phone')"
-          @blur="formData.touched.phone = true"
-        />
+        <FormField id="phone" label="Telefon" placeholder="Indtast telefon" fieldType="text" v-model="formData.phone"
+          :touched="formData.touched.phone" @input="handleNumberInput($event, 10, 'phone')"
+          @blur="formData.touched.phone = true" />
 
-        <FormField
-          id="linkedin"
-          label="LinkedIn"
+        <FormField id="linkedin" label="LinkedIn"
           placeholder="Indtast din LinkedIn-profil (fx https://www.linkedin.com/in/dit-navn)"
-          v-model="formData.linkedin"
-          :touched="formData.touched.linkedin"
-          @blur="formData.touched.linkedin = true"
-        />
+          v-model="formData.linkedin" :touched="formData.touched.linkedin" @blur="formData.touched.linkedin = true" />
 
         <FormLabel v-model="formData.gender" />
 
-        <FormField
-          id="age"
-          label="Alder"
-          placeholder="Alder"
-          v-model="formData.age"
-          :touched="formData.touched.age"
-          @input="handleNumberInput($event, 2, 'age')"
-          @blur="formData.touched.age = true"
-        />
+        <FormField id="age" label="Alder" placeholder="Alder" v-model="formData.age" :touched="formData.touched.age"
+          @input="handleNumberInput($event, 2, 'age')" @blur="formData.touched.age = true" />
 
-        <FormField
-          id="company"
-          label="Nuværende virksomhed"
-          placeholder="Nuværende virksomhed"
-          v-model="formData.company"
-          :touched="formData.touched.company"
-          @blur="formData.touched.company = true"
-        />
+        <FormField id="company" label="Nuværende virksomhed" placeholder="Nuværende virksomhed"
+          v-model="formData.company" :touched="formData.touched.company" @blur="formData.touched.company = true" />
 
-        <FormField
-          id="message"
-          label="Noter"
-          placeholder="Noter"
-          v-model="formData.message"
-          :touched="formData.touched.message"
-          @blur="formData.touched.message = true"
-        />
+        <FormField id="message" label="Noter" placeholder="Noter" v-model="formData.message"
+          :touched="formData.touched.message" @blur="formData.touched.message = true" />
       </div>
 
       <div class="uploadeButtons">
         <div class="uploadItem">
-          <UploadButton
-            title="CV"
-            button-text="Upload"
-            accept=".pdf,doc,docx"
-            :max-size-mb="2"
-            :multiple="false"
-            @file-selected="(f) => handleFile('cv', f)"
-            @error="handleError"
-            @file-removed="(f) => handleRemoved('cv', f)"
-          />
+          <UploadButton title="CV" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
+            @file-selected="(f) => handleFile('cv', f)" @error="handleError"
+            @file-removed="(f) => handleRemoved('cv', f)" />
         </div>
 
         <div class="uploadItem">
-          <UploadButton
-            title="Billede"
-            button-text="Upload"
-            accept=".png,.jpg,.jpeg"
-            :max-size-mb="2"
-            :multiple="false"
-            @file-selected="(f) => handleFile('photo', f)"
-            @error="handleError"
-            @file-removed="(f) => handleRemoved('photo', f)"
-          />
+          <UploadButton title="Billede" button-text="Upload" accept=".png,.jpg,.jpeg" :max-size-mb="2" :multiple="false"
+            @file-selected="(f) => handleFile('photo', f)" @error="handleError"
+            @file-removed="(f) => handleRemoved('photo', f)" />
         </div>
 
         <div class="uploadItem">
-          <UploadButton
-            title="Andre dokumenter"
-            button-text="Upload"
-            accept=".pdf,doc,docx,png,jpg,jpeg"
-            :max-size-mb="2"
-            :multiple="true"
-            @file-selected="(f) => handleFile('andet', f)"
-            @error="handleError"
-            @file-removed="(f) => handleRemoved('andet', f)"
-          />
+          <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,doc,docx,png,jpg,jpeg"
+            :max-size-mb="2" :multiple="true" @file-selected="(f) => handleFile('andet', f)" @error="handleError"
+            @file-removed="(f) => handleRemoved('andet', f)" />
         </div>
 
         <div class="uploadItem">
-          <UploadButton
-            title="Ansøgning"
-            button-text="Upload"
-            accept=".pdf,doc,docx"
-            :max-size-mb="2"
-            :multiple="false"
-            @file-selected="(f) => handleFile('ansogning', f)"
-            @error="handleError"
-            @file-removed="(f) => handleRemoved('ansogning', f)"
-          />
+          <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
+            @file-selected="(f) => handleFile('ansogning', f)" @error="handleError"
+            @file-removed="(f) => handleRemoved('ansogning', f)" />
         </div>
       </div>
 
@@ -423,17 +309,8 @@ async function confirmAdd() {
   </transition>
 
   <div class="toastWrapper">
-    <Toast
-      v-for="t in toasts"
-      :key="t.id"
-      :title="t.title"
-      :subtitle="t.subtitle"
-      :variant="t.variant"
-      :duration="t.duration"
-      :showUndo="t.showUndo"
-      @close="removeToast(t.id)"
-      @undo="handleUndo"
-    />
+    <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
+      :duration="t.duration" :showUndo="t.showUndo" @close="removeToast(t.id)" @undo="handleUndo" />
   </div>
 </template>
 
@@ -489,11 +366,13 @@ async function confirmAdd() {
 .fade-leave-active {
   transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
+
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;

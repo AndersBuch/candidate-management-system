@@ -22,7 +22,6 @@ onMounted(() => {
 
 <template>
   <aside class="sideMenu">
-    <!-- Logo / top -->
     <div class="logoArea">
       <BasicIconAndLogo name="MainLogo" :large="true" />
     </div>
@@ -54,10 +53,10 @@ onMounted(() => {
           :class="{ activeCompanySection: company.id === activeCompanyId }">
           <div class="menuSectionInner">
             <RouterLink to="/dashboardsite" v-slot="{ isActive }">
-            <button class="companyButton" @click="selectCompany(company.id)">
-              <BasicIconAndLogo name="Box" :iconSize="true" />
-              <span class="companyName">{{ company.name }}</span>
-            </button>
+              <button class="companyButton" @click="selectCompany(company.id)">
+                <BasicIconAndLogo name="Box" :iconSize="true" />
+                <span class="companyName">{{ company.name }}</span>
+              </button>
             </RouterLink>
           </div>
 
@@ -228,6 +227,7 @@ onMounted(() => {
 }
 
 .companyItem.activeCompanySection {
+
   .companyButton,
   .positionButton,
   .companyName,
@@ -237,6 +237,7 @@ onMounted(() => {
 }
 
 .companyItem.activeCompanySection {
+
   .companyButton :deep(path),
   .companyButton :deep(circle),
   .companyButton :deep(rect),

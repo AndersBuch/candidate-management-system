@@ -32,9 +32,9 @@ const props = defineProps({
     default: '',
   },
   htmlType: {
-  type: String,
-  default: null, // vigtig: default = null så vi ikke ændrer eksisterende adfærd
-},
+    type: String,
+    default: null, // vigtig: default = null så vi ikke ændrer eksisterende adfærd
+  },
 })
 
 const emit = defineEmits(['click'])

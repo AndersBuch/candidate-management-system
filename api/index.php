@@ -1,7 +1,7 @@
 <?php
 
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // IMPORTANT on live
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
 }
-
 
 // Method override: gør det muligt at sende multipart som POST og "lade som" PUT
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -181,7 +180,6 @@ switch ($path) {
     $controller = new DocumentController($pdo);
     $controller->view((int)$m[1]);
     break;
-
 
     default:
             //jobs/{jobId}/candidates

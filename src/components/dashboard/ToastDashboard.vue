@@ -65,7 +65,6 @@ const variantClass = computed(() => (variant === 'danger' ? 'toastDanger' : 'toa
         <div class="toastInner">
             <div class="toastIcon" aria-hidden>
                 <template v-if="variant === 'danger'">
-                    <!-- trash / danger icon -->
                     <BasicIconAndLogo name="Thash" :iconSize="true" />
                 </template>
                 <template v-else>
@@ -76,7 +75,6 @@ const variantClass = computed(() => (variant === 'danger' ? 'toastDanger' : 'toa
             <div class="toastText">
                 <div class="toastTitle">{{ title }}</div>
                 <div class="toastSubtitle" v-if="subtitle">{{ subtitle }}</div>
-
             </div>
 
             <Button v-if="showUndo" type="smallDashboard" :label="undoLabel" @click="doUndo" />
