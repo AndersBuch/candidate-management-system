@@ -32,7 +32,6 @@ const {
   markedForDeletion
 } = props
 
-
 const emit = defineEmits(['file-selected', 'error', 'file-removed', 'remove-existing'])
 
 const fileInput = ref(null)
@@ -139,13 +138,11 @@ const stateClass = computed(() => {
 <template>
   <div class="uploadeButtonRoot">
 
-    <!-- Titel -->
     <div class="UploadTitle">
       <h3>{{ title }}</h3>
       <p v-if="errorMessage" class="uploadError">{{ errorMessage }}</p>
     </div>
 
-    <!-- Upload-knap -->
     <div class="uploadButton" :class="[stateClass, { dragging }]" @drop="onDrop" @dragover="onDragOver"
       @dragleave="onDragLeave">
       <div class="actions">
@@ -155,17 +152,15 @@ const stateClass = computed(() => {
       </div>
     </div>
 
-    <!-- ✔ FILE META LIGGER NU HER -->
     <div class="fileMeta" v-if="files.length || existingFiles.length">
-      <!-- Nye uploads -->
       <div class="fileRow" v-for="(name, index) in fileNames" :key="`new-${index}`">
         <a class="fileLink" href="#" @click.prevent>{{ name }}</a>
         <BasicIconAndLogo class="basicIconAndLogo" name="CloseGrey" @click.prevent="removeFile(index)"
           :iconSize="true" />
       </div>
-      
-      <!-- Eksisterende filer fra backend -->
-      <div class="fileRow" v-for="doc in existingFiles" :key="`existing-${doc.id}`" :class="{ 'marked-for-deletion': markedForDeletion.has(doc.id) }">
+
+      <div class="fileRow" v-for="doc in existingFiles" :key="`existing-${doc.id}`"
+        :class="{ 'marked-for-deletion': markedForDeletion.has(doc.id) }">
         <a class="fileLink" :href="`/api/documents/${doc.id}/download`" target="_blank" rel="noopener">
           {{ doc.file_name }}
         </a>
@@ -183,7 +178,6 @@ const stateClass = computed(() => {
 }
 
 .UploadTitle {
-  //lavet
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -205,14 +199,14 @@ const stateClass = computed(() => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-width: 0; // VIGTIGSTE LINJE!
+  min-width: 0;
   max-width: 330px;
   overflow: hidden;
   transition: opacity 0.2s ease;
 
   &.marked-for-deletion {
     opacity: 0.5;
-    
+
     .fileLink {
       text-decoration: line-through;
       color: $dangerRed;
@@ -222,7 +216,7 @@ const stateClass = computed(() => {
 
 .fileMeta {
   display: flex;
-  flex-direction: column; // ⬅ hver fil på en ny linje
+  flex-direction: column;
   gap: 8px;
 
   .fileLink {
@@ -259,9 +253,9 @@ const stateClass = computed(() => {
 }
 
 .uploadError {
-  color: $dangerRed; // rød farve til fejl
-  @include bodyText; // lidt mindre end h3
-  margin-top: 4px; // afstand mellem titel og fejl
+  color: $dangerRed; 
+  @include bodyText; 
+  margin-top: 4px; 
 }
 
 .uploadButton.dragging {
@@ -274,13 +268,11 @@ const stateClass = computed(() => {
   background: rgba($primaryBlue, 0.2);
 }
 
-/* når boksen er i error-tilstand men brugeren trækker */
 .uploadButton.error.dragging {
   border-color: $dangerRed;
   background: rgba($dangerRed, 0.2);
 }
 
-/* når boksen er i success-tilstand men brugeren trækker */
 .uploadButton.success.dragging {
   border-color: $goodGreen;
   background: rgba($goodGreen, 0.2);

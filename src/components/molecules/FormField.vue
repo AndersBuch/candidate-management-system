@@ -33,17 +33,15 @@ const isError = computed(() => props.error && props.touched)
     <label :for="id" :class="{ errorLabel: isError }">{{ label }}</label>
 
     <div class="inputWrapper">
-      <!-- Hvis der er slot, brug den -->
       <slot v-if="$slots.default"></slot>
 
-      <!-- Ellers default input -->
       <textarea v-if="fieldType === 'textarea'" :id="id" :placeholder="placeholder" v-model="localValue"
         @blur="emit('blur')" :maxlength="150" :class="['textareaField', { hasValue }]"></textarea>
 
-      <input v-else :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id" :placeholder="placeholder"
-        v-model="localValue" @blur="emit('blur')" :class="{ errorField: isError, hasValue: hasValue }" />
+      <input v-else :type="showToggle ? (showPassword ? 'text' : 'password') : fieldType" :id="id"
+        :placeholder="placeholder" v-model="localValue" @blur="emit('blur')"
+        :class="{ errorField: isError, hasValue: hasValue }" />
 
-      <!-- Eye / EyeOff ikon -->
       <button v-if="showToggle" type="button" class="eyeToggle" @click="showPassword = !showPassword">
         <BasicIconAndLogo :name="showPassword ? 'Eye' : 'EyeOff'" :iconSize="true" />
       </button>

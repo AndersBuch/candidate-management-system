@@ -47,19 +47,14 @@ const handleCandidateDeleted = () => {
 }
 
 const handleSaved = () => {
-  console.log('✅ ExtendedCandidateInfo handleSaved triggered, emitting saved')
   showEditModal.value = false
   emit('saved')
 }
-
-
 </script>
 
 <template>
 
-<aside class="exstendedCandidateContainer" ref="rootRef" @click.stop @pointerdown.stop>
-
-
+  <aside class="exstendedCandidateContainer" ref="rootRef" @click.stop @pointerdown.stop>
     <section class="flexContainer flexContainerCenter">
       <BasicIconAndLogo name="User" :iconSize="true" />
       <h2 class="adminName">Claus Bjerring - Admin</h2>
@@ -68,50 +63,21 @@ const handleSaved = () => {
     <div class="divider"></div>
 
     <section class="flexContainer flexContainerCenter">
-<div class="iconContainer">
-  <!-- EDIT IKON -->
-  <BasicIconAndLogo
-    name="Edit"
-    :iconSize="true"
-    @click="openEditModal"
-  />
-
-  <!-- DELETE IKON -->
-  <BasicIconAndLogo
-    name="Thash"
-    :iconSize="true"
-    @click="openDeleteModal"
-  />
-</div>
-      <img
-        class="profilePicture"
-        src="/img/TestProfilePicture.jpg"
-        alt="Candidate profile picture"
-      />
+      <div class="iconContainer">
+        <BasicIconAndLogo name="Edit" :iconSize="true" @click="openEditModal" />
+        <BasicIconAndLogo name="Thash" :iconSize="true" @click="openDeleteModal" />
+      </div>
+      <img class="profilePicture" src="/img/TestProfilePicture.jpg" alt="Candidate profile picture" />
       <h3 class="candidateName">
         {{ candidate.firstName }} {{ candidate.lastName }}
       </h3>
-      <BasicIconAndLogo
-        name="LinkinIcon"
-        :iconSize="true"
-        v-if="candidate.linkedin"
-      />
+      <BasicIconAndLogo name="LinkinIcon" :iconSize="true" v-if="candidate.linkedin" />
 
-      <EditModal
-  v-if="showEditModal"
-  :candidate="candidate"
-  @close="showEditModal = false"
-  @saved="handleSaved"
-/>
+      <EditModal v-if="showEditModal" :candidate="candidate" @close="showEditModal = false" @saved="handleSaved" />
 
-<DeleteModal
-  v-if="showDeleteModal"
-  :candidateId="candidate.id"
-  :showTrigger="false"
-  @close="showDeleteModal = false"
-  @confirm="() => { emit('deleteRequested', candidate.id); showDeleteModal = false }"
-/>
-
+      <DeleteModal v-if="showDeleteModal" :candidateId="candidate.id" :showTrigger="false"
+        @close="showDeleteModal = false"
+        @confirm="() => { emit('deleteRequested', candidate.id); showDeleteModal = false }" />
     </section>
 
     <div class="divider"></div>
@@ -146,15 +112,14 @@ const handleSaved = () => {
 </template>
 
 <style scoped lang="scss">
-
-  .toastWrapper {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
+.toastWrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
 }
 
 .exstendedCandidateContainer {
@@ -228,7 +193,6 @@ const handleSaved = () => {
 .infoGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* 2 kolonner */
   column-gap: 40px;
   row-gap: 24px;
 }

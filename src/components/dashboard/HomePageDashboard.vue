@@ -6,8 +6,8 @@ import WigdetForm from '@/components/dashboard/WigdetForm.vue'
 import WigdetShortcut from '@/components/dashboard/WigdetShortcut.vue'
 
 import { ref } from 'vue'
-const searchTerm = ref('')
 
+const searchTerm = ref('')
 </script>
 
 <template>

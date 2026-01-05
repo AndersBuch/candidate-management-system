@@ -124,14 +124,13 @@ function handleCandidateDeleted() {
 }
 
 function handleSaved() {
-  console.log('✅ DashboardSite handleSaved triggered, showing toast')
   toasts.value.push({
     id: Date.now(),
     title: 'Kandidat opdateret',
     subtitle: 'Ændringerne blev gemt korrekt',
     variant: 'success',
     duration: 3000,
-    showUndo: false 
+    showUndo: false
   })
 }
 
@@ -156,26 +155,18 @@ onBeforeUnmount(() => {
 
     <section ref="dashboardRef" class="dashboardContentWrapper">
       <DashboardHeader />
-      <Tableform
-  :active-index="activeIndex"
-  @openCandidate="openCandidate"
-/>
+      <Tableform :active-index="activeIndex" @openCandidate="openCandidate" />
     </section>
 
-<Transition name="slide-right">
-  <ExtendedCandidateInfo
-    v-if="extendedCandidate"
-    ref="extendedRef"
-    :candidate="extendedCandidate"
-    @candidateDeleted="handleCandidateDeleted"
-    @deleteRequested="requestDelete"
-    @saved="handleSaved"
-  />
-</Transition>
+    <Transition name="slide-right">
+      <ExtendedCandidateInfo v-if="extendedCandidate" ref="extendedRef" :candidate="extendedCandidate"
+        @candidateDeleted="handleCandidateDeleted" @deleteRequested="requestDelete" @saved="handleSaved" />
+    </Transition>
 
-<div class="toastWrapper">
-  <Toast v-for="t in toasts" :key="t.id" :showUndo="t.showUndo" v-bind="t" @close="removeToast" @undo="undoDelete" />
-</div>
+    <div class="toastWrapper">
+      <Toast v-for="t in toasts" :key="t.id" :showUndo="t.showUndo" v-bind="t" @close="removeToast"
+        @undo="undoDelete" />
+    </div>
 
   </div>
 </template>

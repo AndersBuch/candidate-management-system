@@ -23,7 +23,6 @@ const showModal = ref(false)
 
 const emit = defineEmits(['close', 'confirm'])
 
-
 const openModal = () => {
     showModal.value = true
 }
@@ -43,13 +42,10 @@ onMounted(() => {
     }
 })
 
-
 function confirmDelete() {
-  emit('confirm', props.candidateId)
-  emit('close')
+    emit('confirm', props.candidateId)
+    emit('close')
 }
-
-
 </script>
 
 <template>
@@ -98,12 +94,10 @@ function confirmDelete() {
     gap: 3px;
 }
 
-/* Første <p> */
 .kandidateModal p:first-of-type {
     @include bigBodyText;
 }
 
-/* Andet <p> */
 .kandidateModal p:last-of-type {
     @include bodyText;
 }
