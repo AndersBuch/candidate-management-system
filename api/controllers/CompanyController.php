@@ -61,7 +61,6 @@ class CompanyController
         exit;
     }
 
-
     return $user;
 }
 private function base64url_encode($data) {
@@ -71,7 +70,5 @@ private function base64url_encode($data) {
 private function base64url_decode($data) {
     return base64_decode(strtr($data, '-_', '+/'));
 }
-
-
 
 }

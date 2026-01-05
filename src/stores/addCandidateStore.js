@@ -45,6 +45,7 @@ export const useCandidateStore = defineStore('candidate', () => {
   }
 
   // Opdater status på kandidat (application)
+
   async function updateStatus(applicationId, newStatus) {
     try {
       const url = `/api/candidates/${applicationId}`
@@ -127,95 +128,94 @@ export const useCandidateStore = defineStore('candidate', () => {
     }
   }
 
+  async function addCandidateWithFiles(payload, files) {
+    const jobId = companyStore.activePosition?.id || null
 
-async function addCandidateWithFiles(payload, files) {
-  const jobId = companyStore.activePosition?.id || null
+    const fd = new FormData()
 
-  const fd = new FormData()
+    Object.entries({
+      ...payload,
+      status: payload.status,
+      job_id: jobId
+    }).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) fd.append(k, v)
+    })
 
-  Object.entries({
-    ...payload,
-    status: payload.status,
-    job_id: jobId
-  }).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) fd.append(k, v)
-  })
+    if (files?.cv) fd.append('cv', files.cv)
+    if (files?.ansogning) fd.append('ansogning', files.ansogning)
+    if (files?.photo) fd.append('photo', files.photo)
 
-  if (files?.cv) fd.append('cv', files.cv)
-  if (files?.ansogning) fd.append('ansogning', files.ansogning)
-  if (files?.photo) fd.append('photo', files.photo)
+    if (files?.andet?.length) {
+      files.andet.forEach((f) => fd.append('andet[]', f))
+    }
 
-  if (files?.andet?.length) {
-    files.andet.forEach((f) => fd.append('andet[]', f))
+    const res = await fetch('/api/candidates', {
+      method: 'POST',
+      body: fd,
+      credentials: 'include'
+    })
+
+    if (!res.ok) {
+      const text = await res.text()
+      let data = null
+      try { data = JSON.parse(text) } catch (_) { }
+
+      const err = new Error(data?.message || 'Kunne ikke indsende ansøgning. Prøv igen.')
+      err.status = res.status
+      err.raw = text
+      throw err
+    }
+
+    const created = await res.json()
+
+    if (jobId) await companyStore.fetchCandidatesForPosition(jobId)
+    return created
   }
-
-  const res = await fetch('/api/candidates', {
-    method: 'POST',
-    body: fd,
-    credentials: 'include'
-  })
-
-if (!res.ok) {
-  const text = await res.text()
-  let data = null
-  try { data = JSON.parse(text) } catch (_) {}
-
-  const err = new Error(data?.message || 'Kunne ikke indsende ansøgning. Prøv igen.')
-  err.status = res.status
-  err.raw = text
-  throw err
-}
-
-  const created = await res.json()
-
-  if (jobId) await companyStore.fetchCandidatesForPosition(jobId)
-  return created
-}
-
 
   //  Update kandidat + filer (FormData)
-async function updateCandidateWithFiles(candidateId, payload, files) {
-  if (!payload?.application_id) {
-    console.warn(
-      'updateCandidateWithFiles: payload.application_id mangler. Dokument-upload kan ikke placeres korrekt.'
-    )
-  }
 
-  const fd = new FormData()
+  async function updateCandidateWithFiles(candidateId, payload, files) {
+    if (!payload?.application_id) {
+      console.warn(
+        'updateCandidateWithFiles: payload.application_id mangler. Dokument-upload kan ikke placeres korrekt.'
+      )
+    }
 
-  Object.entries(payload).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) fd.append(k, String(v))
-  })
+    const fd = new FormData()
 
-  if (files?.cv instanceof File) fd.append('cv', files.cv)
-  if (files?.ansogning instanceof File) fd.append('ansogning', files.ansogning)
-  if (files?.photo instanceof File) fd.append('photo', files.photo)
-
-  if (Array.isArray(files?.andet) && files.andet.length) {
-    files.andet.forEach((f) => {
-      if (f instanceof File) fd.append('andet[]', f)
+    Object.entries(payload).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) fd.append(k, String(v))
     })
+
+    if (files?.cv instanceof File) fd.append('cv', files.cv)
+    if (files?.ansogning instanceof File) fd.append('ansogning', files.ansogning)
+    if (files?.photo instanceof File) fd.append('photo', files.photo)
+
+    if (Array.isArray(files?.andet) && files.andet.length) {
+      files.andet.forEach((f) => {
+        if (f instanceof File) fd.append('andet[]', f)
+      })
+    }
+
+    // method override
+    fd.append('_method', 'PUT')
+
+    const res = await fetch(`/api/candidates/${candidateId}`, {
+      method: 'POST',
+      body: fd,
+      credentials: 'include'
+    })
+
+    if (!res.ok) {
+      console.error('updateCandidateWithFiles failed:', await res.text())
+      throw new Error('updateCandidateWithFiles failed')
+    }
+
+    const jobId = companyStore.activePosition?.id || null
+    if (jobId) await companyStore.fetchCandidatesForPosition(jobId)
+
+    return true
   }
-
-  // method override
-  fd.append('_method', 'PUT')
-
-  const res = await fetch(`/api/candidates/${candidateId}`, {
-    method: 'POST',
-    body: fd,
-    credentials: 'include'
-  })
-
-  if (!res.ok) {
-    console.error('updateCandidateWithFiles failed:', await res.text())
-    throw new Error('updateCandidateWithFiles failed')
-  }
-
-  const jobId = companyStore.activePosition?.id || null
-  if (jobId) await companyStore.fetchCandidatesForPosition(jobId)
-
-  return true
-}
 
   // docs
   async function fetchDocuments(applicationId) {
