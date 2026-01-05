@@ -8,14 +8,13 @@ import Wigdet from '@/components/dashboard/Wigdet.vue'
         <div class="wigdetRow">
             <Wigdet icon="BoxWhite" title="Insatech A/S" subtitle="Maskinmester" showButton buttonLabel="Gå til siden"
                 :buttonClick="handleEdit" />
-            <Wigdet icon="BoxWhite" title="Lihme Protein Solutions ApS" subtitle="Maskinmester" showButton buttonLabel="Gå til siden"
-                :buttonClick="handleEdit" />
+            <Wigdet icon="BoxWhite" title="Lihme Protein Solutions ApS" subtitle="Maskinmester" showButton
+                buttonLabel="Gå til siden" :buttonClick="handleEdit" />
             <Wigdet icon="BoxWhite" title="Regal A/S" subtitle="Maskinmester" showButton buttonLabel="Gå til siden"
                 :buttonClick="handleEdit" />
         </div>
     </div>
 </template>
-
 
 <style scoped lang="scss">
 .wigdetFrom {

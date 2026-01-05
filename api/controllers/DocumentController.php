@@ -177,6 +177,4 @@ private function deleteRelativeFile(string $pathOrUrl): void {
         }
     }
 
-
-
 }

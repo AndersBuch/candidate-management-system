@@ -8,21 +8,19 @@ const props = defineProps({
     icon: { type: String, required: true },
     title: { type: String, required: true },
     subtitle: { type: String, required: true },
-    count: { type: Number, default: 0 },          // ikke alle widgets har count
-    showButton: { type: Boolean, default: false }, // vis knap i stedet for count
-    buttonLabel: { type: String, default: 'Annuller' }, // knap-tekst
-    buttonClick: { type: Function },              // funktion når knap klikkes
+    count: { type: Number, default: 0 },          
+    showButton: { type: Boolean, default: false }, 
+    buttonLabel: { type: String, default: 'Annuller' }, 
+    buttonClick: { type: Function },             
     positiveColor: { type: String, default: '#34C759' },
     negativeColor: { type: String, default: '#FF383C' },
     neutralColor: { type: String, default: '#D5E9FF' },
     forceNeutral: { type: Boolean, default: false }
 })
 
-
-// Tekstvisning
 const displayCount = computed(() => {
     if (props.forceNeutral) {
-        return props.count   // Vis tallet præcis som det er
+        return props.count   
     }
 
     if (props.count > 0) return `+${props.count}`
@@ -30,7 +28,6 @@ const displayCount = computed(() => {
     return props.count
 })
 
-// Baggrundsfarve
 const countColor = computed(() => {
     if (props.forceNeutral) {
         return props.neutralColor
@@ -41,10 +38,9 @@ const countColor = computed(() => {
     return props.neutralColor
 })
 
-// 👇 TEKSTFARVE
+
 const countTextColor = computed(() => {
     if (props.forceNeutral) return '#333' // sort tekst i neutral mode
-
     if (props.count > 0) return '#fff'   // hvid tekst i grøn
     if (props.count < 0) return '#fff'   // hvid tekst i rød
 
@@ -61,17 +57,14 @@ const countTextColor = computed(() => {
         <h3 class="title">{{ title }}</h3>
         <p class="subtitle">{{ subtitle }}</p>
 
-    <!-- v-if på RouterLink -->
-    <RouterLink v-if="showButton" to="/dashboardsite">
-      <Button type="smallDashboard" :label="buttonLabel" :aria-label="buttonLabel"
-        @click="buttonClick" />
-    </RouterLink>
+        <RouterLink v-if="showButton" to="/dashboardsite">
+            <Button type="smallDashboard" :label="buttonLabel" :aria-label="buttonLabel" @click="buttonClick" />
+        </RouterLink>
 
-    <!-- Ellers vis count -->
-    <div v-else class="count" :style="{ backgroundColor: countColor, color: countTextColor }">
-      {{ displayCount }}
+        <div v-else class="count" :style="{ backgroundColor: countColor, color: countTextColor }">
+            {{ displayCount }}
+        </div>
     </div>
-  </div>
 </template>
 
 <style scoped lang="scss">

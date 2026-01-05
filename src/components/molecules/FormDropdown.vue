@@ -11,7 +11,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const open = ref(false)
-const selected = ref(props.modelValue || 'Kontakt') // <-- default
+const selected = ref(props.modelValue || 'Kontakt') 
 
 watch(() => props.modelValue, v => {
   selected.value = v || 'Kontakt'  // opdater også default ved ændringer
@@ -62,7 +62,6 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 </template>
 
 <style scoped lang="scss">
-
 .arrow {
   transition: transform 0.4s ease;
 }
@@ -99,16 +98,14 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
     background-color: $whiteColor;
     transition: border-color 0.2s, color 0.2s;
     cursor: pointer;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     margin: 0;
 
     &:hover {
       border-color: $darkGrey;
-      background-color: #f9f9f9;
+      background-color: $lightGrey;
     }
   }
-
-  /* dropdown list */
   .fdList {
     position: absolute;
     top: calc(100% + 4px);
@@ -122,7 +119,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
     list-style: none;
     padding: 4px 0;
     box-sizing: border-box;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   /* dropdown items */
@@ -143,6 +140,4 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
     }
   }
 }
-
-
 </style>

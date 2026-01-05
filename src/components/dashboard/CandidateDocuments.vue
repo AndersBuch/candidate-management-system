@@ -117,22 +117,13 @@ function downloadFile(file) {
         <ul class="documentsList">
           <li v-for="file in section.files" :key="file.id" class="documentsItem">
             <!-- Klik navn -> åbner PDF (inline) i ny fane -->
-            <a
-              class="documentsFileLink"
-              :href="file.viewUrl"
-              target="_blank"
-              rel="noopener"
-            >
+            <a class="documentsFileLink" :href="file.viewUrl" target="_blank" rel="noopener">
               {{ file.name }}
             </a>
 
             <!-- Download-knap -->
-            <Button
-              type="smallDashboard"
-              label="Download"
-              aria-label="Download dokumenter"
-              @click="downloadFile(file)"
-            />
+            <Button type="smallDashboard" label="Download" aria-label="Download dokumenter"
+              @click="downloadFile(file)" />
           </li>
         </ul>
       </div>
@@ -184,7 +175,7 @@ function downloadFile(file) {
   text-overflow: ellipsis;
 }
 
-.documentsItem > :last-child {
+.documentsItem> :last-child {
   flex: 0 0 auto;
   margin-left: auto;
 }

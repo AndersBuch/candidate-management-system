@@ -23,8 +23,6 @@ const rows = computed(() => {
   })
 })
 
-
-
 const selectedCandidate = ref(null)
 const showEditModal = ref(false)
 const sortKey = ref(null)      // 'name' | 'email' | 'status'
@@ -47,7 +45,7 @@ function onEdit(row) {
 }
 
 function onStatusClick(row) {
-  console.log('✅ status click:', row.status)
+  console.log('status click:', row.status)
 }
 
 function sortBy(key) {
@@ -60,11 +58,9 @@ function sortBy(key) {
   }
 }
 
-
 function setActiveRow(index) {
   emit('openCandidate', index)
 }
-
 
 const toasts = ref([])
 
@@ -87,62 +83,37 @@ function removeToast(id) {
 
 <template>
   <div class="tableHeader">
-<div class="headerItem" @click="sortBy('name')">
-  <p>Navn</p>
-  <BasicIconAndLogo name="Shuffle" :iconSize="true" />
-</div>
+    <div class="headerItem" @click="sortBy('name')">
+      <p>Navn</p>
+      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
+    </div>
     <div class="headerItem">
       <p>Tlf</p>
     </div>
-<div class="headerItem" @click="sortBy('email')">
-  <p>Email</p>
-  <BasicIconAndLogo name="Shuffle" :iconSize="true" />
-</div>
+    <div class="headerItem" @click="sortBy('email')">
+      <p>Email</p>
+      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
+    </div>
 
-<div class="headerItem" @click="sortBy('status')">
-  <p>Status</p>
-  <BasicIconAndLogo name="Shuffle" :iconSize="true" />
-</div>
+    <div class="headerItem" @click="sortBy('status')">
+      <p>Status</p>
+      <BasicIconAndLogo name="Shuffle" :iconSize="true" />
+    </div>
 
   </div>
 
   <div class="tableFormContainer">
-    <TableField
-      v-for="(r, i) in rows"
-      :key="r.id ?? i"
-      :id="r.applicationId"
-      :index="i"
-      :candidate-id="r.id"
-      :application-id="r.applicationId"
-      :name="r.name"
-      :phone="r.phone"
-      :email="r.email"
-      :status="r.status"
-      :linkedin-url="r.linkedin"
-      :is-active="props.activeIndex === i"
-      @rowClick="setActiveRow"
-      @edit="() => onEdit(r)"
-    />
+    <TableField v-for="(r, i) in rows" :key="r.id ?? i" :id="r.applicationId" :index="i" :candidate-id="r.id"
+      :application-id="r.applicationId" :name="r.name" :phone="r.phone" :email="r.email" :status="r.status"
+      :linkedin-url="r.linkedin" :is-active="props.activeIndex === i" @rowClick="setActiveRow"
+      @edit="() => onEdit(r)" />
   </div>
 
-  <EditModal
-    v-if="showEditModal"
-    :candidate="selectedCandidate"
-    @close="showEditModal = false"
-    @saved="showToast"
-  />
+  <EditModal v-if="showEditModal" :candidate="selectedCandidate" @close="showEditModal = false" @saved="showToast" />
 
   <div class="toastWrapper">
-    <Toast
-      v-for="t in toasts"
-      :key="t.id"
-      :title="t.title"
-      :subtitle="t.subtitle"
-      :variant="t.variant"
-      :duration="t.duration"
-      :showUndo="t.showUndo"
-      @close="removeToast(t.id)"
-    />
+    <Toast v-for="t in toasts" :key="t.id" :title="t.title" :subtitle="t.subtitle" :variant="t.variant"
+      :duration="t.duration" :showUndo="t.showUndo" @close="removeToast(t.id)" />
   </div>
 </template>
 

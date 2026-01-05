@@ -55,32 +55,23 @@ function onApplyClick(row, e) {
         </tr>
       </thead>
 
-    <tbody>
-      <tr
-        v-for="row in rows"
-        :key="`${row.company.id}-${row.position.id}`"
-        @click="goToPageTwo"
-        style="cursor: pointer"
-      >
-        <td class="cellCompany">
-          <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
-          {{ row.company.name }}
-        </td>
+      <tbody>
+        <tr v-for="row in rows" :key="`${row.company.id}-${row.position.id}`" @click="goToPageTwo"
+          style="cursor: pointer">
+          <td class="cellCompany">
+            <BasicIconAndLogo name="LPSLogo" :exstraSmall="true" />
+            {{ row.company.name }}
+          </td>
 
-        <td>{{ row.position.name }}</td>
-        <td>{{ row.position.branch }}</td>
-        <td>{{ row.position.geography }}</td>
+          <td>{{ row.position.name }}</td>
+          <td>{{ row.position.branch }}</td>
+          <td>{{ row.position.geography }}</td>
 
-        <td class="cellCta">
-          <Button
-            label="Søg job"
-            type="small"
-            aria-label="Søg job"
-            @click="(e) => onApplyClick(row, e)"
-          />
-        </td>
-      </tr>
-    </tbody>
+          <td class="cellCta">
+            <Button label="Søg job" type="small" aria-label="Søg job" @click="(e) => onApplyClick(row, e)" />
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>

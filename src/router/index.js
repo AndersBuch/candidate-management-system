@@ -64,17 +64,17 @@ router.beforeEach((to, from, next) => {
   sessionStorage.getItem('token')
 
 
-  // 1️⃣ Hvis bruger prøver at gå ind på en beskyttet side uden token → redirect til login
+  // 1 Hvis bruger prøver at gå ind på en beskyttet side uden token → redirect til login
   if (to.meta.requiresAuth && !token) {
     return next({ name: 'LogInDashboard' })
   }
 
-  // 2️⃣ Hvis bruger er logget ind og vil ind på login-siden → redirect til dashboard
+  // 2️ Hvis bruger er logget ind og vil ind på login-siden → redirect til dashboard
   if (to.name === 'LogInDashboard' && token) {
     return next({ name: 'DashboardSite' })
   }
 
-  // 3️⃣ Ellers fortsæt som normalt
+  // 3️ Ellers fortsæt som normalt
   next()
 })
 
