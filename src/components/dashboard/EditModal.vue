@@ -376,7 +376,7 @@ const submitForm = async () => {
 
       <div class="uploadeButtons">
         <div class="uploadItem">
-          <UploadButton title="CV" button-text="Upload" accept=".pdf,doc,docx" :multiple="false"
+          <UploadButton title="CV" button-text="Upload" accept=".pdf,.doc,.docx" :multiple="false"
             :existing-files="docsByKind('CV')" :marked-for-deletion="markedForDeletion"
             @file-selected="(f) => handleFile('cv', f)" @file-removed="(f) => handleRemoved('cv', f)"
             @remove-existing="removeDocument" />
@@ -397,7 +397,7 @@ const submitForm = async () => {
         </div>
 
         <div class="uploadItem">
-          <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
+          <UploadButton title="Ansøgning" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
             :existing-files="docsByKind('Ansøgning')" :marked-for-deletion="markedForDeletion"
             @file-selected="(f) => handleFile('ansogning', f)" @file-removed="(f) => handleRemoved('ansogning', f)"
             @remove-existing="removeDocument" />

@@ -6,7 +6,7 @@ ini_set('log_errors', 1);
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS, PUT");
 
 // Preflight
@@ -40,6 +40,8 @@ spl_autoload_register(function ($class) {
         }
     }
 });
+
+require_once __DIR__ . '/auth.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -83,6 +85,16 @@ switch ($path) {
         }
         $controller = new AuthController($pdo);
         $controller->login();
+        break;
+
+    case '/logout':
+        if ($method !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            break;
+        }
+        $controller = new AuthController($pdo);
+        $controller->logout();
         break;
 
     case '/candidates':
@@ -179,6 +191,17 @@ switch ($path) {
     require_once __DIR__ . '/controllers/DocumentController.php';
     $controller = new DocumentController($pdo);
     $controller->view((int)$m[1]);
+    break;
+
+
+    case '/me':
+    if ($method !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['error' => 'Method not allowed']);
+        break;
+    }
+    $controller = new AuthController($pdo);
+    $controller->me();
     break;
 
     default:

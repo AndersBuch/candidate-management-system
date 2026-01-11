@@ -57,28 +57,19 @@ export const useCompanyStore = defineStore('company', () => {
 
   async function fetchCompanies() {
     try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-      const headers = token ? { 'Authorization': `Bearer ${token}` } : {}
+      const res = await fetch('/api/companies', {
+        credentials: 'include'
+      })
 
-
-      const res = await fetch('/api/companies', { headers })
-
-      if (!res.ok) {
-        throw new Error('Kunne ikke hente firmaer')
-      }
-
+      if (!res.ok) throw new Error('Kunne ikke hente firmaer')
       const data = await res.json()
-      console.log('companies from API', data)
       companies.value = data
 
       if (data.length) {
         activeCompanyId.value = data[0].id
         const firstPositionId = data[0].positions[0]?.id ?? null
         activePositionId.value = firstPositionId
-
-        if (firstPositionId) {
-          fetchCandidatesForPosition(firstPositionId)
-        }
+        if (firstPositionId) fetchCandidatesForPosition(firstPositionId)
       } else {
         activeCompanyId.value = null
         activePositionId.value = null
@@ -92,12 +83,11 @@ export const useCompanyStore = defineStore('company', () => {
     if (!positionId) return
 
     try {
-      const res = await fetch(`/api/jobs/${positionId}/candidates`)
+      const res = await fetch(`/api/jobs/${positionId}/candidates`, {
+        credentials: 'include'
+      })
 
-      if (!res.ok) {
-        throw new Error('Kunne ikke hente kandidater')
-      }
-
+      if (!res.ok) throw new Error('Kunne ikke hente kandidater')
       const data = await res.json()
 
       candidatesByPositionId.value = {
@@ -110,20 +100,14 @@ export const useCompanyStore = defineStore('company', () => {
   }
 
   async function addCompany(payload) {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-    const headers = Object.assign(
-      { 'Content-Type': 'application/json' },
-      token ? { 'Authorization': `Bearer ${token}` } : {}
-    )
-
     const res = await fetch('/api/companies', {
       method: 'POST',
-      headers,
-      body: JSON.stringify(payload)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: 'include'
     })
 
     if (!res.ok) throw new Error('Kunne ikke tilføje firma')
-
     await fetchCompanies()
   }
 

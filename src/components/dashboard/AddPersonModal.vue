@@ -277,7 +277,7 @@ async function confirmAdd() {
 
       <div class="uploadeButtons">
         <div class="uploadItem">
-          <UploadButton title="CV" button-text="Upload" accept=".pdf,doc,docx" :max-size-mb="2" :multiple="false"
+          <UploadButton title="CV" button-text="Upload" accept=".pdf,.doc,.docx" :max-size-mb="2" :multiple="false"
             @file-selected="(f) => handleFile('cv', f)" @error="handleError"
             @file-removed="(f) => handleRemoved('cv', f)" />
         </div>
@@ -289,7 +289,7 @@ async function confirmAdd() {
         </div>
 
         <div class="uploadItem">
-          <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,doc,docx,png,jpg,jpeg"
+          <UploadButton title="Andre dokumenter" button-text="Upload" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
             :max-size-mb="2" :multiple="true" @file-selected="(f) => handleFile('andet', f)" @error="handleError"
             @file-removed="(f) => handleRemoved('andet', f)" />
         </div>

@@ -319,6 +319,7 @@ public function store() {
 
     // Hent antal kandidater (alle)
     public function count() {
+        $user = requireAuth();
         header('Content-Type: application/json; charset=utf-8');
 
         $stmt = $this->pdo->query("SELECT COUNT(*) as total FROM candidate");
@@ -328,6 +329,7 @@ public function store() {
 
 // Hent antal kandidater oprettet i de sidste X dage
 public function countRecent($days = 30) {
+    $user = requireAuth();
     header('Content-Type: application/json; charset=utf-8');
 
     $days = (int)$days;
@@ -355,6 +357,7 @@ public function countRecent($days = 30) {
 
     // DELETE /api/candidates/{id}
 public function destroy($id) {
+    $user = requireAuth();
     header('Content-Type: application/json; charset=utf-8');
 
     try {

@@ -3,7 +3,7 @@ import BasicIconAndLogo from '@/components/atoms/BasicIconAndLogo.vue'
 import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCompanyStore } from '@/stores/useCompanyStore'
-
+import { useRouter } from 'vue-router'
 const companyStore = useCompanyStore()
 const { companies, activeCompanyId, activePositionId } = storeToRefs(companyStore)
 
@@ -18,6 +18,23 @@ const selectPosition = (companyId, positionId) => {
 onMounted(() => {
   companyStore.fetchCompanies()
 })
+
+
+
+const router = useRouter()
+
+async function handleLogout() {
+  try {
+    await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include'
+    })
+  } finally {
+    // Send bruger til login uanset hvad
+    router.push({ name: 'LogInDashboard' })
+  }
+}
+
 </script>
 
 <template>
@@ -104,8 +121,8 @@ onMounted(() => {
           <BasicIconAndLogo name="User" :iconSize="true" />
           Din Profil
         </button>
-        <button class="logoutButton">
-          <BasicIconAndLogo name="Logout" :iconSize="true" />
+        <button class="logoutButton" @click="handleLogout" >
+          <BasicIconAndLogo name="Logout" :iconSize="true"  />
           Log ud
         </button>
       </div>

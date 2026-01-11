@@ -20,44 +20,38 @@ const form = reactive({
 const error = ref(null)
 
 async function handleLogin() {
-    try {
-        // Debug: se hvad der bliver sendt til backend
-        console.log('Sender login:', JSON.stringify({ email: form.email, password: form.password }));
+  try {
+    error.value = null
 
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: form.email, password: form.password }),
-        });
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      credentials: 'include', // <-- VIGTIGT for HttpOnly cookies
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: form.email,
+        password: form.password,
+        rememberme: rememberme.value, // <-- send til backend (så cookie kan være persistent)
+      }),
+    })
 
-        const data = await res.json();
+    const data = await res.json().catch(() => ({}))
 
-        // Debug: se hvad backend returnerer
-        console.log('Response fra backend:', res, data);
-
-        if (!res.ok) {
-            error.value = data.error;
-            return;
-        }
-
-// GEM TOKEN – afhængigt af om "Husk mig" er slået til
-if (rememberme.value) {
-    // betyder: brugeren vil huskes efter browser-luk
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('loggedUser', JSON.stringify(data.user));
-} else {
-    // betyder: logget ud så snart browseren lukkes
-    sessionStorage.setItem('token', data.token);
-    sessionStorage.setItem('loggedUser', JSON.stringify(data.user));
-}
-
-router.push({ name: 'HomePage' });
-
-    } catch (err) {
-        console.error('Fetch fejl:', err);
-        error.value = 'Noget gik galt.';
+    if (!res.ok) {
+      error.value = data.error || 'Login fejlede.'
+      return
     }
+
+    // ✅ Ingen token storage længere.
+    // Hvis du vil vise brugerinfo i UI, så gør det via et /api/me endpoint bagefter
+    // eller en Pinia store (ikke localStorage).
+
+    router.push({ name: 'HomePage' })
+  } catch (err) {
+    console.error('Fetch fejl:', err)
+    error.value = 'Noget gik galt.'
+  }
 }
+
 
 </script>
 

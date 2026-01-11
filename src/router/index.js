@@ -57,25 +57,28 @@ const router = createRouter({
 })
 
 
-// 🔐 GLOBAL ROUTE GUARD
-router.beforeEach((to, from, next) => {
-  const token =
-  localStorage.getItem('token') ||
-  sessionStorage.getItem('token')
+router.beforeEach(async (to, from, next) => {
+  const wantsLogin = to.name === 'LogInDashboard'
+  const requiresAuth = !!to.meta.requiresAuth
 
+  // Kun tjek login-status hvis enten:
+  // - siden kræver auth
+  // - eller brugeren går til login-siden (for at redirecte dem væk)
+  if (!requiresAuth && !wantsLogin) return next()
 
-  // 1 Hvis bruger prøver at gå ind på en beskyttet side uden token → redirect til login
-  if (to.meta.requiresAuth && !token) {
-    return next({ name: 'LogInDashboard' })
+  try {
+    const res = await fetch('/api/me', { credentials: 'include' })
+
+    const isLoggedIn = res.ok
+
+    if (requiresAuth && !isLoggedIn) return next({ name: 'LogInDashboard' })
+    if (wantsLogin && isLoggedIn) return next({ name: 'DashboardSite' })
+
+    return next()
+  } catch {
+    if (requiresAuth) return next({ name: 'LogInDashboard' })
+    return next()
   }
-
-  // 2️ Hvis bruger er logget ind og vil ind på login-siden → redirect til dashboard
-  if (to.name === 'LogInDashboard' && token) {
-    return next({ name: 'DashboardSite' })
-  }
-
-  // 3️ Ellers fortsæt som normalt
-  next()
 })
 
 export default router

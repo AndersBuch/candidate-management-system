@@ -65,6 +65,7 @@ private function deleteRelativeFile(string $pathOrUrl): void {
 
     // GET /api/applications/{id}/documents
     public function listByApplication($applicationId) {
+        $user = requireAuth();
         header('Content-Type: application/json; charset=utf-8');
         $model = new Document($this->pdo);
         echo json_encode($model->listByApplication((int)$applicationId));
@@ -72,6 +73,7 @@ private function deleteRelativeFile(string $pathOrUrl): void {
 
     // DELETE /api/documents/{id}
     public function delete($id) {
+        $user = requireAuth();
         header('Content-Type: application/json; charset=utf-8');
 
         try {
@@ -104,6 +106,7 @@ private function deleteRelativeFile(string $pathOrUrl): void {
 
     // GET /api/documents/{id}/download
     public function download($id) {
+        $user = requireAuth();
         try {
             $model = new Document($this->pdo);
             $doc = $model->getById((int)$id);
@@ -138,43 +141,71 @@ private function deleteRelativeFile(string $pathOrUrl): void {
         }
     }
 
-    // GET /api/documents/{id}/view
-    public function view($id) {
-        try {
-            $model = new Document($this->pdo);
-            $doc = $model->getById((int)$id);
+        // GET /api/documents/{id}/view
+    public function view(int $id) {
+        $user = requireAuth(); // auth 
 
-            if (!$doc) {
-                http_response_code(404);
-                echo "Not found";
-                return;
-            }
+        $model = new Document($this->pdo);
+        $doc = $model->getById($id);
 
-            $base = $this->uploadsBasePath();
-            $full = $base . "/" . ltrim($doc['file_url'], "/");
-
-            $real = realpath($full);
-            $realBase = realpath($base);
-
-            if (!$real || !$realBase || !str_starts_with($real, $realBase) || !is_file($real)) {
-                http_response_code(404);
-                echo "File missing";
-                return;
-            }
-
-            $filename = $doc['file_name'] ?: basename($real);
-
-            // Bedre for PDF i browser
-            header('Content-Type: application/pdf');
-            header('X-Content-Type-Options: nosniff');
-            header('Content-Disposition: inline; filename="' . addslashes($filename) . '"');
-            header('Content-Length: ' . filesize($real));
-
-            readfile($real);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo "View error";
+        if (!$doc) {
+            http_response_code(404);
+            echo "Not found";
+            return;
         }
+
+        $base = $this->uploadsBasePath();
+        $fullPath = realpath($base . '/' . ltrim($doc['file_url'], '/'));
+
+        if (!$fullPath || !is_file($fullPath)) {
+            http_response_code(404);
+            echo "File missing";
+            return;
+        }
+
+        $filename = $doc['file_name'] ?: basename($fullPath);
+        $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+
+        // MIME-type + disposition
+        switch ($ext) {
+            case 'pdf':
+                $mime = 'application/pdf';
+                $disposition = 'inline';
+                break;
+
+            case 'png':
+                $mime = 'image/png';
+                $disposition = 'inline';
+                break;
+
+            case 'jpg':
+            case 'jpeg':
+                $mime = 'image/jpeg';
+                $disposition = 'inline';
+                break;
+
+            case 'doc':
+                $mime = 'application/msword';
+                $disposition = 'attachment';
+                break;
+
+            case 'docx':
+                $mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                $disposition = 'attachment';
+                break;
+
+            default:
+                $mime = 'application/octet-stream';
+                $disposition = 'attachment';
+        }
+
+        header('Content-Type: ' . $mime);
+        header('Content-Disposition: ' . $disposition . '; filename="' . addslashes($filename) . '"');
+        header('Content-Length: ' . filesize($fullPath));
+        header('X-Content-Type-Options: nosniff');
+
+        readfile($fullPath);
     }
+
 
 }
