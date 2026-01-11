@@ -111,6 +111,7 @@ private function handleDocumentUploads(int $applicationId): void {
 
     // OPTIONAL: generel liste, bruges ikke til job-filteret i øjeblikket
     public function index() {
+        $user = requireAuth();
         header('Content-Type: application/json; charset=utf-8');
 
         $jobId = $_GET['jobId'] ?? null;
