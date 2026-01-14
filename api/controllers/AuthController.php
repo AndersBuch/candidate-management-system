@@ -56,7 +56,7 @@ class AuthController {
             || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)
         );
 
-        // Hvis du vil have "remember me" (persistent cookie), kan du bruge max-age/expires
+        // "remember me" (persistent cookie), max-age/expires
         $remember = !empty($data['rememberme']);
         $maxAge = $remember ? 60 * 60 * 24 * 7 : 0; // 7 dage, ellers session cookie
 
