@@ -4,39 +4,34 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools()
-  ],
+  plugins: [vue(), vueDevTools()],
 
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
-
 
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8085',
+        target: 'http://localhost',
         changeOrigin: true,
-      }
-    }
+        rewrite: (path) => path.replace(/^\/api/, '/app/api'),
+      },
+    },
   },
-
-
 
   css: {
     preprocessorOptions: {
       scss: {
         additionalData: `
-        @use "@/assets/style/globalVariables.scss" as *;
-        @use "@/assets/style/main.scss";
-      `
-      }
-    }
+@use "@/assets/style/globalVariables.scss" as *;
+@use "@/assets/style/main.scss";
+`,
+      },
+    },
   },
 
-  base: '/app/'
+  base: '/app/',
 })

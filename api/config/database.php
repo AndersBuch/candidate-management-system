@@ -1,7 +1,7 @@
 <?php
 
 // Lokal config UDENFOR projektet (absolut sti)
-$localSecureConfig = 'C:/local-configs/profilsearch/config.php';
+$localSecureConfig = '/Users/cloud14/local-configs/profilsearch/config.php';
 
 // Live config på serveren (som før)
 $liveSecureConfig  = '/var/www/buchdesigns.dk/secure/config.php';
